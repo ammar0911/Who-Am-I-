@@ -10,6 +10,12 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 export const Header: React.FC = () => {
   const { currentUser, logout, navigate, mode, toggleTheme, t } =
     useContext(AppContext);
+  const [mounted, setMounted] = React.useState(false);
+
+  // After mounting, we have access to the theme
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
@@ -41,11 +47,12 @@ export const Header: React.FC = () => {
             <button
               onClick={toggleTheme}
               className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-              {mode === "light" ? (
-                <DarkModeIcon className="w-5 h-5" />
-              ) : (
-                <LightModeIcon className="w-5 h-5" />
-              )}
+              {mounted &&
+                (mode === "dark" ? (
+                  <LightModeIcon className="w-5 h-5" />
+                ) : (
+                  <DarkModeIcon className="w-5 h-5" />
+                ))}
             </button>
             {currentUser ? (
               <div className="relative flex items-center">

@@ -9,6 +9,11 @@ export default function HomePage() {
   const { users, navigate, t } = useContext(AppContext);
   const searchInput = useRef<HTMLInputElement>(null);
 
+  // Early return if context is not yet available
+  if (!t || !users) {
+    return null; // Or a loading state
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchInput.current) {

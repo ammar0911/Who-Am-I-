@@ -1,19 +1,45 @@
 "use client";
 import React, { useContext, useState } from "react";
-import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import Image from "next/image";
 import { AppContext } from "../../../contexts/AppContext";
 import { AvailabilityChip } from "../../../components/AvailabilityChip";
+import dynamic from "next/dynamic";
+
+// Dynamically import Material-UI components
+const FormControl = dynamic(
+  () => import("@mui/material").then((mod) => mod.FormControl),
+  { ssr: false }
+);
+const InputLabel = dynamic(
+  () => import("@mui/material").then((mod) => mod.InputLabel),
+  { ssr: false }
+);
+const Select = dynamic(
+  () => import("@mui/material").then((mod) => mod.Select),
+  { ssr: false }
+);
+const MenuItem = dynamic(
+  () => import("@mui/material").then((mod) => mod.MenuItem),
+  { ssr: false }
+);
 
 export default function SearchPage() {
   const { users, currentUser, navigate, pageData, t } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState<string>(
     (pageData?.query as string) || ""
   );
-  const [departmentFilter, setDepartmentFilter] = useState<string>(
-    t("allDepartments")
-  );
+  const [departmentFilter, setDepartmentFilter] = useState<string>("");
+
+  // Early return if context is not yet available
+  if (!t || !users) {
+    return null; // Or a loading state
+  }
+
+  // Set initial department filter after we know t is available
+  if (departmentFilter === "") {
+    setDepartmentFilter(t("allDepartments"));
+  }
 
   const departments = [
     t("allDepartments"),
@@ -40,7 +66,7 @@ export default function SearchPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          {t("searchDirectory")}
+          {t("directoryTitle")}
         </h1>
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
@@ -49,7 +75,7 @@ export default function SearchPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
-              placeholder={t("searchPlaceholder")}
+              placeholder={t("searchByName")}
             />
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
@@ -58,7 +84,7 @@ export default function SearchPage() {
             <Select
               value={departmentFilter}
               label={t("department")}
-              onChange={(e) => setDepartmentFilter(e.target.value)}>
+              onChange={(e) => setDepartmentFilter(e.target.value as string)}>
               {departments.map((dept) => (
                 <MenuItem key={dept} value={dept}>
                   {dept}

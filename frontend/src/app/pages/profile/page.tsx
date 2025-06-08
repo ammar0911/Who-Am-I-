@@ -1,21 +1,40 @@
 "use client";
 import React, { useContext } from "react";
 import { Settings, CalendarMonth, AccessTime } from "@mui/icons-material";
-import { Switch, Button } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AppContext } from "../../../contexts/AppContext";
 import { AvailabilityChip } from "../../../components/AvailabilityChip";
 import { WeeklyAvailabilityView } from "../../../components/WeeklyAvailabilityView";
 import LoginIcon from "@mui/icons-material/Login";
+import dynamic from "next/dynamic";
+
+// Dynamically import Material-UI components
+const Switch = dynamic(
+  () => import("@mui/material").then((mod) => mod.Switch),
+  {
+    ssr: false,
+  }
+);
+const Button = dynamic(
+  () => import("@mui/material").then((mod) => mod.Button),
+  {
+    ssr: false,
+  }
+);
 
 export default function ProfilePage() {
   const { users, currentUser, pageData, updateUserVisibility, t } =
     useContext(AppContext);
   const router = useRouter();
 
-  const user = users.find((u) => u.id === pageData?.userId);
-  if (!user)
+  // Early return if context is not yet available
+  if (!t) {
+    return null; // Or a loading state
+  }
+
+  const user = users?.find((u) => u.id === pageData?.userId);
+  if (!users || !user)
     return (
       <div className="text-center p-10 dark:text-gray-200">
         {t("profileNotFound")}

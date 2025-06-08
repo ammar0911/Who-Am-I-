@@ -95,11 +95,14 @@ const mockUsers: User[] = [
 ];
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [mode, setMode] = useState<"light" | "dark">(
-    typeof window !== "undefined"
-      ? (localStorage.getItem("theme") as "light" | "dark") || "light"
-      : "light"
-  );
+  const [mode, setMode] = useState<"light" | "dark">("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark";
+    if (savedTheme) {
+      setMode(savedTheme);
+    }
+  }, []);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [page, setPage] = useState<string>("home");
@@ -167,8 +170,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     navigate("home");
   };
 
-  const toggleTheme = () =>
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
+  const toggleTheme = () => {
+    setMode((prev) => {
+      const newMode = prev === "light" ? "dark" : "light";
+      localStorage.setItem("theme", newMode);
+      return newMode;
+    });
+  };
 
   const updateUserVisibility = (userId: number, isPublic: boolean) => {
     setUsers((prev) =>
