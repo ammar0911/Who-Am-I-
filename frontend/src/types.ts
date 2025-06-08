@@ -93,10 +93,7 @@ export interface AppContextType {
     users: User[];
     login: (userId: number) => void;
     logout: () => void;
-    navigate: (page: string, data?: Record<string, unknown> | null) => void;
     updateUserVisibility: (userId: number, isPublic: boolean) => void;
-    page: string;
-    pageData: Record<string, unknown> | null;
     mode: 'light' | 'dark';
     toggleTheme: () => void;
     language: Language;
@@ -118,7 +115,6 @@ export interface WeeklyAvailabilityViewProps {
 }
 
 export interface HomePageProps {
-    navigate: (page: string, data?: Record<string, unknown> | null) => void;
     t: <T extends TranslationKey>(key: T, params?: Record<string, string>) => TranslationReturn<T>;
     users: User[];
     currentUser: User | null;
@@ -127,17 +123,13 @@ export interface HomePageProps {
 export interface ProfilePageProps {
     users: User[];
     currentUser: User | null;
-    pageData: Record<string, unknown> | null;
     updateUserVisibility: (userId: number, isPublic: boolean) => void;
-    navigate: (page: string, data?: Record<string, unknown> | null) => void;
     t: <T extends TranslationKey>(key: T, params?: Record<string, string>) => TranslationReturn<T>;
 }
 
 export interface SearchPageProps {
     users: User[];
     currentUser: User | null;
-    navigate: (page: string, data?: Record<string, unknown> | null) => void;
-    pageData: Record<string, unknown> | null;
     t: <T extends TranslationKey>(key: T, params?: Record<string, string>) => TranslationReturn<T>;
 }
 

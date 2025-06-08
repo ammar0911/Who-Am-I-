@@ -105,10 +105,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   }, []);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>(mockUsers);
-  const [page, setPage] = useState<string>("home");
-  const [pageData, setPageData] = useState<Record<string, unknown> | null>(
-    null
-  );
+
   const [language, setLanguage] = useState<Language>("en");
 
   const theme = createTheme(getDesignTokens(mode));
@@ -149,25 +146,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     return String(value) as TranslationReturn<T>;
   };
 
-  const navigate = (
-    newPage: string,
-    data: Record<string, unknown> | null = null
-  ) => {
-    setPage(newPage);
-    setPageData(data);
-  };
-
   const login = (userId: number) => {
     const user = users.find((u) => u.id === userId);
     if (user) {
       setCurrentUser(user);
-      navigate("profile", { userId: user.id });
     }
   };
 
   const logout = () => {
     setCurrentUser(null);
-    navigate("home");
   };
 
   const toggleTheme = () => {
@@ -192,10 +179,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     users,
     login,
     logout,
-    navigate,
     updateUserVisibility,
-    page,
-    pageData,
     mode,
     toggleTheme,
     language,

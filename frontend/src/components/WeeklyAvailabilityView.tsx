@@ -190,7 +190,7 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
                   const slotInfo = getSlotInfo(day, slot, index);
                   const style =
                     slotInfo.type === "calendar"
-                      ? { backgroundColor: "#8b5cf6" }
+                      ? { backgroundColor: "#64727f" }
                       : {
                           backgroundImage: getStripeBg(slotInfo.level),
                           backgroundSize: "10px 10px",
@@ -235,7 +235,7 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
       <div className="mt-6 border-t dark:border-gray-700 pt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-600 dark:text-gray-400">
         <div className="font-bold">{t("legend")}</div>
         <div className="flex items-center">
-          <div className="w-4 h-4 rounded-sm mr-2 bg-[#8b5cf6]"></div>
+          <div className="w-4 h-4 rounded-sm mr-2 bg-[#64727f]"></div>
           {t("legendNotAvailableCalendar")}
         </div>
         <div className="flex items-center">

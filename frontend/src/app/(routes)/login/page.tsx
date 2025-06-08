@@ -1,7 +1,7 @@
 "use client";
 import React, { useContext } from "react";
 import Image from "next/image";
-import { AppContext } from "../../../contexts/AppContext";
+import { AppContext } from "@/contexts/AppContext";
 import dynamic from "next/dynamic";
 
 // Dynamically import Material-UI components
@@ -37,20 +37,20 @@ export default function LoginPage() {
                 fullWidth
                 variant="outlined"
                 onClick={() => login(user.id)}
-                className="flex items-center justify-start p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                <Image
-                  width={40}
-                  height={40}
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-10 h-10 rounded-full mr-4"
-                />
-                <div className="text-left">
-                  <div className="font-medium text-gray-900 dark:text-white">
-                    {user.name}
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {user.title}
+                className="!justify-start !normal-case !text-left">
+                <div className="flex items-center space-x-3">
+                  <Image
+                    width={32}
+                    height={32}
+                    src={user.avatar}
+                    alt={user.name}
+                    className="rounded-full"
+                  />
+                  <div>
+                    <p className="font-medium">{user.name}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {user.title}
+                    </p>
                   </div>
                 </div>
               </Button>

@@ -1,23 +1,9 @@
 "use client";
 
-import React, { useContext } from "react";
-import { AppContext } from "../contexts/AppContext";
-import HomePage from "../app/pages/home/page";
-import SearchPage from "../app/pages/search/page";
-import ProfilePage from "../app/pages/profile/page";
-import LoginPage from "../app/pages/login/page";
+import React from "react";
 
-export function PageContent() {
-  const { page } = useContext(AppContext);
-
-  switch (page) {
-    case "search":
-      return <SearchPage />;
-    case "profile":
-      return <ProfilePage />;
-    case "login":
-      return <LoginPage />;
-    default:
-      return <HomePage />;
-  }
+export function PageContent({ children }: { children: React.ReactNode }) {
+  return (
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">{children}</main>
+  );
 }
