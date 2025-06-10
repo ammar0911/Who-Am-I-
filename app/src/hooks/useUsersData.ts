@@ -1,9 +1,9 @@
-import { UserDoc } from '@/types';
+import { UserDTO } from '@/types';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/apiClient';
 
 export default function useUsers() {
-  const [users, setUsers] = useState<UserDoc[]>([]);
+  const [users, setUsers] = useState<UserDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

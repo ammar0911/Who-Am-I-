@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { Geist, Geist_Mono } from 'next/font/google';
-import useUsers from '@/hooks/useUsers';
+import useUsersData from '@/hooks/useUsersData';
+import useSensorsData from '@/hooks/useSensorsData';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -13,7 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
-  const { users, loading, error } = useUsers();
+  const { users, loading, error } = useUsersData();
+  const {
+    sensors,
+    loading: sensorsLoading,
+    error: sensorsError,
+  } = useSensorsData();
 
   return (
     <>
@@ -24,13 +30,25 @@ export default function Home() {
       </Head>
       <div className={`${geistSans.variable} ${geistMono.variable}`}>
         <main>
-          <h1 className="text-2xl font-bold">Users List</h1>
+          <h2 className="text-2xl font-bold">Users List</h2>
           {loading && <p>Loading...</p>}
           {error && <p className="text-red-500">{error}</p>}
           <ul>
             {users.map((user) => (
               <li key={user.id} className="py-2">
                 <strong>{user.name}</strong> - {user.email}
+              </li>
+            ))}
+          </ul>
+          <h2 className="text-2xl font-bold mt-8">Sensors List</h2>
+          {sensorsLoading && <p>Loading sensors...</p>}
+          {sensorsError && <p className="text-red-500">{sensorsError}</p>}
+          <ul>
+            {sensors.map((sensor) => (
+              <li key={sensor.id} className="py-2">
+                <strong>{sensor.id}</strong> - 🔋{sensor.batteryStatus}% -{' '}
+                {sensor.isOpen ? 'Open' : 'Closed'} -{' '}
+                {new Date(sensor.inputTime).toLocaleString()}
               </li>
             ))}
           </ul>
