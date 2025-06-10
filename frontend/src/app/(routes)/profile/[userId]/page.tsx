@@ -56,23 +56,21 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 text-center">
-            <div className="flex items-center space-x-4">
-              <Image
-                width={64}
-                height={64}
-                src={user.avatar}
-                alt={user.name}
-                className="w-16 h-16 rounded-full"
-              />
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {user.name}
-                </h2>
-                <p className="text-gray-600 dark:text-gray-400">{user.title}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {user.department}
-                </p>
-              </div>
+            <Image
+              width={64}
+              height={64}
+              src={user.avatar}
+              alt={user.name}
+              className="h-24 w-24 rounded-full mb-4 mx-auto"
+            />
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {user.name}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">{user.title}</p>
+              <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
+                {user.department}
+              </p>
             </div>
 
             <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
