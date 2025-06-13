@@ -28,7 +28,7 @@ export default function useSensorsData() {
 }
 
 export function useSensorsByOfficeId(officeId: string) {
-  const [sensors, setSensors] = useState<SensorDTO[]>([]);
+  const [sensors, setSensors] = useState<SensorDTO>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
