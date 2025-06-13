@@ -194,6 +194,35 @@ export const sensorApi = {
     }
   },
 
+  async getByOfficeId(officeId: string): Promise<SensorDTO> {
+    try {
+      const docRef = doc(db, COLLECTIONS.OFFICE, officeId);
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
+        throw new Error(`Office with ID ${officeId} does not exist`);
+      }
+
+      const data = {
+        id: docSnap.id,
+        ...convertFirebaseTimestampsToDate(docSnap.data()),
+      } as OfficeDoc;
+
+      const sensorSnap = await getDoc(data.sensor_id);
+      if (!sensorSnap.exists()) {
+        throw new Error(`Sensor with ID ${data.sensor_id} does not exist`);
+      }
+      const sensorData = {
+        id: sensorSnap.id,
+        ...convertFirebaseTimestampsToDate(sensorSnap.data()),
+      } as SensorDoc;
+
+      return mapSensorDocToDTO(sensorData);
+    } catch (error) {
+      console.error('Error getting sensors by office ID:', error);
+      throw error;
+    }
+  },
+
   async getAll(): Promise<SensorDTO[]> {
     try {
       const q = query(

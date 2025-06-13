@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { Geist, Geist_Mono } from 'next/font/google';
 import useUsersData from '@/hooks/useUsersData';
-import useSensorsData from '@/hooks/useSensorsData';
+import useSensorsData, { useSensorsByOfficeId } from '@/hooks/useSensorsData';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -20,6 +20,12 @@ export default function Home() {
     loading: sensorsLoading,
     error: sensorsError,
   } = useSensorsData();
+
+  const {
+    sensors: officeSensors,
+    loading: officeSensorsLoading,
+    error: officeSensorsError,
+  } = useSensorsByOfficeId(users[0]?.officeId || '');
 
   return (
     <>
@@ -51,6 +57,23 @@ export default function Home() {
                 {new Date(sensor.inputTime).toLocaleString()}
               </li>
             ))}
+          </ul>
+          <h2 className="text-2xl font-bold mt-8">
+            Sensors by Office ID: {users[0]?.officeId}
+          </h2>
+          {officeSensorsLoading && <p>Loading office sensors...</p>}
+          {officeSensorsError && (
+            <p className="text-red-500">{officeSensorsError}</p>
+          )}
+          <ul>
+            {officeSensors && (
+              <li className="py-2">
+                <strong>{officeSensors.id}</strong> - 🔋
+                {officeSensors.batteryStatus}% -{' '}
+                {officeSensors.isOpen ? 'Open' : 'Closed'} -{' '}
+                {new Date(officeSensors.inputTime).toLocaleString()}
+              </li>
+            )}
           </ul>
         </main>
         <footer></footer>
