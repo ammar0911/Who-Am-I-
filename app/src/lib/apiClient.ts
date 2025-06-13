@@ -48,6 +48,8 @@ class ClientApi {
 
   sensors = {
     getAll: () => this.request<SensorDTO[]>('/api/sensors'),
+    getByOfficeId: (officeId: string) =>
+      this.request<SensorDTO>(`/api/sensors/byOfficeId?officeId=${officeId}`),
     getByStatus: (isOpen: boolean) =>
       this.request<SensorDTO[]>(`/api/sensors/status?is_open=${isOpen}`),
     create: (sensor: Omit<SensorDTO, 'id' | 'input_time'>) =>
