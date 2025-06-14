@@ -34,8 +34,28 @@ export default function ProfilePage() {
     return null; // Or a loading state
   }
 
-  const userId = Number(params?.userId);
-  const user = users?.find((u) => u.id === userId);
+  // Extract userId from params without conversion to number
+  const userId = params?.userId || null;
+  console.log(
+    "Profile page - userId from params:",
+    userId,
+    "type:",
+    typeof userId
+  );
+  console.log("Profile page - available users:", users);
+  console.log("Profile page - current user:", currentUser);
+
+  // Find the user by matching the ID
+  const user = users?.find((u) => String(u.id) === String(userId));
+  console.log("Profile page - found user:", user);
+
+  // Additional debugging to check all user IDs and their types
+  if (users?.length > 0) {
+    console.log(
+      "User ID types in users array:",
+      users.map((u) => ({ id: u.id, type: typeof u.id }))
+    );
+  }
 
   if (!users || !user) {
     return (
@@ -48,7 +68,7 @@ export default function ProfilePage() {
     );
   }
 
-  const isOwner = currentUser?.id === user.id;
+  const isOwner = currentUser && String(currentUser.id) === String(user.id);
   const canView = user.isPublic || !!currentUser;
 
   return (
@@ -106,7 +126,7 @@ export default function ProfilePage() {
                   <Switch
                     checked={user.isPublic}
                     onChange={(e) =>
-                      updateUserVisibility(user.id, e.target.checked)
+                      updateUserVisibility(String(user.id), e.target.checked)
                     }
                   />
                 </div>

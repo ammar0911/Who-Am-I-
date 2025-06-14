@@ -36,7 +36,15 @@ export const AvailabilityChip: React.FC<AvailabilityChipProps> = ({
   isLoggedIn,
 }) => {
   const { t } = useContext(AppContext);
+
+  // If the profile is not public and the user is not logged in, show Private
+  // Otherwise show the actual status from sensor data
   const displayStatus = isPublic || isLoggedIn ? status : "Private";
+
+  console.log(
+    `AvailabilityChip: Actual status=${status}, isPublic=${isPublic}, isLoggedIn=${isLoggedIn}, displayStatus=${displayStatus}`
+  );
+
   const getLocalizedStatus = (status: AvailabilityStatus) => {
     switch (status) {
       case "Available":

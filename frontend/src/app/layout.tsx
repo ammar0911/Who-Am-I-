@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppProvider } from "../contexts/AppContext";
 import { Header } from "../components/Header";
 import { PageContent } from "../components/PageContent";
+import { ErrorDisplay } from "../components/ErrorDisplay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
         <AppProvider>
           <Header />
           <PageContent>{children}</PageContent>
+          <ErrorDisplay />
         </AppProvider>
       </body>
     </html>

@@ -68,7 +68,7 @@ export type AvailabilityStatus = 'Available' | 'Not Available' | 'Private';
 export type Language = 'en' | 'de';
 
 export interface User {
-    id: number;
+    id: string | number;
     name: string;
     title: string;
     department: string;
@@ -91,13 +91,15 @@ export interface CalendarEvent {
 export interface AppContextType {
     currentUser: User | null;
     users: User[];
-    login: (userId: number) => void;
+    login: (userId: string | number) => void;
     logout: () => void;
-    updateUserVisibility: (userId: number, isPublic: boolean) => void;
+    updateUserVisibility: (userId: string | number, isPublic: boolean) => void;
     mode: 'light' | 'dark';
     toggleTheme: () => void;
     language: Language;
     setLanguage: (lang: Language) => void;
+    loading: boolean;
+    error: string | null;
     t: <T extends TranslationKey>(key: T, params?: Record<string, string>) => TranslationReturn<T>;
 }
 
