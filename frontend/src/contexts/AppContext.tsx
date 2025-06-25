@@ -29,7 +29,76 @@ const API_BASE_URL = "/api";
 const API_ENDPOINTS = {
   USERS: `${API_BASE_URL}/users`,
   SENSORS: `${API_BASE_URL}/sensors`,
-  SENSORS_BY_OFFICE: `${API_BASE_URL}/sensors/byOfficeId`,
+};
+
+// Cache to store user and sensor data with TTL
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+// Cache TTL in milliseconds (3 seconds for live demo)
+const CACHE_TTL = 500; // Changed from 30000 for live demo
+
+// Cache for storing API responses
+const apiCache = {
+  users: new Map<string, CacheEntry<ApiUser>>(),
+  allUsers: null as CacheEntry<ApiUser[]> | null,
+  sensors: new Map<number, CacheEntry<ApiSensor[]>>(),
+
+  // Get cached data if valid, otherwise return null
+  get: function <T>(
+    cache: Map<string | number, CacheEntry<T>> | null,
+    key: string | number
+  ): T | null {
+    if (!cache) return null;
+
+    const entry = cache.get(key);
+    if (!entry) return null;
+
+    const now = Date.now();
+    if (now - entry.timestamp > CACHE_TTL) {
+      cache.delete(key);
+      return null;
+    }
+
+    return entry.data;
+  },
+
+  // Store data in cache
+  set: function <T>(
+    cache: Map<string | number, CacheEntry<T>> | null,
+    key: string | number,
+    data: T
+  ): void {
+    if (!cache) return;
+    cache.set(key, { data, timestamp: Date.now() });
+  },
+
+  // Get all users from cache if valid
+  getAllUsers: function (): ApiUser[] | null {
+    if (!this.allUsers) return null;
+
+    const now = Date.now();
+    if (now - this.allUsers.timestamp > CACHE_TTL) {
+      this.allUsers = null;
+      return null;
+    }
+
+    return this.allUsers.data;
+  },
+
+  // Set all users in cache
+  setAllUsers: function (users: ApiUser[]): void {
+    this.allUsers = { data: users, timestamp: Date.now() };
+  },
+
+  // Clear all caches
+  clear: function (): void {
+    this.users.clear();
+    this.allUsers = null;
+    this.sensors.clear();
+  },
 };
 
 const getDesignTokens = (mode: "light" | "dark") => ({
@@ -77,141 +146,210 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   useEffect(() => {
     document.documentElement.className = mode;
     document.documentElement.lang = language;
-  }, [mode, language]); // Fetch all users and their related data from the API
+  }, [mode, language]);
+
+  // Efficient API fetching functions
+  const fetchUserById = useCallback(
+    async (userId: string | number): Promise<ApiUser | null> => {
+      // Check cache first
+      const cachedUser = apiCache.get(apiCache.users, String(userId));
+      if (cachedUser) {
+        console.log(`Using cached data for user ${userId}`);
+        return cachedUser;
+      }
+
+      try {
+        const response = await fetch(`${API_ENDPOINTS.USERS}/${userId}`);
+        if (!response.ok) {
+          console.error(`Failed to fetch user ${userId}: ${response.status}`);
+          return null;
+        }
+
+        const user = await response.json();
+        // Store in cache
+        apiCache.set(apiCache.users, String(userId), user);
+        return user;
+      } catch (error) {
+        console.error(`Error fetching user ${userId}:`, error);
+        return null;
+      }
+    },
+    []
+  );
+
+  const fetchAllUsers = useCallback(
+    async (forceRefresh = false): Promise<ApiUser[]> => {
+      // Check cache first if not forcing refresh
+      if (!forceRefresh) {
+        const cachedUsers = apiCache.getAllUsers();
+        if (cachedUsers) {
+          console.log("Using cached data for all users");
+          return cachedUsers;
+        }
+      }
+
+      try {
+        console.log("Fetching all users from API");
+        const response = await fetch(API_ENDPOINTS.USERS);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch users: ${response.status}`);
+        }
+
+        const users = await response.json();
+        // Store each user in cache
+        users.forEach((user: ApiUser) => {
+          apiCache.set(apiCache.users, String(user.id), user);
+        });
+        // Store all users in cache
+        apiCache.setAllUsers(users);
+        return users;
+      } catch (error) {
+        console.error("Error fetching all users:", error);
+        return [];
+      }
+    },
+    []
+  );
+
+  const fetchSensorsByOfficeId = useCallback(
+    async (officeId: number, forceRefresh = true): Promise<ApiSensor[]> => {
+      // Check cache first if not forcing refresh
+      if (!forceRefresh) {
+        const cachedSensors = apiCache.get(apiCache.sensors, officeId);
+        if (cachedSensors) {
+          console.log(`Using cached sensor data for office ${officeId}`);
+          return cachedSensors;
+        }
+      }
+
+      try {
+        const response = await fetch(
+          `${API_ENDPOINTS.SENSORS}?officeId=${officeId}`
+        );
+        if (!response.ok) {
+          console.error(
+            `Failed to fetch sensors for office ${officeId}: ${response.status}`
+          );
+          return [];
+        }
+
+        const sensors = await response.json();
+        // Store in cache
+        apiCache.set(apiCache.sensors, officeId, sensors);
+        return sensors;
+      } catch (error) {
+        console.error(`Error fetching sensors for office ${officeId}:`, error);
+        return [];
+      }
+    },
+    []
+  ); // Helper to transform API user to full User object
+  const transformApiUserToUser = useCallback(
+    async (apiUser: ApiUser): Promise<User> => {
+      // Default to Not Available
+      let currentStatus: "Available" | "Not Available" = "Not Available";
+
+      // Only fetch sensor data if user has an officeId
+      if (apiUser.officeId) {
+        try {
+          const sensors = await fetchSensorsByOfficeId(apiUser.officeId);
+
+          if (sensors && sensors.length > 0) {
+            const sensor = sensors[0];
+            currentStatus = sensor.isOpen ? "Available" : "Not Available";
+            console.log(
+              `User ${apiUser.name} status set to ${currentStatus} based on sensor.isOpen=${sensor.isOpen}`
+            );
+          } else {
+            console.log(
+              `No sensors found for ${apiUser.name}'s office ${apiUser.officeId}`
+            );
+          }
+        } catch (error) {
+          console.error(`Error processing sensors for ${apiUser.name}:`, error);
+        }
+      } else {
+        console.log(
+          `User ${apiUser.name} has no officeId, setting to Not Available`
+        );
+      }
+
+      // Generate an avatar if none exists
+      // const avatar = `https://placehold.co/100x100/E0E7FF/4F46E5?text=${apiUser.name
+      //   .split(" ")
+      //   .map((n) => n[0])
+      //   .join("")}`;
+      const avatar = `https://placehold.co/100x100/E0E7FF/4F46E5?text=LP`;
+
+      // Use mock data for availability and calendar
+      const mockPredictedAvailability = {
+        Monday: [0.1, 0.1, 0.8, 0.9, 0.9, 0.2, 0.7, 0.6, 0.1, 0.1, 0.1],
+        Tuesday: [0.2, 0.2, 0.3, 0.8, 0.8, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+        Wednesday: [0.1, 0.1, 0.9, 0.9, 0.9, 0.3, 0.8, 0.7, 0.1, 0.1, 0.1],
+        Thursday: [0.3, 0.3, 0.2, 0.7, 0.7, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+        Friday: [0.1, 0.1, 0.8, 0.9, 0.9, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1],
+        Saturday: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+      };
+
+      const mockCalendarEvents = [
+        { day: "Monday", start: "14:00", end: "16:00" },
+        { day: "Wednesday", start: "10:00", end: "12:00" },
+      ];
+
+      return {
+        id: apiUser.id,
+        name: apiUser.name,
+        title: "Professor of Computer Vision", // apiUser.title,
+        department: "Computer Science", // apiUser.department,
+        email: apiUser.email,
+        avatar,
+        currentStatus,
+        isPublic: true, // apiUser.isPublic,
+        predictedAvailability: mockPredictedAvailability,
+        calendarEvents: mockCalendarEvents,
+      };
+    },
+    [fetchSensorsByOfficeId]
+  );
+
+  // Fetch users on initial load with better efficiency
   useEffect(() => {
-    const fetchUsers = async () => {
+    const loadUsers = async () => {
       try {
         setLoading(true);
         setError(null);
-        console.log("Fetching users from local API route");
 
         // Fetch all users
-        const usersResponse = await fetch(API_ENDPOINTS.USERS);
-        if (!usersResponse.ok) {
-          const errorText = await usersResponse.text();
-          throw new Error(
-            `Failed to fetch users: ${usersResponse.status} ${errorText}`
-          );
+        const apiUsers = await fetchAllUsers(true); // Force refresh on initial load
+
+        if (apiUsers.length === 0) {
+          throw new Error("No users found");
         }
 
-        const apiUsers: ApiUser[] = await usersResponse.json();
-        console.log("Users fetched successfully:", apiUsers);
-
-        // We'll make individual sensor requests for each user
-        const transformedUsersPromises = apiUsers.map(async (apiUser) => {
-          // Default to Not Available
-          let currentStatus: "Available" | "Not Available" = "Not Available";
-
-          // Only try to get sensor if user has an officeId
-          if (apiUser.officeId) {
-            try {
-              const sensorResponse = await fetch(
-                `${API_ENDPOINTS.SENSORS_BY_OFFICE}?officeId=${apiUser.officeId}`
-              );
-
-              if (sensorResponse.ok) {
-                const sensors = await sensorResponse.json();
-                console.log(
-                  `User ${apiUser.name} office ${apiUser.officeId} sensors:`,
-                  sensors,
-                  `array length: ${sensors.length}`
-                );
-
-                // Check if sensors exist and we have at least one
-                if (sensors && sensors.length > 0) {
-                  const sensor = sensors[0];
-                  console.log(`Sensor data for ${apiUser.name}:`, sensor);
-                  if (sensor.isOpen) {
-                    currentStatus = "Available";
-                    console.log(
-                      `Setting ${apiUser.name} to Available because sensor.isOpen is true`
-                    );
-                  } else {
-                    console.log(
-                      `Setting ${apiUser.name} to Not Available because sensor.isOpen is false`
-                    );
-                  }
-                } else {
-                  console.log(
-                    `No sensors found for ${apiUser.name}'s office ${apiUser.officeId}`
-                  );
-                }
-              } else {
-                console.log(
-                  `Failed to fetch sensors for ${apiUser.name}'s office ${apiUser.officeId}`
-                );
-              }
-            } catch (error) {
-              console.error(
-                `Error fetching sensor for ${apiUser.name}:`,
-                error
-              );
-            }
-          } else {
-            console.log(
-              `User ${apiUser.name} has no officeId, setting to Not Available`
-            );
-          }
-
-          // Generate an avatar if none exists
-          const avatar = `https://placehold.co/100x100/E0E7FF/4F46E5?text=${apiUser.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")}`;
-
-          // Use mock data for availability and calendar
-          const mockPredictedAvailability = {
-            Monday: [0.1, 0.1, 0.8, 0.9, 0.9, 0.2, 0.7, 0.6, 0.1, 0.1, 0.1],
-            Tuesday: [0.2, 0.2, 0.3, 0.8, 0.8, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-            Wednesday: [0.1, 0.1, 0.9, 0.9, 0.9, 0.3, 0.8, 0.7, 0.1, 0.1, 0.1],
-            Thursday: [0.3, 0.3, 0.2, 0.7, 0.7, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-            Friday: [0.1, 0.1, 0.8, 0.9, 0.9, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1],
-            Saturday: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-          };
-
-          // Use empty calendar events since API endpoint is not ready
-          const mockCalendarEvents = [
-            { day: "Monday", start: "14:00", end: "16:00" },
-            { day: "Wednesday", start: "10:00", end: "12:00" },
-          ];
-
-          // Keep the ID as is (either string or number)
-          const id = apiUser.id;
-
-          return {
-            id,
-            name: apiUser.name,
-            title: apiUser.title,
-            department: apiUser.department,
-            email: apiUser.email,
-            avatar,
-            currentStatus,
-            isPublic: true, // apiUser.isPublic,
-            predictedAvailability: mockPredictedAvailability,
-            calendarEvents: mockCalendarEvents,
-          };
-        });
-
-        // Wait for all user transformations to complete
-        const transformedUsers = await Promise.all(transformedUsersPromises);
-        console.log("Transformed users with sensor data:", transformedUsers);
+        // Transform users with parallel processing
+        const transformedUsers = await Promise.all(
+          apiUsers.map(transformApiUserToUser)
+        );
 
         setUsers(transformedUsers);
         setError(null);
       } catch (err) {
-        console.error("Error fetching users:", err);
+        console.error("Error loading users:", err);
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
         );
-        // Fallback to empty users array if API fails
         setUsers([]);
       } finally {
         setLoading(false);
       }
     };
+    loadUsers();
 
-    fetchUsers();
-  }, []);
+    // Cleanup function to clear cache when component unmounts
+    return () => {
+      apiCache.clear();
+    };
+  }, [transformApiUserToUser, fetchAllUsers]);
 
   // Translation type helpers
   type ArrayTranslationKeys = "daysOfWeek" | "dayAbbreviations";
@@ -258,64 +396,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       }
 
       // If not in local state, fetch from API
-      const response = await fetch(`${API_ENDPOINTS.USERS}/${userId}`);
-      if (!response.ok) throw new Error("Failed to fetch user");
-
-      const apiUser: ApiUser = await response.json();
-
-      // Default to Not Available if sensor fetch fails
-      let currentStatus: "Available" | "Not Available" = "Not Available";
-
-      // Only try to get sensor status if user has an officeId
-      if (apiUser.officeId) {
-        const sensorResponse = await fetch(
-          `${API_ENDPOINTS.SENSORS_BY_OFFICE}?officeId=${apiUser.officeId}`
-        );
-
-        if (sensorResponse.ok) {
-          const sensors: ApiSensor[] = await sensorResponse.json();
-          if (sensors && sensors.length > 0) {
-            const userSensor = sensors[0];
-            // Set status based ONLY on the sensor data
-            currentStatus = userSensor.isOpen ? "Available" : "Not Available";
-            console.log(
-              `Login: New user ${apiUser.name}, sensor.isOpen=${userSensor.isOpen}, setting status to ${currentStatus}`
-            );
-          }
-        }
+      const apiUser = await fetchUserById(userId);
+      if (!apiUser) {
+        throw new Error("Failed to fetch user");
       }
 
-      // Use mock data for availability and calendar since API endpoints are not ready yet
-      const mockPredictedAvailability = {
-        Monday: [0.1, 0.1, 0.8, 0.9, 0.9, 0.2, 0.7, 0.6, 0.1, 0.1, 0.1],
-        Tuesday: [0.2, 0.2, 0.3, 0.8, 0.8, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-        Wednesday: [0.1, 0.1, 0.9, 0.9, 0.9, 0.3, 0.8, 0.7, 0.1, 0.1, 0.1],
-        Thursday: [0.3, 0.3, 0.2, 0.7, 0.7, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-        Friday: [0.1, 0.1, 0.8, 0.9, 0.9, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1],
-        Saturday: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
-      };
-
-      const mockCalendarEvents = [
-        { day: "Monday", start: "14:00", end: "16:00" },
-        { day: "Wednesday", start: "10:00", end: "12:00" },
-      ];
-
-      // Create full user object
-      const fullUser: User = {
-        id: apiUser.id,
-        name: apiUser.name,
-        title: apiUser.title,
-        department: apiUser.department,
-        email: apiUser.email,
-        avatar: `https://placehold.co/100x100/E0E7FF/4F46E5?text=${apiUser.name
-          .split(" ")
-          .map((n) => n[0])
-          .join("")}`,
-        currentStatus: currentStatus,
-        isPublic: true, //apiUser.isPublic,
-        predictedAvailability: mockPredictedAvailability,
-        calendarEvents: mockCalendarEvents,
-      };
+      // Transform to full user
+      const fullUser = await transformApiUserToUser(apiUser);
 
       setCurrentUser(fullUser);
 
@@ -362,6 +449,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       if (!response.ok) {
         throw new Error("Failed to update user visibility on server");
       }
+
+      // Update cache
+      const apiUser = await fetchUserById(userId);
+      if (apiUser) {
+        apiCache.set(apiCache.users, String(userId), apiUser);
+      }
     } catch (err) {
       console.error("Error updating user visibility:", err);
       // Revert changes in case of error
@@ -383,7 +476,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
-  // Function to refresh a user's status
+  // Efficient function to refresh a user's status
   const refreshUserStatus = useCallback(
     async (userId: string | number) => {
       try {
@@ -391,31 +484,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         const user = users.find((u) => String(u.id) === String(userId));
         if (!user) return;
 
-        // Find the user's office ID
-        const userResponse = await fetch(`${API_ENDPOINTS.USERS}/${userId}`);
-        if (!userResponse.ok) return;
-        const apiUser: ApiUser = await userResponse.json();
+        // Get user info with office ID
+        const apiUser = await fetchUserById(userId);
+        if (!apiUser || !apiUser.officeId) return;
 
-        // If user doesn't have an office, we can't check sensor status
-        if (!apiUser.officeId) return;
-
-        // Get current sensor status
-        const sensorResponse = await fetch(
-          `${API_ENDPOINTS.SENSORS_BY_OFFICE}?officeId=${apiUser.officeId}`
-        );
-        if (!sensorResponse.ok) {
-          console.log(
-            `Failed to fetch sensor data for user ${apiUser.name}'s office ${apiUser.officeId}`
-          );
-          return;
-        }
-
-        const sensors: ApiSensor[] = await sensorResponse.json();
-        console.log(
-          `Refreshing status: User ${apiUser.name}, received sensors:`,
-          sensors,
-          `array length: ${sensors.length}`
-        );
+        // Get current sensor status with forced refresh
+        const sensors = await fetchSensorsByOfficeId(apiUser.officeId, true);
 
         // Check if we have any sensors before proceeding
         if (!sensors || sensors.length === 0) {
@@ -430,9 +504,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         // Update status in local state
         if (userSensor) {
           const newStatus = userSensor.isOpen ? "Available" : "Not Available";
-          console.log(
-            `refreshUserStatus: User ${apiUser.name} sensor.isOpen=${userSensor.isOpen}, setting status to ${newStatus}`
-          );
 
           // Only update if status has changed
           if (newStatus !== user.currentStatus) {
@@ -460,7 +531,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         // Don't set error state for refresh failures
       }
     },
-    [users, currentUser]
+    [users, currentUser, fetchSensorsByOfficeId, fetchUserById]
   );
 
   // Set up polling to refresh current user's status
@@ -470,10 +541,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // Initial refresh
     refreshUserStatus(currentUser.id);
 
-    // Set up interval to refresh every 30 seconds
+    // Set up interval to refresh every 3 seconds for live demo
     const intervalId = setInterval(() => {
       refreshUserStatus(currentUser.id);
-    }, 30000);
+    }, 500); // Changed from 30000 for live demo
 
     return () => clearInterval(intervalId);
   }, [currentUser, refreshUserStatus]);
