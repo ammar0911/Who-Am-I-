@@ -1,25 +1,20 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { AppProvider } from "../contexts/AppContext";
-import { Header } from "../components/Header";
-import { PageContent } from "../components/PageContent";
-import { ErrorDisplay } from "../components/ErrorDisplay";
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "No-Knock",
+  title: 'No-Knock',
   description:
-    "The smart directory for real-time, calendar-integrated, and predicted availability.",
+    'The smart directory for real-time, calendar-integrated, and predicted availability.',
 };
 
 export default function RootLayout({
@@ -30,12 +25,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AppProvider>
-          <Header />
-          <PageContent>{children}</PageContent>
-          <ErrorDisplay />
-        </AppProvider>
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
       </body>
     </html>
   );

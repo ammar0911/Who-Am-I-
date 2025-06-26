@@ -1,13 +1,13 @@
-"use client";
-import React, { useContext } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Login as LoginIcon, Logout as LogoutIcon } from "@mui/icons-material";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import { AppContext } from "../contexts/AppContext";
-import { LanguageSwitcher } from "./LanguageSwitcher";
+'use client';
+import React, { useContext } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Login as LoginIcon, Logout as LogoutIcon } from '@mui/icons-material';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { AppContext } from '../contexts/AppContext';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export const Header: React.FC = () => {
   const { currentUser, logout, mode, toggleTheme, t } = useContext(AppContext);
@@ -32,13 +32,15 @@ export const Header: React.FC = () => {
             <div className="ml-10 flex items-baseline space-x-1">
               <Link
                 href="/home"
-                className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
-                {t("home")}
+                className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                {t('home')}
               </Link>
               <Link
                 href="/search"
-                className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
-                {t("directory")}
+                className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                {t('directory')}
               </Link>
             </div>
           </div>
@@ -46,9 +48,10 @@ export const Header: React.FC = () => {
             <LanguageSwitcher />
             <button
               onClick={toggleTheme}
-              className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+              className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
               {mounted &&
-                (mode === "dark" ? (
+                (mode === 'dark' ? (
                   <LightModeIcon className="w-5 h-5" />
                 ) : (
                   <DarkModeIcon className="w-5 h-5" />
@@ -58,7 +61,8 @@ export const Header: React.FC = () => {
               <div className="relative flex items-center">
                 <Link
                   href={`/profile/${currentUser.id}`}
-                  className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                  className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
                   <Image
                     className="h-8 w-8 rounded-full"
                     src={currentUser.avatar}
@@ -73,9 +77,10 @@ export const Header: React.FC = () => {
                 <button
                   onClick={() => {
                     logout();
-                    router.push("/home");
+                    router.push('/home');
                   }}
-                  className="ml-1 text-gray-600 dark:text-gray-300 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                  className="ml-1 text-gray-600 dark:text-gray-300 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
                   <LogoutIcon />
                 </button>
               </div>
@@ -83,8 +88,9 @@ export const Header: React.FC = () => {
               <div className="hidden md:block">
                 <Link
                   href="/login"
-                  className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium py-2 px-4 rounded-lg flex items-center">
-                  <LoginIcon className="w-5 h-5 mr-2" /> {t("login")}
+                  className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium py-2 px-4 rounded-lg flex items-center"
+                >
+                  <LoginIcon className="w-5 h-5 mr-2" /> {t('login')}
                 </Link>
               </div>
             )}
