@@ -1,14 +1,16 @@
-"use client";
-import React, { useContext, useRef } from "react";
-import { Search } from "@mui/icons-material";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { AppContext } from "@/contexts/AppContext";
-import { AvailabilityChip } from "@/components/AvailabilityChip";
+'use client';
+import React, { useContext, useRef } from 'react';
+import { Search } from '@mui/icons-material';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { AppContext } from '@/contexts/AppContext';
+import { AvailabilityChip } from '@/components/AvailabilityChip';
+import useUsers from '@/hooks/useUsersData';
 
 export default function HomePage() {
-  const { users, t } = useContext(AppContext);
+  const { t } = useContext(AppContext);
+  const { users } = useUsers();
   const router = useRouter();
   const searchInput = useRef<HTMLInputElement>(null);
 
@@ -16,6 +18,8 @@ export default function HomePage() {
   if (!t || !users) {
     return null; // Or a loading state
   }
+
+  const availableUsers = users;
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,20 +30,15 @@ export default function HomePage() {
     }
   };
 
-  // Filter for currently available users
-  const availableUsers = users.filter(
-    (user) => user.currentStatus === "Available" && user.isPublic
-  );
-
   return (
     <div className="min-h-screen gradient-bg">
       <div className="container mx-auto px-4 py-8 relative">
         <div className="mt-15 text-center mb-12">
           <h1 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
-            {t("homeTitle")}
+            {t('homeTitle')}
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-white/90">
-            {t("homeTagline")}
+            {t('homeTagline')}
           </p>
         </div>
 
@@ -51,14 +50,15 @@ export default function HomePage() {
                   ref={searchInput}
                   type="text"
                   className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 dark:border-gray-600 rounded-md py-4 bg-white/10 dark:bg-gray-700/10 text-white placeholder-white/70"
-                  placeholder={t("searchPlaceholder")}
+                  placeholder={t('searchPlaceholder')}
                 />
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70" />
               </div>
               <button
                 type="submit"
-                className="ml-4 px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl">
-                {t("searchButton")}
+                className="ml-4 px-6 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg font-medium backdrop-blur-sm transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                {t('searchButton')}
               </button>
             </div>
           </form>
@@ -66,7 +66,7 @@ export default function HomePage() {
 
         <div className="glass rounded-xl shadow-xl p-8">
           <h2 className="text-2xl font-bold text-white mb-6">
-            {t("currentlyAvailable")}
+            {t('currentlyAvailable')}
           </h2>
           {availableUsers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -74,7 +74,8 @@ export default function HomePage() {
                 <Link
                   key={user.id}
                   href={`/profile/${user.id}`}
-                  className="cursor-pointer bg-white/5 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-300 border border-white/10">
+                  className="cursor-pointer bg-white/5 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-300 border border-white/10"
+                >
                   <div className="flex items-center space-x-4 mb-4">
                     <Image
                       width={48}
@@ -92,7 +93,7 @@ export default function HomePage() {
                   </div>
                   <div className="mt-2">
                     <AvailabilityChip
-                      status={user.currentStatus}
+                      status={user.available}
                       isPublic={user.isPublic}
                       isLoggedIn={false}
                     />
@@ -101,7 +102,7 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <p className="text-white/70">{t("noOneAvailable")}</p>
+            <p className="text-white/70">{t('noOneAvailable')}</p>
           )}
         </div>
       </div>

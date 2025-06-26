@@ -1,22 +1,22 @@
-"use client";
-import React, { useContext } from "react";
-import { CheckCircle, Cancel, AccessTime } from "@mui/icons-material";
-import { AppContext } from "../contexts/AppContext";
-import { AvailabilityStatus } from "../types";
+'use client';
+import React, { useContext } from 'react';
+import { CheckCircle, Cancel, AccessTime } from '@mui/icons-material';
+import { AppContext } from '../contexts/AppContext';
+import { AvailabilityStatus } from '../types';
 
 const availabilityColors: Record<AvailabilityStatus, string> = {
   Available:
-    "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300",
-  "Not Available":
-    "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300",
-  Private: "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+    'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+  'Not Available':
+    'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
+  Private: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
 };
 
 const availabilityIcons: Record<AvailabilityStatus, React.ReactElement> = {
   Available: (
     <CheckCircle className="w-4 h-4 mr-2 text-green-600 dark:text-green-400" />
   ),
-  "Not Available": (
+  'Not Available': (
     <Cancel className="w-4 h-4 mr-2 text-red-600 dark:text-red-400" />
   ),
   Private: (
@@ -39,7 +39,7 @@ export const AvailabilityChip: React.FC<AvailabilityChipProps> = ({
 
   // If the profile is not public and the user is not logged in, show Private
   // Otherwise show the actual status from sensor data
-  const displayStatus = isPublic || isLoggedIn ? status : "Private";
+  const displayStatus = isPublic || isLoggedIn ? status : 'Private';
 
   console.log(
     `AvailabilityChip: Actual status=${status}, isPublic=${isPublic}, isLoggedIn=${isLoggedIn}, displayStatus=${displayStatus}`
@@ -47,12 +47,12 @@ export const AvailabilityChip: React.FC<AvailabilityChipProps> = ({
 
   const getLocalizedStatus = (status: AvailabilityStatus) => {
     switch (status) {
-      case "Available":
-        return t("available");
-      case "Not Available":
-        return t("notAvailable");
-      case "Private":
-        return t("availabilityPrivate");
+      case AvailabilityStatus.Available:
+        return t('available');
+      case AvailabilityStatus.NotAvailable:
+        return t('notAvailable');
+      case AvailabilityStatus.Private:
+        return t('availabilityPrivate');
       default:
         return status;
     }
@@ -65,7 +65,8 @@ export const AvailabilityChip: React.FC<AvailabilityChipProps> = ({
 
   return (
     <div
-      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${color}`}>
+      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${color}`}
+    >
       {icon}
       {localizedStatus}
     </div>

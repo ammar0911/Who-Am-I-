@@ -69,23 +69,13 @@ export interface TranslationStrings {
   footerText: string;
 }
 
-export type AvailabilityStatus = 'Available' | 'Not Available' | 'Private';
-export type Language = 'en' | 'de';
-
-export interface User {
-  id: string | number;
-  name: string;
-  title: string;
-  department: string;
-  email: string;
-  avatar: string;
-  currentStatus: AvailabilityStatus;
-  isPublic: boolean;
-  predictedAvailability: {
-    [key: string]: number[];
-  };
-  calendarEvents: CalendarEvent[];
+export enum AvailabilityStatus {
+  Available = 'Available',
+  NotAvailable = 'Not Available',
+  Private = 'Private',
 }
+
+export type Language = 'en' | 'de';
 
 export interface CalendarEvent {
   day: string;
@@ -172,6 +162,12 @@ export interface User {
   password: string;
   pronouns: string;
   user_settings: string;
+
+  // Not implemented yet
+  title: string;
+  department: string;
+  avatar: string;
+  is_public: boolean;
 }
 
 export interface WorkingBlock {
@@ -206,6 +202,13 @@ export interface UserDTO {
   password: string;
   pronouns: string;
   userSettings: string;
+
+  // Not implemented yet
+  title: string;
+  department: string;
+  avatar: string;
+  isPublic: boolean;
+  available: AvailabilityStatus;
 }
 
 export interface WorkingBlockDoc extends WorkingBlock {

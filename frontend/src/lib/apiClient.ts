@@ -20,6 +20,8 @@ class ClientApi {
   users = {
     getAll: () => this.request<UserDTO[]>('/api/users'),
     getById: (id: string) => this.request<UserDTO>(`/api/users/${id}`),
+    getAllPublicAndAvailable: () =>
+      this.request<UserDTO[]>('/api/users/getAllPublicAndAvailable'),
     create: (user: Omit<UserDTO, 'id'>) =>
       this.request<{ id: string }>('/api/users', {
         method: 'POST',

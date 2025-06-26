@@ -88,6 +88,7 @@ export const userApi = {
         ...convertFirebaseTimestampsToDate(doc.data()),
       })) as UserDoc[];
 
+      // @TODO: Add availability data to the DTO
       return data.map(mapUserDocToDTO);
     } catch (error) {
       console.error('Error getting users:', error);
