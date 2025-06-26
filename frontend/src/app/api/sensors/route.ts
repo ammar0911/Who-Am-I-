@@ -1,84 +1,52 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { sensorApi } from '@/lib/firestoreApi';
 
-const API_BASE_URL = "https://ubi-sys-lab-no-knock.vercel.app/api";
-
-// Define the sensor interface
-interface ApiSensor {
-    id: string | number;
-    batteryStatus?: number;
-    inputTime?: string;
-    isOpen: boolean;
-    officeId?: number;
-}
-
-export async function GET(request: NextRequest) {
-    try {
-        // Get query parameters
-        const searchParams = request.nextUrl.searchParams;
-        const officeId = searchParams.get("officeId");
-
-        let url = `${API_BASE_URL}/sensors`;
-
-        // If officeId is provided, add it to the query
-        if (officeId) {
-            console.log(`Fetching sensors for office ${officeId}`);
-
-            // Try the direct endpoint first
-            try {
-                const directUrl = `${API_BASE_URL}/sensors/byOfficeId?officeId=${officeId}`;
-                console.log(`Trying direct endpoint: ${directUrl}`);
-
-                const directResponse = await fetch(directUrl, {
-                    cache: "no-store",
-                });
-
-                if (directResponse.ok) {
-                    const data = await directResponse.json();
-                    console.log(`Found sensor for office ${officeId}:`, data);
-
-                    // Wrap single object in array to maintain consistent API response format
-                    const sensorArray = Array.isArray(data) ? data : [data];
-                    return NextResponse.json(sensorArray);
-                }
-            } catch (error) {
-                console.log(`Error fetching from direct endpoint: ${error}`);
-            }
-
-            // Fallback: Add officeId parameter to the base URL
-            url += `?officeId=${officeId}`;
-        }
-
-        console.log('Fetching sensors from:', url);
-        const response = await fetch(url, {
-            cache: 'no-store'
-        });
-
-        if (!response.ok) {
-            throw new Error(`API responded with status: ${response.status}`);
-        }
-
-        const allSensors: ApiSensor[] = await response.json();
-
-        // If we have officeId and the API doesn't filter properly, do it manually
-        if (officeId && !url.includes('byOfficeId')) {
-            console.log(`Retrieved ${allSensors.length} total sensors, filtering for office ${officeId}`);
-
-            // For demo/fallback purposes (if API doesn't support proper filtering)
-            const mockSensor: ApiSensor = {
-                id: `sensor-${officeId}`,
-                isOpen: Math.random() > 0.5, // Randomly open or closed for demonstration
-                inputTime: new Date().toISOString(),
-                batteryStatus: 100
-            };
-
-            console.log(`Created mock sensor for office ${officeId}: isOpen=${mockSensor.isOpen}`);
-            return NextResponse.json([mockSensor]);
-        }
-
-        console.log('Sensors API response:', allSensors);
-        return NextResponse.json(allSensors);
-    } catch (error) {
-        console.error('Error fetching sensors:', error);
-        return NextResponse.json({ error: 'Failed to fetch sensors' }, { status: 500 });
-    }
+/**
+ * @openapi
+ * /api/sensors:
+ *   get:
+ *     summary: Get all sensors
+ *     description: Returns a list of all sensors.
+ *     responses:
+ *       200:
+ *         description: A list of sensors.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: jtXtrYmcN8D0zLpjKzWI
+ *                   batteryStatus:
+ *                     type: integer
+ *                     example: 35
+ *                   inputTime:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-06-04T15:47:43.913Z"
+ *                   isOpen:
+ *                     type: boolean
+ *                     example: false
+ *             examples:
+ *               sensors:
+ *                 value:
+ *                   - id: jtXtrYmcN8D0zLpjKzWI
+ *                     batteryStatus: 35
+ *                     inputTime: "2025-06-04T15:47:43.913Z"
+ *                     isOpen: false
+ *       500:
+ *         description: Internal Server Error
+ */
+export async function GET() {
+  try {
+    const sensors = await sensorApi.getAll();
+    return Response.json(sensors);
+  } catch (error) {
+    console.error('API Error:', error);
+    return new Response(`Webhook error: ${String(error)}`, {
+      status: 500,
+    });
+  }
 }
