@@ -1,57 +1,67 @@
-import { NextResponse } from 'next/server';
+import { userApi } from '@/lib/firestoreApi';
 
-const API_BASE_URL = "https://ubi-sys-lab-no-knock.vercel.app/api";
-
-// Cache for all users with 1-minute TTL
-interface ApiUser {
-    id: string | number;
-    name: string;
-    title: string;
-    department: string;
-    email: string;
-    officeId: number;
-    isPublic: boolean;
-    [key: string]: string | number | boolean | undefined;
-}
-
-interface CacheEntry {
-    data: ApiUser[];
-    timestamp: number;
-}
-
-let usersCache: CacheEntry | null = null;
-const CACHE_TTL = 60000; // 1 minute in milliseconds
-
+/**
+ * @openapi
+ * /api/users:
+ *   get:
+ *     summary: Get all users
+ *     description: Returns a list of all users.
+ *     responses:
+ *       200:
+ *         description: A list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "yXGO7YkiXpQDSSqyxHz1"
+ *                   accountType:
+ *                     type: integer
+ *                     example: 1
+ *                   email:
+ *                     type: string
+ *                     example: "me@robruizr.dev"
+ *                   name:
+ *                     type: string
+ *                     example: "Roberto Ruiz"
+ *                   officeId:
+ *                     type: string
+ *                     example: "NZYeL9zhepNhAeQavl5X"
+ *                   password:
+ *                     type: string
+ *                     example: "1234"
+ *                   pronouns:
+ *                     type: string
+ *                     example: "he/him"
+ *                   userSettings:
+ *                     type: string
+ *                     example: "{}"
+ *             examples:
+ *               users:
+ *                 value:
+ *                   - id: "yXGO7YkiXpQDSSqyxHz1"
+ *                     accountType: 1
+ *                     email: "me@robruizr.dev"
+ *                     name: "Roberto Ruiz"
+ *                     officeId: "NZYeL9zhepNhAeQavl5X"
+ *                     password: "1234"
+ *                     pronouns: "he/him"
+ *                     userSettings: "{}"
+ *       500:
+ *         description: Internal Server Error
+ */
 export async function GET() {
-    try {
-        // Check cache first
-        if (usersCache && (Date.now() - usersCache.timestamp < CACHE_TTL)) {
-            console.log('Using cached data for all users');
-            return NextResponse.json(usersCache.data);
-        }
-
-        console.log('Fetching users from:', `${API_BASE_URL}/users`);
-        const response = await fetch(`${API_BASE_URL}/users`, {
-            // Add cache: 'no-store' to ensure we don't get cached responses
-            cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`API responded with status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('Users API response:', data);
-
-        // Store in cache
-        usersCache = { data, timestamp: Date.now() };
-
-        return NextResponse.json(data);
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
-    }
+  try {
+    const users = await userApi.getAll();
+    return Response.json(users);
+  } catch (error) {
+    console.error('API Error:', error);
+    return new Response(`Webhook error: ${String(error)}`, {
+      status: 500,
+    });
+  }
 }

@@ -1,10 +1,8 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { userApi } from '@/lib/firestoreApi';
-import rejectIfMethodNotIncluded from '@/lib/rejectIfMethodNotIncluded';
 
 /**
  * @openapi
- * /api/users:
+ * /api/users/getAllPublicAndAvailable:
  *   get:
  *     summary: Get all users
  *     description: Returns a list of all users.
@@ -56,19 +54,13 @@ import rejectIfMethodNotIncluded from '@/lib/rejectIfMethodNotIncluded';
  *       500:
  *         description: Internal Server Error
  */
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    switch (req.method) {
-      case 'GET':
-        const users = await userApi.getAll();
-        res.status(200).json(users);
-        break;
-    }
-  } catch (error) {
-    console.error('API Error:', error);
-    console.error(error?.toString());
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+/** @TODO */
+export async function GET() {
+  // Not implemented yet
+  return new Response(JSON.stringify(await userApi.getAll()), {
+    status: 501,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 }
-
-export default rejectIfMethodNotIncluded(handler, ['GET']);

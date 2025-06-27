@@ -1,5 +1,5 @@
 import { sensorApi } from '@/lib/firestoreApi';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest } from 'next/server';
 
 /**
  * @openapi
@@ -42,29 +42,23 @@ import { NextApiRequest, NextApiResponse } from 'next';
  *       500:
  *         description: Internal Server Error
  */
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { officeId } = req.query;
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const officeId = searchParams.get('officeId');
 
   if (typeof officeId !== 'string' || officeId.trim() === '') {
-    return res.status(400).json({ error: 'Invalid office ID' });
+    return new Response(`Invalid office ID`, {
+      status: 404,
+    });
   }
 
   try {
-    switch (req.method) {
-      case 'GET':
-        const sensors = await sensorApi.getByOfficeId(officeId);
-        res.status(200).json(sensors);
-        break;
-      default:
-        res.setHeader('Allow', ['GET']);
-        return res
-          .status(405)
-          .json({ error: `Method ${req.method} Not Allowed` });
-    }
+    const sensors = await sensorApi.getByOfficeId(officeId);
+    return Response.json(sensors);
   } catch (error) {
     console.error('API Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return new Response(`Webhook error: ${String(error)}`, {
+      status: 500,
+    });
   }
 }
-
-export default handler;

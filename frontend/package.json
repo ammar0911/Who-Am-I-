@@ -13,9 +13,17 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
+    "@stoplight/elements": "^9.0.2",
+    "core-js": "^3.43.0",
+    "firebase": "^11.9.1",
+    "mobx": "^6.13.7",
     "next": "15.3.3",
+    "next-swagger-doc": "^0.4.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "redoc": "^2.5.0",
+    "styled-components": "^6.1.19",
+    "swagger-ui-dist": "^5.25.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -23,6 +31,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/swagger-ui-dist": "^3.30.6",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",

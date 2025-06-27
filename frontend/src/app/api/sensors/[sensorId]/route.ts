@@ -1,3 +1,5 @@
+import { sensorApi } from '@/lib/firestoreApi';
+
 /**
  * @openapi
  * /api/sensors/{id}:
@@ -89,44 +91,69 @@
  *       500:
  *         description: Internal Server Error
  */
-import { sensorApi } from '@/lib/firestoreApi';
-import rejectIfMethodNotIncluded from '@/lib/rejectIfMethodNotIncluded';
-import { NextApiRequest, NextApiResponse } from 'next';
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ sensorId: string }> }
+) {
+  const { sensorId: id } = await params;
 
   if (typeof id !== 'string') {
-    return res.status(400).json({ error: 'Invalid sensor ID' });
+    return new Response(`Invalid sensor ID`, {
+      status: 404,
+    });
   }
-
   try {
-    switch (req.method) {
-      case 'GET':
-        const sensor = await sensorApi.getById(id);
-        if (!sensor) {
-          return res.status(404).json({ error: 'Sensor not found' });
-        }
-        res.status(200).json(sensor);
-        break;
-
-      case 'PUT':
-        const { batteryStatus, isOpen } = req.body;
-        console.log('PUT request body:', { batteryStatus, isOpen });
-        if (typeof batteryStatus !== 'number' || typeof isOpen !== 'boolean') {
-          return res.status(400).json({ error: 'Invalid request body' });
-        }
-        await sensorApi.update(id, {
-          battery_status: batteryStatus,
-          is_open: isOpen,
-        });
-        res.status(200).json({ message: 'Sensor updated successfully' });
-        break;
+    const sensor = await sensorApi.getById(id);
+    if (!sensor) {
+      return new Response(`Invalid sensor ID`, {
+        status: 404,
+      });
     }
+    return Response.json(sensor);
   } catch (error) {
     console.error('API Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return new Response(`Webhook error: ${String(error)}`, {
+      status: 500,
+    });
   }
 }
 
-export default rejectIfMethodNotIncluded(handler, ['GET', 'PUT']);
+interface SensorPUTRequestBody {
+  batteryStatus: number;
+  isOpen: boolean;
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ sensorId: string }> }
+) {
+  const { sensorId: id } = await params;
+
+  if (typeof id !== 'string') {
+    return new Response(`Invalid sensor ID`, {
+      status: 404,
+    });
+  }
+
+  try {
+    const { batteryStatus, isOpen } =
+      (await request.json()) satisfies SensorPUTRequestBody;
+    console.log('PUT request body:', { batteryStatus, isOpen });
+    if (typeof batteryStatus !== 'number' || typeof isOpen !== 'boolean') {
+      return new Response(`Invalid request body`, {
+        status: 400,
+      });
+    }
+    await sensorApi.update(id, {
+      battery_status: batteryStatus,
+      is_open: isOpen,
+    });
+    return Response.json({ message: 'Sensor updated successfully' });
+  } catch (error) {
+    console.error('API Error:', error);
+    return new Response(`Webhook error: ${String(error)}`, {
+      status: 500,
+    });
+  }
+}

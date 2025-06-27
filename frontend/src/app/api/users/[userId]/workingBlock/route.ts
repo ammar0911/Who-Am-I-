@@ -1,6 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { workingBlockApi } from '@/lib/firestoreApi';
-import rejectIfMethodNotIncludedWrapper from '@/lib/rejectIfMethodNotIncluded';
+import { NextRequest } from 'next/server';
 
 /**
  * @openapi
@@ -34,20 +33,31 @@ import rejectIfMethodNotIncludedWrapper from '@/lib/rejectIfMethodNotIncluded';
  *                   format: date-time
  *                   example: "2025-06-04T15:47:43.913Z"
  */
-async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
+async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ userId: string }> }
+) {
+  const { userId } = await params;
 
-  if (typeof id !== 'string') {
-    return res.status(400).json({ error: 'Invalid user ID' });
+  if (typeof userId !== 'string') {
+    return new Response(`Invalid user ID`, {
+      status: 404,
+    });
   }
 
   try {
-    const workingBlocks = await workingBlockApi.getByUserId(id);
-    res.status(200).json(workingBlocks);
+    const workingBlocks = await workingBlockApi.getByUserId(userId);
+    if (!workingBlocks) {
+      return new Response(`No working blocks found for user ID: ${userId}`, {
+        status: 404,
+      });
+    }
+    // If the workingBlocks is an array, we can return it directly
+    return Response.json(workingBlocks);
   } catch (error) {
     console.error('API Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return new Response(`Webhook error: ${String(error)}`, {
+      status: 500,
+    });
   }
 }
-
-export default rejectIfMethodNotIncludedWrapper(handler, ['GET']);
