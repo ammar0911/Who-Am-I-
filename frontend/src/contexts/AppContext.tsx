@@ -46,7 +46,6 @@ const apiCache = {
   allUsers: null as CacheEntry<ApiUser[]> | null,
   sensors: new Map<number, CacheEntry<ApiSensor[]>>(),
 
-  // Get cached data if valid, otherwise return null
   get: function <T>(
     cache: Map<string | number, CacheEntry<T>> | null,
     key: string | number
@@ -75,7 +74,6 @@ const apiCache = {
     cache.set(key, { data, timestamp: Date.now() });
   },
 
-  // Get all users from cache if valid
   getAllUsers: function (): ApiUser[] | null {
     if (!this.allUsers) return null;
 
@@ -87,8 +85,6 @@ const apiCache = {
 
     return this.allUsers.data;
   },
-
-  // Set all users in cache
   setAllUsers: function (users: ApiUser[]): void {
     this.allUsers = { data: users, timestamp: Date.now() };
   },
@@ -151,7 +147,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   // Efficient API fetching functions
   const fetchUserById = useCallback(
     async (userId: string | number): Promise<ApiUser | null> => {
-      // Check cache first
       const cachedUser = apiCache.get(apiCache.users, String(userId));
       if (cachedUser) {
         console.log(`Using cached data for user ${userId}`);
@@ -166,7 +161,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         }
 
         const user = await response.json();
-        // Store in cache
         apiCache.set(apiCache.users, String(userId), user);
         return user;
       } catch (error) {
@@ -179,7 +173,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const fetchAllUsers = useCallback(
     async (forceRefresh = false): Promise<ApiUser[]> => {
-      // Check cache first if not forcing refresh
       if (!forceRefresh) {
         const cachedUsers = apiCache.getAllUsers();
         if (cachedUsers) {
@@ -234,7 +227,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         }
 
         const sensors = await response.json();
-        // Store in cache
         apiCache.set(apiCache.sensors, officeId, sensors);
         return sensors;
       } catch (error) {
@@ -326,7 +318,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           throw new Error("No users found");
         }
 
-        // Transform users with parallel processing
         const transformedUsers = await Promise.all(
           apiUsers.map(transformApiUserToUser)
         );
@@ -384,7 +375,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const login = async (userId: string | number) => {
     try {
-      // First check if user exists in our local state
       const user = users.find((u) => String(u.id) === String(userId));
       if (user) {
         // Simply set the current user without changing their status
@@ -401,7 +391,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         throw new Error("Failed to fetch user");
       }
 
-      // Transform to full user
       const fullUser = await transformApiUserToUser(apiUser);
 
       setCurrentUser(fullUser);
@@ -437,7 +426,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         setCurrentUser((prev) => (prev ? { ...prev, isPublic } : null));
       }
 
-      // Then update on the backend
       const response = await fetch(`${API_ENDPOINTS.USERS}/${userId}`, {
         method: "PATCH",
         headers: {

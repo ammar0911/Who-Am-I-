@@ -52,7 +52,6 @@ async function GET(
         status: 404,
       });
     }
-    // If the workingBlocks is an array, we can return it directly
     return Response.json(workingBlocks);
   } catch (error) {
     console.error('API Error:', error);

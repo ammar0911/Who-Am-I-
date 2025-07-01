@@ -38,7 +38,6 @@ export async function GET(request: NextRequest) {
     const code = searchParams.get('code');
     const state = searchParams.get('state');
 
-    // Extract user ID from the state parameter
     let userId: string | null = null;
     if (state) {
         try {
@@ -60,10 +59,7 @@ export async function GET(request: NextRequest) {
             process.env.GOOGLE_REDIRECT_URI
         );
 
-        // Exchange the authorization code for tokens
         const { tokens } = await oauth2Client.getToken(code);
-
-        // Extract the tokens
         const { access_token, refresh_token, expiry_date } = tokens;
 
         console.log('--- Google OAuth Tokens Received ---');
@@ -76,11 +72,9 @@ export async function GET(request: NextRequest) {
         // Update user settings in database if userId is available
         if (userId) {
             try {
-                // Get current user
                 const user = await userApi.getById(userId);
 
                 if (user) {
-                    // Parse current user settings or initialize if empty
                     let userSettings = {};
                     try {
                         userSettings = user.userSettings ? JSON.parse(user.userSettings) : {};
@@ -88,7 +82,6 @@ export async function GET(request: NextRequest) {
                         console.error('Error parsing user settings:', e);
                     }
 
-                    // Update user settings with Google OAuth tokens
                     const updatedSettings = {
                         ...userSettings,
                         googleAuth: {
@@ -115,7 +108,6 @@ export async function GET(request: NextRequest) {
             console.log('No userId found in cookies, skipping user settings update');
         }
 
-        // Return a success message to the parent window
         const response = createCallbackResponse('success');
 
         // Set the access token in an httpOnly cookie for future API calls from the server

@@ -27,7 +27,6 @@ export default function ProfilePage() {
   const [isLoadingCalendars, setIsLoadingCalendars] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Extract userId from params
   const userId = params?.userId || null;
 
   // Find the user by matching the ID
@@ -45,8 +44,6 @@ export default function ProfilePage() {
       }
 
       const data = await response.json();
-
-      // Extract calendar list items
       if (data.items && Array.isArray(data.items)) {
         const calendars = data.items.map(
           (cal: { id: string; summary?: string }) => ({
@@ -77,20 +74,15 @@ export default function ProfilePage() {
       }
 
       const userData = await response.json();
-
       if (userData.userSettings) {
         try {
           const settings = JSON.parse(userData.userSettings);
 
-          // Check if user is connected to Google
           if (settings.googleAuth?.accessToken) {
             setIsConnectedToGoogle(true);
-
-            // Fetch available calendars if connected
             fetchAvailableCalendars();
           }
 
-          // Set selected calendars if available
           if (
             settings.selectedCalendars &&
             Array.isArray(settings.selectedCalendars)
@@ -135,7 +127,6 @@ export default function ProfilePage() {
     }
   }, [userId, selectedCalendarIds]);
 
-  // Fetch working blocks when user is loaded
   useEffect(() => {
     if (userId) {
       const fetchWorkingBlocks = async () => {
@@ -149,16 +140,17 @@ export default function ProfilePage() {
 
           const workingBlocks = await response.json();
 
-          // Transform working blocks to calendar events
+          if (!workingBlocks || workingBlocks.length === 0) {
+            console.log("No working blocks found for this user");
+            setCalendarEvents([]);
+            return;
+          }
+
           const events: CalendarEvent[] = workingBlocks.map(
             (block: WorkingBlockDTO) => {
-              // Convert milliseconds to date
               const startDate = new Date(block.startMs);
-
-              // Calculate end time based on duration
               const endDate = new Date(block.startMs + block.durationMs);
 
-              // Get day name (0 = Sunday, 1 = Monday, etc.)
               const days = [
                 "Sunday",
                 "Monday",
@@ -170,7 +162,6 @@ export default function ProfilePage() {
               ];
               const day = days[block.weekDay];
 
-              // Format times as HH:MM
               const formatTime = (date: Date) => {
                 return date.toLocaleTimeString("en-US", {
                   hour: "2-digit",
@@ -190,17 +181,15 @@ export default function ProfilePage() {
           setCalendarEvents(events);
         } catch (error) {
           console.error("Error fetching working blocks:", error);
+          setCalendarEvents([]);
         }
       };
 
       fetchWorkingBlocks();
-
-      // Fetch user settings to check Google connection and selected calendars
       fetchUserCalendarSettings();
     }
   }, [userId, fetchUserCalendarSettings]);
 
-  // Handle successful Google Calendar connection
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const googleConnectStatus = urlParams.get("google_connect");
@@ -216,7 +205,6 @@ export default function ProfilePage() {
         url.pathname + url.search
       );
 
-      // Fetch available calendars after successful connection
       fetchAvailableCalendars();
     }
   }, [fetchAvailableCalendars]);
