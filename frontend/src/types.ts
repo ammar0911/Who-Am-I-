@@ -155,6 +155,7 @@ export interface AppProviderProps {
 }
 
 export interface User {
+  id: string | number;
   account_type: number;
   email: string;
   name: string;
@@ -167,7 +168,7 @@ export interface User {
   title: string;
   department: string;
   avatar: string;
-  is_public: boolean;
+  isPublic: boolean;
 }
 
 export interface WorkingBlock {

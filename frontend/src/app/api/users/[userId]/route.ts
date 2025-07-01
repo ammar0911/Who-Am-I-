@@ -133,7 +133,7 @@ export async function PUT(
   const { userId: id } = await params;
 
   if (typeof id !== 'string') {
-    return new Response(`Invalid sensor ID`, {
+    return new Response(`Invalid user ID`, {
       status: 404,
     });
   }
@@ -144,9 +144,15 @@ export async function PUT(
         status: 404,
       });
     }
-    // await userApi.update(id, req.body);
+
+    // Parse the request body
+    const requestBody = await request.json();
+
+    // Update the user
+    await userApi.update(id, requestBody);
+
     return Response.json({
-      message: 'User not updated. Method has not been implemented yet.',
+      message: 'User updated successfully',
     });
   } catch (error) {
     console.error('API Error:', error);

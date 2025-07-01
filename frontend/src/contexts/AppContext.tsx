@@ -38,7 +38,7 @@ interface CacheEntry<T> {
 }
 
 // Cache TTL in milliseconds (3 seconds for live demo)
-const CACHE_TTL = 500; // Changed from 30000 for live demo
+const CACHE_TTL = 3000; // Changed from 30000 for live demo
 
 // Cache for storing API responses
 const apiCache = {
@@ -544,7 +544,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // Set up interval to refresh every 3 seconds for live demo
     const intervalId = setInterval(() => {
       refreshUserStatus(currentUser.id);
-    }, 500); // Changed from 30000 for live demo
+    }, 3000); // Changed from 30000 for live demo
 
     return () => clearInterval(intervalId);
   }, [currentUser, refreshUserStatus]);

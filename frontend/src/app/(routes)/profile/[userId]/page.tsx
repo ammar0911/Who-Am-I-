@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Settings, CalendarMonth, AccessTime } from "@mui/icons-material";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -8,54 +8,290 @@ import { AppContext } from "@/contexts/AppContext";
 import { AvailabilityChip } from "@/components/AvailabilityChip";
 import { WeeklyAvailabilityView } from "@/components/WeeklyAvailabilityView";
 import LoginIcon from "@mui/icons-material/Login";
-import dynamic from "next/dynamic";
-
-// Dynamically import Material-UI components
-const Switch = dynamic(
-  () => import("@mui/material").then((mod) => mod.Switch),
-  {
-    ssr: false,
-  }
-);
-const Button = dynamic(
-  () => import("@mui/material").then((mod) => mod.Button),
-  {
-    ssr: false,
-  }
-);
+import { AvailabilityStatus, CalendarEvent, WorkingBlockDTO } from "@/types";
+import CalendarSelection from "@/components/CalendarSelection";
+import { Switch, Button } from "@mui/material";
 
 export default function ProfilePage() {
   const { users, currentUser, updateUserVisibility, t } =
     useContext(AppContext);
   const params = useParams();
 
-  // Early return if context is not yet available
-  if (!t) {
-    return null; // Or a loading state
-  }
+  // State management
+  const [isConnectedToGoogle, setIsConnectedToGoogle] = useState(false);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([]);
+  const [availableCalendars, setAvailableCalendars] = useState<
+    Array<{ id: string; summary: string }>
+  >([]);
+  const [isLoadingCalendars, setIsLoadingCalendars] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Extract userId from params without conversion to number
+  // Extract userId from params
   const userId = params?.userId || null;
-  console.log(
-    "Profile page - userId from params:",
-    userId,
-    "type:",
-    typeof userId
-  );
-  console.log("Profile page - available users:", users);
-  console.log("Profile page - current user:", currentUser);
 
   // Find the user by matching the ID
   const user = users?.find((u) => String(u.id) === String(userId));
-  console.log("Profile page - found user:", user);
 
-  // Additional debugging to check all user IDs and their types
-  if (users?.length > 0) {
-    console.log(
-      "User ID types in users array:",
-      users.map((u) => ({ id: u.id, type: typeof u.id }))
-    );
+  // Function to fetch available calendars
+  const fetchAvailableCalendars = useCallback(async () => {
+    if (!userId) return;
+
+    setIsLoadingCalendars(true);
+    try {
+      const response = await fetch(`/api/users/${userId}/calendar`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch calendars: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Extract calendar list items
+      if (data.items && Array.isArray(data.items)) {
+        const calendars = data.items.map(
+          (cal: { id: string; summary?: string }) => ({
+            id: cal.id,
+            summary: cal.summary || "Unnamed Calendar",
+          })
+        );
+
+        setAvailableCalendars(calendars);
+      }
+    } catch (error) {
+      console.error("Error fetching calendars:", error);
+    } finally {
+      setIsLoadingCalendars(false);
+    }
+  }, [userId]);
+
+  // Function to fetch user's calendar settings
+  const fetchUserCalendarSettings = useCallback(async () => {
+    if (!userId) return;
+
+    try {
+      const response = await fetch(`/api/users/${userId}`);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch user settings: ${response.statusText}`
+        );
+      }
+
+      const userData = await response.json();
+
+      if (userData.userSettings) {
+        try {
+          const settings = JSON.parse(userData.userSettings);
+
+          // Check if user is connected to Google
+          if (settings.googleAuth?.accessToken) {
+            setIsConnectedToGoogle(true);
+
+            // Fetch available calendars if connected
+            fetchAvailableCalendars();
+          }
+
+          // Set selected calendars if available
+          if (
+            settings.selectedCalendars &&
+            Array.isArray(settings.selectedCalendars)
+          ) {
+            setSelectedCalendarIds(settings.selectedCalendars);
+          }
+        } catch (e) {
+          console.error("Error parsing user settings:", e);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user settings:", error);
+    }
+  }, [userId, fetchAvailableCalendars]);
+
+  // Function to save selected calendars
+  const saveSelectedCalendars = useCallback(async () => {
+    if (!userId) return;
+
+    setIsSaving(true);
+    try {
+      const response = await fetch(`/api/users/${userId}/calendar/settings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ calendarIds: selectedCalendarIds }),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to save calendar settings: ${response.statusText}`
+        );
+      }
+
+      // Show success notification or feedback
+      console.log("Calendar settings saved successfully");
+    } catch (error) {
+      console.error("Error saving calendar settings:", error);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [userId, selectedCalendarIds]);
+
+  // Fetch working blocks when user is loaded
+  useEffect(() => {
+    if (userId) {
+      const fetchWorkingBlocks = async () => {
+        try {
+          const response = await fetch(`/api/users/${userId}/workingBlock`);
+          if (!response.ok) {
+            throw new Error(
+              `Failed to fetch working blocks: ${response.statusText}`
+            );
+          }
+
+          const workingBlocks = await response.json();
+
+          // Transform working blocks to calendar events
+          const events: CalendarEvent[] = workingBlocks.map(
+            (block: WorkingBlockDTO) => {
+              // Convert milliseconds to date
+              const startDate = new Date(block.startMs);
+
+              // Calculate end time based on duration
+              const endDate = new Date(block.startMs + block.durationMs);
+
+              // Get day name (0 = Sunday, 1 = Monday, etc.)
+              const days = [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+              ];
+              const day = days[block.weekDay];
+
+              // Format times as HH:MM
+              const formatTime = (date: Date) => {
+                return date.toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                });
+              };
+
+              return {
+                day,
+                start: formatTime(startDate),
+                end: formatTime(endDate),
+              };
+            }
+          );
+
+          setCalendarEvents(events);
+        } catch (error) {
+          console.error("Error fetching working blocks:", error);
+        }
+      };
+
+      fetchWorkingBlocks();
+
+      // Fetch user settings to check Google connection and selected calendars
+      fetchUserCalendarSettings();
+    }
+  }, [userId, fetchUserCalendarSettings]);
+
+  // Handle successful Google Calendar connection
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const googleConnectStatus = urlParams.get("google_connect");
+
+    if (googleConnectStatus === "success") {
+      setIsConnectedToGoogle(true);
+      // Remove query parameter from URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete("google_connect");
+      window.history.replaceState(
+        {},
+        document.title,
+        url.pathname + url.search
+      );
+
+      // Fetch available calendars after successful connection
+      fetchAvailableCalendars();
+    }
+  }, [fetchAvailableCalendars]);
+
+  if (!t) {
+    return null; // Loading state
   }
+
+  // Connect to Google Calendar
+  const connectGoogleCalendar = async () => {
+    try {
+      // Pass the current user ID to the Google OAuth endpoint
+      const response = await fetch(`/api/auth/google?userId=${userId}`);
+      const data = await response.json();
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.error || "Failed to get authentication URL");
+      }
+
+      // Open popup for OAuth flow
+      const popup = window.open(
+        data.url,
+        "google-auth",
+        "width=600,height=700"
+      );
+
+      // Listen for message from popup
+      window.addEventListener(
+        "message",
+        (event) => {
+          if (event.origin !== window.location.origin) {
+            return;
+          }
+
+          const { status, error } = event.data;
+
+          if (status === "success") {
+            console.log("Google Calendar connected successfully!");
+            setIsConnectedToGoogle(true);
+            fetchAvailableCalendars();
+
+            if (popup) popup.close();
+          } else {
+            console.error("Authentication failed:", error);
+            if (popup) popup.close();
+          }
+        },
+        { once: true }
+      );
+    } catch (error) {
+      console.error("Error initiating Google Calendar connection:", error);
+    }
+  };
+
+  const disconnectGoogleCalendar = async () => {
+    // Implementation for disconnecting from Google Calendar
+    if (!userId) return;
+
+    try {
+      // This would need an API endpoint to remove Google tokens from user settings
+      // For now, we'll just update the UI state
+      setIsConnectedToGoogle(false);
+      setAvailableCalendars([]);
+      setSelectedCalendarIds([]);
+
+      // TODO: Add API call to remove Google tokens from user settings
+      console.log("Disconnected from Google Calendar");
+    } catch (error) {
+      console.error("Error disconnecting from Google Calendar:", error);
+    }
+  };
+
+  const onCalendarSelectionChange = (selectedIds: string[]) => {
+    setSelectedCalendarIds(selectedIds);
+  };
 
   if (!users || !user) {
     return (
@@ -71,10 +307,41 @@ export default function ProfilePage() {
   const isOwner = currentUser && String(currentUser.id) === String(user.id);
   const canView = user.isPublic || !!currentUser;
 
+  // JSX for the calendar selection UI
+  const calendarSelectionUI = (
+    <div className="mt-4 p-4 border rounded-lg dark:border-gray-700">
+      <h4 className="font-medium text-gray-700 dark:text-gray-200 mb-2">
+        Select Calendars
+      </h4>
+      {isLoadingCalendars ? (
+        <p className="text-sm text-gray-500">Loading calendars...</p>
+      ) : (
+        <>
+          <CalendarSelection
+            availableCalendars={availableCalendars}
+            selectedCalendarIds={selectedCalendarIds}
+            onCalendarSelectionChange={onCalendarSelectionChange}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            className="mt-3"
+            fullWidth
+            disabled={isSaving}
+            onClick={saveSelectedCalendars}
+          >
+            {isSaving ? "Saving..." : "Save Calendar Selection"}
+          </Button>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">
+          {/* User profile card */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 text-center">
             <Image
               width={64}
@@ -99,7 +366,7 @@ export default function ProfilePage() {
               </h3>
               <div className="flex justify-center">
                 <AvailabilityChip
-                  status={user.currentStatus}
+                  status={AvailabilityStatus.Available}
                   isPublic={user.isPublic}
                   isLoggedIn={!!currentUser}
                 />
@@ -107,6 +374,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
+          {/* Settings section (only for profile owner) */}
           {isOwner && (
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
@@ -114,6 +382,7 @@ export default function ProfilePage() {
                 {t("profileSettings")}
               </h3>
               <div className="space-y-4">
+                {/* Public availability toggle */}
                 <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
                   <div>
                     <p className="font-medium text-gray-700 dark:text-gray-200">
@@ -130,22 +399,41 @@ export default function ProfilePage() {
                     }
                   />
                 </div>
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  startIcon={<CalendarMonth />}>
-                  {t("connectGoogle")}
-                </Button>
+
+                {/* Google Calendar integration */}
+                {isConnectedToGoogle ? (
+                  <>
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      startIcon={<CalendarMonth />}
+                      onClick={disconnectGoogleCalendar}
+                    >
+                      Disconnect Google Calendar
+                    </Button>
+                    {calendarSelectionUI}
+                  </>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    startIcon={<CalendarMonth />}
+                    onClick={connectGoogleCalendar}
+                  >
+                    {t("connectGoogle")}
+                  </Button>
+                )}
               </div>
             </div>
           )}
         </div>
 
+        {/* Calendar/availability view */}
         <div className="lg:col-span-2 space-y-6">
           {canView ? (
             <WeeklyAvailabilityView
-              predictedAvailability={user.predictedAvailability}
-              calendarEvents={user.calendarEvents}
+              predictedAvailability={{}}
+              calendarEvents={calendarEvents}
             />
           ) : (
             <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 text-center">
@@ -155,12 +443,13 @@ export default function ProfilePage() {
               </h3>
               <p className="mt-2 text-gray-500 dark:text-gray-400">
                 {t("availabilityPrivateDesc", {
-                  name: user.name.split(" ").slice(1).join(" "),
+                  name: user.name.split(" ")[0],
                 })}
               </p>
               <Link
                 href="/login"
-                className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+              >
                 <LoginIcon className="w-4 h-4 mr-2" /> {t("loginToView")}
               </Link>
             </div>

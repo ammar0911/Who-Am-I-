@@ -16,6 +16,7 @@
     "@stoplight/elements": "^9.0.2",
     "core-js": "^3.43.0",
     "firebase": "^11.9.1",
+    "googleapis": "^150.0.1",
     "mobx": "^6.13.7",
     "next": "15.3.3",
     "next-swagger-doc": "^0.4.1",
