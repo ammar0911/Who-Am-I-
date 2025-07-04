@@ -33,7 +33,7 @@ import { NextRequest } from 'next/server';
  *                   format: date-time
  *                   example: "2025-06-04T15:47:43.913Z"
  */
-async function GET(
+export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {

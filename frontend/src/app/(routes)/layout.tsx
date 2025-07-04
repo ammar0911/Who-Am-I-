@@ -3,7 +3,6 @@ import './globals.css';
 import { AppProvider } from '@/contexts/AppContext';
 import { Header } from '@/components/Header';
 import { PageContent } from '@/components/PageContent';
-import { ErrorDisplay } from '@/components/ErrorDisplay';
 
 export const metadata: Metadata = {
   title: 'No-Knock',
@@ -20,7 +19,6 @@ export default function RootLayout({
     <AppProvider>
       <Header />
       <PageContent>{children}</PageContent>
-      <ErrorDisplay />
     </AppProvider>
   );
 }

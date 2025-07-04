@@ -84,17 +84,10 @@ export interface CalendarEvent {
 }
 
 export interface AppContextType {
-  currentUser: User | null;
-  users: User[];
-  login: (userId: string | number) => void;
-  logout: () => void;
-  updateUserVisibility: (userId: string | number, isPublic: boolean) => void;
   mode: 'light' | 'dark';
   toggleTheme: () => void;
   language: Language;
   setLanguage: (lang: Language) => void;
-  loading: boolean;
-  error: string | null;
   t: <T extends TranslationKey>(
     key: T,
     params?: Record<string, string>
@@ -253,3 +246,10 @@ export const COLLECTIONS = {
   SENSOR: 'sensor',
   OFFICE: 'office',
 } as const;
+
+export enum AccountType {
+  Admin = 'Admin',
+  Maintainer = 'Maintainer',
+  User = 'User',
+  Guest = 'Guest',
+}
