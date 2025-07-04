@@ -1,18 +1,22 @@
-'use client';
-import React, { useContext } from 'react';
-import Link from 'next/link';
+"use client";
+import React, { useContext } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import { AppContext } from '../contexts/AppContext';
-import LanguageSwitcher from './LanguageSwitcher';
-import SessionSwitch from './Session/SessionSwitch';
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { AppContext } from "../contexts/AppContext";
+import LanguageSwitcher from "./LanguageSwitcher";
+import SessionSwitch from "./Session/SessionSwitch";
+import { AccountType } from "@/types";
 
 export const Header: React.FC = () => {
   const { mode, toggleTheme, t } = useContext(AppContext);
+  const { data: session } = useSession();
   const [mounted, setMounted] = React.useState(false);
 
-  // After mounting, we have access to the theme
+  const isAdmin = session?.user?.accountType === AccountType.Admin;
+
   React.useEffect(() => {
     setMounted(true);
   }, []);
@@ -32,14 +36,22 @@ export const Header: React.FC = () => {
                 href="/home"
                 className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
-                {t('home')}
+                {t("home")}
               </Link>
               <Link
                 href="/search"
                 className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
-                {t('directory')}
+                {t("directory")}
               </Link>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className="flex items-center text-indigo-600 dark:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Admin Panel
+                </Link>
+              )}
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -49,7 +61,7 @@ export const Header: React.FC = () => {
               className="text-gray-600 dark:text-gray-300 hover:text-indigo-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               {mounted &&
-                (mode === 'dark' ? (
+                (mode === "dark" ? (
                   <LightModeIcon className="w-5 h-5" />
                 ) : (
                   <DarkModeIcon className="w-5 h-5" />
