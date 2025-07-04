@@ -1,22 +1,21 @@
-"use client";
-import React, { useContext } from "react";
-import { CheckCircle, Cancel, AccessTime } from "@mui/icons-material";
-import { AppContext } from "../contexts/AppContext";
-import { AvailabilityStatus } from "../types";
+'use client';
+import React, { useContext } from 'react';
+import { CheckCircle, Cancel, AccessTime } from '@mui/icons-material';
+import { AppContext } from '../contexts/AppContext';
+import { AvailabilityStatus } from '../types';
 
 const availabilityColors: Record<AvailabilityStatus, string> = {
   Available:
-    "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300",
-  "Not Available":
-    "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300",
-  Private: "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+    'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+  NotAvailable: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
+  Private: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
 };
 
 const availabilityIcons: Record<AvailabilityStatus, React.ReactElement> = {
   Available: (
     <CheckCircle className="w-4 h-4 mr-2 text-green-600 dark:text-green-400" />
   ),
-  "Not Available": (
+  NotAvailable: (
     <Cancel className="w-4 h-4 mr-2 text-red-600 dark:text-red-400" />
   ),
   Private: (
@@ -37,22 +36,22 @@ export const AvailabilityChip: React.FC<AvailabilityChipProps> = ({
 }) => {
   const { t } = useContext(AppContext);
 
-  const displayStatus = isPublic || isLoggedIn ? status : "Private";
+  const displayStatus = isPublic || isLoggedIn ? status : 'Private';
 
   const getLocalizedStatus = (status: AvailabilityStatus) => {
     switch (status) {
       case AvailabilityStatus.Available:
-        return t("available");
+        return t('available');
       case AvailabilityStatus.NotAvailable:
-        return t("notAvailable");
+        return t('notAvailable');
       case AvailabilityStatus.Private:
-        return t("availabilityPrivate");
+        return t('availabilityPrivate');
       default:
         return status;
     }
   };
   const localizedStatus = getLocalizedStatus(
-    displayStatus as AvailabilityStatus
+    displayStatus as AvailabilityStatus,
   );
   const color = availabilityColors[displayStatus as AvailabilityStatus];
   const icon = availabilityIcons[displayStatus as AvailabilityStatus];

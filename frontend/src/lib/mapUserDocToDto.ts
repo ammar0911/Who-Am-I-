@@ -6,7 +6,7 @@ function mapUserDocToDTO(user: UserDoc): UserDTO {
     accountType: user.account_type,
     email: user.email,
     name: user.name,
-    officeId: user.office_id.id,
+    officeId: user.office_id?.id,
     password: user.password,
     pronouns: user.pronouns,
     userSettings: user.user_settings,

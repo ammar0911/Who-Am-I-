@@ -1,0 +1,11 @@
+{
+  "apiFolder": "src/app/api",
+  "definition": {
+    "openapi": "3.0.0",
+    "info": {
+      "title": "No-Knock API Documentation",
+      "version": "1.0"
+    },
+    "security": []
+  }
+}

@@ -1,9 +1,10 @@
-import { sensorApi } from '@/lib/firestoreApi';
 import { NextRequest } from 'next/server';
+
+import { sensorApi } from '@/lib/firestoreApi';
 
 /**
  * @openapi
- * /api/sensors/byOfficeId?officeId={officeId}:
+ * /api/sensors/byOfficeId:
  *   get:
  *     summary: Get sensors by office ID
  *     description: Returns a list of sensors associated with a specific office ID.

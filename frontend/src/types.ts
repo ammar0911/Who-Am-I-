@@ -1,5 +1,6 @@
 // Types and interfaces for the application
 import { DocumentReference } from 'firebase/firestore';
+import { Session } from 'next-auth';
 import { ReactNode } from 'react';
 
 // Translation types
@@ -71,7 +72,7 @@ export interface TranslationStrings {
 
 export enum AvailabilityStatus {
   Available = 'Available',
-  NotAvailable = 'Not Available',
+  NotAvailable = 'NotAvailable',
   Private = 'Private',
 }
 
@@ -90,7 +91,7 @@ export interface AppContextType {
   setLanguage: (lang: Language) => void;
   t: <T extends TranslationKey>(
     key: T,
-    params?: Record<string, string>
+    params?: Record<string, string>,
   ) => TranslationReturn<T>;
 }
 
@@ -110,7 +111,7 @@ export interface WeeklyAvailabilityViewProps {
 export interface HomePageProps {
   t: <T extends TranslationKey>(
     key: T,
-    params?: Record<string, string>
+    params?: Record<string, string>,
   ) => TranslationReturn<T>;
   users: User[];
   currentUser: User | null;
@@ -122,7 +123,7 @@ export interface ProfilePageProps {
   updateUserVisibility: (userId: number, isPublic: boolean) => void;
   t: <T extends TranslationKey>(
     key: T,
-    params?: Record<string, string>
+    params?: Record<string, string>,
   ) => TranslationReturn<T>;
 }
 
@@ -131,7 +132,7 @@ export interface SearchPageProps {
   currentUser: User | null;
   t: <T extends TranslationKey>(
     key: T,
-    params?: Record<string, string>
+    params?: Record<string, string>,
   ) => TranslationReturn<T>;
 }
 
@@ -139,7 +140,7 @@ export interface LoginPageProps {
   login: (userId: number) => void;
   t: <T extends TranslationKey>(
     key: T,
-    params?: Record<string, string>
+    params?: Record<string, string>,
   ) => TranslationReturn<T>;
 }
 
@@ -149,7 +150,7 @@ export interface AppProviderProps {
 
 export interface User {
   id: string | number;
-  account_type: number;
+  account_type: AccountType;
   email: string;
   name: string;
   office_id: DocumentReference;
@@ -187,9 +188,10 @@ export interface UserDoc extends User {
   id: string;
 }
 
-export interface UserDTO {
+type SessionUser = Session['user'];
+
+export interface UserDTO extends SessionUser {
   id: string;
-  accountType: number;
   email: string;
   name: string;
   officeId: string;
@@ -241,7 +243,7 @@ export interface OfficeDTO {
 
 // Collection names as constants
 export const COLLECTIONS = {
-  USER: 'user',
+  USER: 'users',
   WORKING_BLOCK: 'working_block',
   SENSOR: 'sensor',
   OFFICE: 'office',

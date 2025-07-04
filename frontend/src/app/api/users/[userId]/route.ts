@@ -23,8 +23,8 @@
  *                   type: string
  *                   example: "yXGO7YkiXpQDSSqyxHz1"
  *                 accountType:
- *                   type: integer
- *                   example: 1
+ *                   type: string
+ *                   enum: [Admin, Maintainer, User, Guest]
  *                 email:
  *                   type: string
  *                   example: "me@robruizr.dev"
@@ -43,6 +43,21 @@
  *                 userSettings:
  *                   type: string
  *                   example: "{}"
+ *                 title:
+ *                   type: string
+ *                   example: "Ms. Sc."
+ *                 department:
+ *                   type: string
+ *                   example: "Engineering"
+ *                 avatar:
+ *                   type: string
+ *                   example: "https://example.com/avatar.jpg"
+ *                 isPublic:
+ *                   type: boolean
+ *                   example: true
+ *                 available:
+ *                   type: string
+ *                   enum: [Available, NotAvailable, Private]
  *             examples:
  *               user:
  *                 value:
@@ -54,6 +69,11 @@
  *                   password: "1234"
  *                   pronouns: "he/him"
  *                   userSettings: "{}"
+ *                   title: "Ms. Sc."
+ *                   department: "Engineering"
+ *                   avatar: "https://example.com/avatar.jpg"
+ *                   isPublic: true
+ *                   available: "Available"
  *       400:
  *         description: Invalid user ID
  *       404:
@@ -101,7 +121,7 @@ import { userApi } from '@/lib/firestoreApi';
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   const { userId: id } = await params;
 
@@ -128,7 +148,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   const { userId: id } = await params;
 

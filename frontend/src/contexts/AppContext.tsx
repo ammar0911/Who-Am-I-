@@ -4,6 +4,9 @@ import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 import { AppContextType, Language, TranslationStrings } from '../types';
 import { translations } from '../app/translations';
 import SessionProvider from './SessionProvider';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+
+export const queryClient = new QueryClient();
 
 const getDesignTokens = (mode: 'light' | 'dark') => ({
   palette: {
@@ -31,9 +34,8 @@ type TranslationKey = keyof TranslationStrings;
 type IsArrayKey<T extends TranslationKey> = T extends ArrayTranslationKeys
   ? true
   : false;
-type TranslationReturn<T extends TranslationKey> = IsArrayKey<T> extends true
-  ? string[]
-  : string;
+type TranslationReturn<T extends TranslationKey> =
+  IsArrayKey<T> extends true ? string[] : string;
 export interface AppProviderProps {
   children: React.ReactNode;
 }
@@ -59,7 +61,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const t = <T extends TranslationKey>(
     key: T,
-    params?: Record<string, string>
+    params?: Record<string, string>,
   ): TranslationReturn<T> => {
     const value = translations[language][key] || translations['en'][key];
 
@@ -95,13 +97,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   return (
-    <SessionProvider>
-      <AppContext.Provider value={value}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {children}
-        </ThemeProvider>
-      </AppContext.Provider>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <AppContext.Provider value={value}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {children}
+          </ThemeProvider>
+        </AppContext.Provider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 };

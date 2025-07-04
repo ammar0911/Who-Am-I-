@@ -1,9 +1,9 @@
-import NextAuth, { DefaultSession } from 'next-auth';
-import { cert } from 'firebase-admin/app';
-import GoogleProvider from 'next-auth/providers/google';
-import GitHubProvider from 'next-auth/providers/github';
-
 import { FirestoreAdapter, initFirestore } from '@auth/firebase-adapter';
+import { cert } from 'firebase-admin/app';
+import NextAuth, { DefaultSession } from 'next-auth';
+import GitHubProvider from 'next-auth/providers/github';
+import GoogleProvider from 'next-auth/providers/google';
+
 import { AccountType } from '@/types';
 
 export const firestore = initFirestore({
@@ -24,8 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   adapter: FirestoreAdapter(firestore),
   callbacks: {
-    async session({ session, token }) {
-      console.log('Session callback:', { session, token });
+    async session({ session }) {
       session.user.id = session.userId;
       return session;
     },
