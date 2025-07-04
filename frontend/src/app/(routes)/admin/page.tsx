@@ -61,7 +61,7 @@ export default function AdminPage() {
     name: "",
     title: "",
     department: "",
-    accountType: 0,
+    accountType: AccountType.Guest,
     officeId: "",
     isPublic: false,
   });
@@ -106,7 +106,7 @@ export default function AdminPage() {
       name: user.name || "",
       title: user.title || "",
       department: user.department || "",
-      accountType: user.accountType !== undefined ? user.accountType : 2, // Default to regular user
+      accountType: user.accountType || AccountType.Guest,
       officeId: user.officeId || "",
       isPublic: user.isPublic || userSettings.isPublic || false,
     });
@@ -280,7 +280,7 @@ export default function AdminPage() {
 
     setUserForm((prev) => ({
       ...prev,
-      [name]: name === "accountType" ? Number(value) : value,
+      [name]: name === "accountType" ? (value as AccountType) : value,
     }));
   };
 
@@ -382,22 +382,12 @@ export default function AdminPage() {
     fetchUsers();
   }, [currentUser, router, status]);
 
-  // Helper function to get account type display text
-  const getAccountTypeDisplay = (accountType: number | undefined): string => {
+  // Helper function to display account type
+  const getAccountTypeDisplay = (
+    accountType: AccountType | string | undefined
+  ): string => {
     if (accountType === undefined) return "Unknown";
-
-    switch (accountType) {
-      case 0:
-        return AccountType.Admin;
-      case 1:
-        return AccountType.Maintainer;
-      case 2:
-        return AccountType.User;
-      case 3:
-        return AccountType.Guest;
-      default:
-        return "Unknown";
-    }
+    return accountType as string;
   };
 
   const renderBatteryStatus = (status: number) => {
@@ -844,15 +834,23 @@ export default function AdminPage() {
                 <Select
                   labelId="account-type-label"
                   id="account-type"
-                  value={userForm.accountType.toString()}
+                  value={userForm.accountType}
                   name="accountType"
                   label={t("accountType")}
                   onChange={handleUserFormChange}
                 >
-                  <MenuItem value="0">{AccountType.Admin}</MenuItem>
-                  <MenuItem value="1">{AccountType.Maintainer}</MenuItem>
-                  <MenuItem value="2">{AccountType.User}</MenuItem>
-                  <MenuItem value="3">{AccountType.Guest}</MenuItem>
+                  <MenuItem value={AccountType.Admin}>
+                    {AccountType.Admin}
+                  </MenuItem>
+                  <MenuItem value={AccountType.Maintainer}>
+                    {AccountType.Maintainer}
+                  </MenuItem>
+                  <MenuItem value={AccountType.User}>
+                    {AccountType.User}
+                  </MenuItem>
+                  <MenuItem value={AccountType.Guest}>
+                    {AccountType.Guest}
+                  </MenuItem>
                 </Select>
               </FormControl>
 

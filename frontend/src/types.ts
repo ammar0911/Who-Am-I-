@@ -192,7 +192,7 @@ export interface AppProviderProps {
 
 export interface User {
   id: string | number;
-  account_type: number;
+  account_type: AccountType;
   email: string;
   name: string;
   office_id: DocumentReference;
@@ -232,7 +232,7 @@ export interface UserDoc extends User {
 
 export interface UserDTO {
   id: string;
-  accountType: number;
+  accountType: AccountType;
   email: string;
   name: string;
   officeId: string;
