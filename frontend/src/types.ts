@@ -68,6 +68,49 @@ export interface TranslationStrings {
   daysOfWeek: string[];
   dayAbbreviations: string[];
   footerText: string;
+
+  // Admin Panel
+  adminPanel: string;
+  adminPanelDescription: string;
+  userManagement: string;
+  officeManagement: string;
+  sensorManagement: string;
+  addOffice: string;
+  editUser: string;
+  editOffice: string;
+  name: string;
+  email: string;
+  title: string;
+  accountType: string;
+  office: string;
+  status: string;
+  actions: string;
+  sensor: string;
+  users: string;
+  batteryStatus: string;
+  lastUpdated: string;
+  notAssigned: string;
+  public: string;
+  private: string;
+  save: string;
+  cancel: string;
+  updateUserDetails: string;
+  updateOfficeDetails: string;
+  newOfficeDetails: string;
+  officeName: string;
+  userId: string;
+  noUserSelected: string;
+  officeNameRequired: string;
+  userUpdated: string;
+  officeUpdated: string;
+  officeCreated: string;
+  failedToUpdateUser: string;
+  failedToSaveOffice: string;
+  loading: string;
+  tryAgain: string;
+  returnToHome: string;
+  accessDenied: string;
+  noPermission: string;
 }
 
 export enum AvailabilityStatus {
@@ -192,6 +235,7 @@ type SessionUser = Session['user'];
 
 export interface UserDTO extends SessionUser {
   id: string;
+  accountType: AccountType;
   email: string;
   name: string;
   officeId: string;

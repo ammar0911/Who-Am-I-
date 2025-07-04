@@ -1,18 +1,22 @@
 'use client';
 import React, { useContext } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { AppContext } from '../contexts/AppContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import SessionSwitch from './Session/SessionSwitch';
+import { AccountType } from '@/types';
 
 export const Header: React.FC = () => {
   const { mode, toggleTheme, t } = useContext(AppContext);
+  const { data: session } = useSession();
   const [mounted, setMounted] = React.useState(false);
 
-  // After mounting, we have access to the theme
+  const isAdmin = session?.user?.accountType === AccountType.Admin;
+
   React.useEffect(() => {
     setMounted(true);
   }, []);
@@ -40,6 +44,14 @@ export const Header: React.FC = () => {
               >
                 {t('directory')}
               </Link>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  className="flex items-center text-indigo-600 dark:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Admin Panel
+                </Link>
+              )}
             </div>
           </div>
           <div className="flex items-center space-x-2">
