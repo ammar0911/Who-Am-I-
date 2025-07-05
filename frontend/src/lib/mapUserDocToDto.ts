@@ -1,4 +1,4 @@
-import { UserDoc, UserDTO, AvailabilityStatus } from '@/types';
+import { UserDoc, UserDTO } from '@/types';
 
 function mapUserDocToDTO(user: UserDoc): UserDTO {
   return {
@@ -13,8 +13,8 @@ function mapUserDocToDTO(user: UserDoc): UserDTO {
     avatar: user.avatar || '', // Default to empty string if avatar is not provided
     title: user.title || '', // Default to empty string if title is not provided
     department: user.department || '', // Default to empty string if department is not provided
-    isPublic: user.isPublic || false, // Default to false if is_public is not
-    available: AvailabilityStatus.Available,
+    isPublic: user.isPublic || false, // Default to false if is_public is not set
+    available: 'Private', // Default to Private if not set
   };
 }
 

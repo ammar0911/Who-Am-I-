@@ -1,8 +1,9 @@
 // Types and interfaces for the application
 import { DocumentReference } from 'firebase/firestore';
-import { Session } from 'next-auth';
 import { ReactNode } from 'react';
+import { AvailabilityStatus, AccountType, UserDTO } from './hooks/api/requests';
 
+export type { AvailabilityStatus, AccountType, UserDTO };
 // Translation types
 export type ArrayTranslationKeys = 'daysOfWeek' | 'dayAbbreviations';
 export type TranslationKey = keyof TranslationStrings;
@@ -111,12 +112,6 @@ export interface TranslationStrings {
   returnToHome: string;
   accessDenied: string;
   noPermission: string;
-}
-
-export enum AvailabilityStatus {
-  Available = 'Available',
-  NotAvailable = 'NotAvailable',
-  Private = 'Private',
 }
 
 export type Language = 'en' | 'de';
@@ -231,26 +226,6 @@ export interface UserDoc extends User {
   id: string;
 }
 
-type SessionUser = Session['user'];
-
-export interface UserDTO extends SessionUser {
-  id: string;
-  accountType: AccountType;
-  email: string;
-  name: string;
-  officeId: string;
-  password: string;
-  pronouns: string;
-  userSettings: string;
-
-  // Not implemented yet
-  title: string;
-  department: string;
-  avatar: string;
-  isPublic: boolean;
-  available: AvailabilityStatus;
-}
-
 export interface WorkingBlockDoc extends WorkingBlock {
   id: string;
 }
@@ -292,10 +267,3 @@ export const COLLECTIONS = {
   SENSOR: 'sensor',
   OFFICE: 'office',
 } as const;
-
-export enum AccountType {
-  Admin = 'Admin',
-  Maintainer = 'Maintainer',
-  User = 'User',
-  Guest = 'Guest',
-}

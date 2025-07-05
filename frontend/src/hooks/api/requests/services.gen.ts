@@ -120,7 +120,7 @@ export class DefaultService {
    * Returns a single user by their ID.
    * @param data The data for the request.
    * @param data.id The user ID
-   * @returns unknown The user object.
+   * @returns UserDTO The user object.
    * @throws ApiError
    */
   public static getApiUsersById(
@@ -207,7 +207,7 @@ export class DefaultService {
   /**
    * Get all users
    * Returns a list of all users.
-   * @returns unknown A list of users.
+   * @returns UserDTO A list of users.
    * @throws ApiError
    */
   public static getApiUsers(): CancelablePromise<GetApiUsersResponse> {

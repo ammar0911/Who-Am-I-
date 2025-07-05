@@ -17,47 +17,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                   example: "yXGO7YkiXpQDSSqyxHz1"
- *                 accountType:
- *                   type: string
- *                   enum: [Admin, Maintainer, User, Guest]
- *                 email:
- *                   type: string
- *                   example: "me@robruizr.dev"
- *                 name:
- *                   type: string
- *                   example: "Roberto Ruiz"
- *                 officeId:
- *                   type: string
- *                   example: "NZYeL9zhepNhAeQavl5X"
- *                 password:
- *                   type: string
- *                   example: "1234"
- *                 pronouns:
- *                   type: string
- *                   example: "he/him"
- *                 userSettings:
- *                   type: string
- *                   example: "{}"
- *                 title:
- *                   type: string
- *                   example: "Ms. Sc."
- *                 department:
- *                   type: string
- *                   example: "Engineering"
- *                 avatar:
- *                   type: string
- *                   example: "https://example.com/avatar.jpg"
- *                 isPublic:
- *                   type: boolean
- *                   example: true
- *                 available:
- *                   type: string
- *                   enum: [Available, NotAvailable, Private]
+ *               $ref: '#/components/schemas/UserDTO'
  *             examples:
  *               user:
  *                 value:
@@ -66,7 +26,6 @@
  *                   email: "me@robruizr.dev"
  *                   name: "Roberto Ruiz"
  *                   officeId: "NZYeL9zhepNhAeQavl5X"
- *                   password: "1234"
  *                   pronouns: "he/him"
  *                   userSettings: "{}"
  *                   title: "Ms. Sc."

@@ -8,14 +8,13 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { AppContext } from '../contexts/AppContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import SessionSwitch from './Session/SessionSwitch';
-import { AccountType } from '@/types';
 
 export const Header: React.FC = () => {
   const { mode, toggleTheme, t } = useContext(AppContext);
   const { data: session } = useSession();
   const [mounted, setMounted] = React.useState(false);
 
-  const isAdmin = session?.user?.accountType === AccountType.Admin;
+  const isAdmin = session?.user?.accountType === 'Admin';
 
   React.useEffect(() => {
     setMounted(true);

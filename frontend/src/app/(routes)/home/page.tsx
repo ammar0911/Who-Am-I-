@@ -1,17 +1,17 @@
 'use client';
 import React, { useContext, useRef } from 'react';
 import { Search } from '@mui/icons-material';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AppContext } from '@/contexts/AppContext';
 import { AvailabilityChip } from '@/components/AvailabilityChip';
-import useUsers from '@/hooks/useUsersData';
+
 import UserAvatar from '@/components/UserAvatar';
+import { useDefaultServiceGetApiUsers } from '@/hooks/api/queries';
 
 export default function HomePage() {
   const { t } = useContext(AppContext);
-  const { users } = useUsers();
+  const { data: users } = useDefaultServiceGetApiUsers();
   const router = useRouter();
   const searchInput = useRef<HTMLInputElement>(null);
 

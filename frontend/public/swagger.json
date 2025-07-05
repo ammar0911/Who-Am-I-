@@ -5,6 +5,82 @@
     "version": "1.0"
   },
   "security": [],
+  "components": {
+    "schemas": {
+      "UserDTO": {
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name",
+          "accountType",
+          "avatar",
+          "available",
+          "isPublic"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "NZYeL9zhepNhAeQavl5X"
+          },
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "accountType": {
+            "$ref": "#/components/schemas/AccountType"
+          },
+          "available": {
+            "$ref": "#/components/schemas/AvailabilityStatus"
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "example": "Ms. Sc."
+          },
+          "department": {
+            "type": "string",
+            "nullable": true,
+            "example": "Engineering"
+          },
+          "officeId": {
+            "type": "string",
+            "nullable": true,
+            "example": "NZYeL9zhepNhAeQavl5X"
+          },
+          "pronouns": {
+            "type": "string",
+            "nullable": true,
+            "example": ""
+          },
+          "userSettings": {
+            "type": "string",
+            "nullable": true,
+            "example": "{}",
+            "description": "JSON string containing user settings."
+          }
+        }
+      },
+      "AccountType": {
+        "type": "string",
+        "enum": ["Admin", "Maintainer", "User", "Guest"],
+        "description": "The type of account for the user."
+      },
+      "AvailabilityStatus": {
+        "type": "string",
+        "enum": ["Available", "NotAvailable", "Private"],
+        "description": "The availability status of the user."
+      }
+    }
+  },
   "paths": {
     "/api/sensors/{id}": {
       "get": {
@@ -272,61 +348,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "example": "yXGO7YkiXpQDSSqyxHz1"
-                    },
-                    "accountType": {
-                      "type": "string",
-                      "enum": ["Admin", "Maintainer", "User", "Guest"]
-                    },
-                    "email": {
-                      "type": "string",
-                      "example": "me@robruizr.dev"
-                    },
-                    "name": {
-                      "type": "string",
-                      "example": "Roberto Ruiz"
-                    },
-                    "officeId": {
-                      "type": "string",
-                      "example": "NZYeL9zhepNhAeQavl5X"
-                    },
-                    "password": {
-                      "type": "string",
-                      "example": "1234"
-                    },
-                    "pronouns": {
-                      "type": "string",
-                      "example": "he/him"
-                    },
-                    "userSettings": {
-                      "type": "string",
-                      "example": "{}"
-                    },
-                    "title": {
-                      "type": "string",
-                      "example": "Ms. Sc."
-                    },
-                    "department": {
-                      "type": "string",
-                      "example": "Engineering"
-                    },
-                    "avatar": {
-                      "type": "string",
-                      "example": "https://example.com/avatar.jpg"
-                    },
-                    "isPublic": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "available": {
-                      "type": "string",
-                      "enum": ["Available", "NotAvailable", "Private"]
-                    }
-                  }
+                  "$ref": "#/components/schemas/UserDTO"
                 },
                 "examples": {
                   "user": {
@@ -336,7 +358,6 @@
                       "email": "me@robruizr.dev",
                       "name": "Roberto Ruiz",
                       "officeId": "NZYeL9zhepNhAeQavl5X",
-                      "password": "1234",
                       "pronouns": "he/him",
                       "userSettings": "{}",
                       "title": "Ms. Sc.",
@@ -548,41 +569,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "example": "yXGO7YkiXpQDSSqyxHz1"
-                      },
-                      "accountType": {
-                        "type": "integer",
-                        "example": 1
-                      },
-                      "email": {
-                        "type": "string",
-                        "example": "me@robruizr.dev"
-                      },
-                      "name": {
-                        "type": "string",
-                        "example": "Roberto Ruiz"
-                      },
-                      "officeId": {
-                        "type": "string",
-                        "example": "NZYeL9zhepNhAeQavl5X"
-                      },
-                      "password": {
-                        "type": "string",
-                        "example": "1234"
-                      },
-                      "pronouns": {
-                        "type": "string",
-                        "example": "he/him"
-                      },
-                      "userSettings": {
-                        "type": "string",
-                        "example": "{}"
-                      }
-                    }
+                    "$ref": "#/components/schemas/UserDTO"
                   }
                 },
                 "examples": {
@@ -594,9 +581,13 @@
                         "email": "me@robruizr.dev",
                         "name": "Roberto Ruiz",
                         "officeId": "NZYeL9zhepNhAeQavl5X",
-                        "password": "1234",
                         "pronouns": "he/him",
-                        "userSettings": "{}"
+                        "userSettings": "{}",
+                        "title": "Ms. Sc.",
+                        "department": "Engineering",
+                        "avatar": "https://example.com/avatar.jpg",
+                        "isPublic": true,
+                        "available": "Available"
                       }
                     ]
                   }
@@ -611,6 +602,5 @@
       }
     }
   },
-  "components": {},
   "tags": []
 }

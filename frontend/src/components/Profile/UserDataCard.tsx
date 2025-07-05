@@ -1,17 +1,13 @@
 import React, { useContext } from 'react';
 
 import { AppContext } from '@/contexts/AppContext';
-import { AccountType, AvailabilityStatus, UserDTO } from '@/types';
+import { UserDTO } from '@/types';
 
 import { AvailabilityChip } from '../AvailabilityChip';
 import UserAvatar from '../UserAvatar';
 
-interface ExpectedUser extends Omit<UserDTO, 'available' | 'accountType'> {
-  available: keyof typeof AvailabilityStatus | undefined;
-  accountType: keyof typeof AccountType | undefined;
-}
 interface UserDataCardProps {
-  user: Partial<ExpectedUser>;
+  user: UserDTO;
 }
 
 const UserDataCard: React.FC<UserDataCardProps> = ({ user }) => {
@@ -43,7 +39,7 @@ const UserDataCard: React.FC<UserDataCardProps> = ({ user }) => {
         </h3>
         <div className="flex justify-center">
           <AvailabilityChip
-            status={AvailabilityStatus.Available}
+            status={user.available}
             isPublic={Boolean(user.isPublic)}
             isLoggedIn={true}
           />

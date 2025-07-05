@@ -14,32 +14,7 @@ import { userApi } from '@/lib/firestoreApi';
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                     example: "yXGO7YkiXpQDSSqyxHz1"
- *                   accountType:
- *                     type: integer
- *                     example: 1
- *                   email:
- *                     type: string
- *                     example: "me@robruizr.dev"
- *                   name:
- *                     type: string
- *                     example: "Roberto Ruiz"
- *                   officeId:
- *                     type: string
- *                     example: "NZYeL9zhepNhAeQavl5X"
- *                   password:
- *                     type: string
- *                     example: "1234"
- *                   pronouns:
- *                     type: string
- *                     example: "he/him"
- *                   userSettings:
- *                     type: string
- *                     example: "{}"
+ *                 $ref: '#/components/schemas/UserDTO'
  *             examples:
  *               users:
  *                 value:
@@ -48,9 +23,13 @@ import { userApi } from '@/lib/firestoreApi';
  *                     email: "me@robruizr.dev"
  *                     name: "Roberto Ruiz"
  *                     officeId: "NZYeL9zhepNhAeQavl5X"
- *                     password: "1234"
  *                     pronouns: "he/him"
  *                     userSettings: "{}"
+ *                     title: "Ms. Sc."
+ *                     department: "Engineering"
+ *                     avatar: "https://example.com/avatar.jpg"
+ *                     isPublic: true
+ *                     available: "Available"
  *       500:
  *         description: Internal Server Error
  */

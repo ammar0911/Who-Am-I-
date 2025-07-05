@@ -2,7 +2,7 @@
 import React, { useContext } from 'react';
 import { CheckCircle, Cancel, AccessTime } from '@mui/icons-material';
 import { AppContext } from '../contexts/AppContext';
-import { AvailabilityStatus } from '../types';
+import { AvailabilityStatus } from '@/hooks/api/requests';
 
 const availabilityColors: Record<AvailabilityStatus, string> = {
   Available:
@@ -40,11 +40,11 @@ export const AvailabilityChip: React.FC<AvailabilityChipProps> = ({
 
   const getLocalizedStatus = (status: AvailabilityStatus) => {
     switch (status) {
-      case AvailabilityStatus.Available:
+      case 'Available':
         return t('available');
-      case AvailabilityStatus.NotAvailable:
+      case 'NotAvailable':
         return t('notAvailable');
-      case AvailabilityStatus.Private:
+      case 'Private':
         return t('availabilityPrivate');
       default:
         return status;
