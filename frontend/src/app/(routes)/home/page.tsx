@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { AppContext } from '@/contexts/AppContext';
 import { AvailabilityChip } from '@/components/AvailabilityChip';
 import useUsers from '@/hooks/useUsersData';
+import UserAvatar from '@/components/UserAvatar';
 
 export default function HomePage() {
   const { t } = useContext(AppContext);
@@ -25,7 +26,7 @@ export default function HomePage() {
     e.preventDefault();
     if (searchInput.current) {
       router.push(
-        `/search?query=${encodeURIComponent(searchInput.current.value)}`
+        `/search?query=${encodeURIComponent(searchInput.current.value)}`,
       );
     }
   };
@@ -77,12 +78,11 @@ export default function HomePage() {
                   className="cursor-pointer bg-white/5 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-300 border border-white/10"
                 >
                   <div className="flex items-center space-x-4 mb-4">
-                    <Image
+                    <UserAvatar
                       width={48}
                       height={48}
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-12 h-12 rounded-full ring-2 ring-white/20"
+                      userAvatar={user.avatar}
+                      userName={user.name}
                     />
                     <div>
                       <h3 className="text-lg font-semibold text-white">

@@ -101,8 +101,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       <SessionProvider>
         <AppContext.Provider value={value}>
           <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {children}
+            <div data-theme={mode}>
+              <CssBaseline />
+              {children}
+            </div>
           </ThemeProvider>
         </AppContext.Provider>
       </SessionProvider>

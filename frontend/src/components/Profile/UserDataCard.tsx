@@ -4,6 +4,7 @@ import { AppContext } from '@/contexts/AppContext';
 import { AccountType, AvailabilityStatus, UserDTO } from '@/types';
 
 import { AvailabilityChip } from '../AvailabilityChip';
+import UserAvatar from '../UserAvatar';
 
 interface ExpectedUser extends Omit<UserDTO, 'available' | 'accountType'> {
   available: keyof typeof AvailabilityStatus | undefined;
@@ -16,18 +17,16 @@ interface UserDataCardProps {
 const UserDataCard: React.FC<UserDataCardProps> = ({ user }) => {
   const { t } = useContext(AppContext);
 
-  console.log({ user });
-
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 text-center">
-      <img
-        width={64}
-        height={64}
-        src={user.avatar || '/images/default-avatar.png'}
-        className="h-24 w-24 rounded-full mb-4 mx-auto"
-        alt=""
-        aria-hidden
-      />
+      <div className="flex justify-center mb-4">
+        <UserAvatar
+          userAvatar={user.avatar}
+          userName={user.name || ''}
+          width={96}
+          height={96}
+        />
+      </div>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
           {user.name}
