@@ -1,7 +1,7 @@
 import { OfficeDoc, OfficeDTO, SensorDTO } from '@/types';
 
 type OfficeDocWithSensor = OfficeDoc & {
-  sensor: SensorDTO | null;
+  sensor?: SensorDTO | null;
 };
 
 const mapOfficeDocToDTO = (doc: OfficeDocWithSensor): OfficeDTO => {

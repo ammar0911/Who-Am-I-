@@ -348,10 +348,16 @@ export const officeApi = {
           ...convertFirebaseTimestampsToDate(docSnap.data()),
         } as OfficeDoc;
 
-        const sensor = await sensorApi.getById(data.sensor_id?.id);
+        if (!data.sensor_id) {
+          return mapOfficeDocToDTO(data);
+        }
+
+        let sensor = await sensorApi.getById(data.sensor_id?.id);
 
         if (!sensor) {
-          throw new Error(`Sensor with ID ${data.sensor_id} does not exist`);
+          sensor = null;
+          console.error(`Sensor with ID ${data.sensor_id?.id} does not exist`);
+          return mapOfficeDocToDTO(data);
         }
 
         const dataWithSensor = { sensor, ...data };
@@ -438,26 +444,26 @@ export const officeApi = {
     try {
       const docRef = doc(db, COLLECTIONS.OFFICE, id);
 
-      const filteredOffice = pickPropertiesIfDefined(officeData, [
-        'name',
-        'sensorId',
-      ]);
-
       let newOffice: Partial<DBOffice> = {
-        name: filteredOffice.name,
+        ...officeData,
       };
 
-      if (filteredOffice.sensorId) {
-        const sensorDocRef = doc(
-          db,
-          COLLECTIONS.SENSOR,
-          filteredOffice.sensorId,
-        );
+      if (officeData.sensorId) {
+        const sensorDocRef = doc(db, COLLECTIONS.SENSOR, officeData.sensorId);
+        const docSnap = await getDoc(sensorDocRef);
+        if (!docSnap.exists()) {
+          throw new Error(
+            `Sensor with ID ${officeData.sensorId} does not exist`,
+          );
+        }
 
         newOffice.sensor_id = sensorDocRef;
       }
 
-      await updateDoc(docRef, newOffice);
+      await updateDoc(
+        docRef,
+        pickPropertiesIfDefined(newOffice, ['name', 'sensor_id']),
+      );
     } catch (error) {
       console.error('Error updating office:', error);
       throw error;
