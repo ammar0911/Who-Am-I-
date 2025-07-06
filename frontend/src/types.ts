@@ -60,7 +60,6 @@ export interface TranslationStrings {
   legend: string;
   legendNotAvailableCalendar: string;
   legendLikelyAvailable: string;
-  legendPossiblyAvailable: string;
   legendLikelyNotAvailable: string;
   tooltipNotAvailableCalendar: string;
   tooltipLikelyAvailable: string;

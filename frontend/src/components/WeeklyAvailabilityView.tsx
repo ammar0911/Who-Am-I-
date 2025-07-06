@@ -1,33 +1,32 @@
-"use client";
-import React, { useContext, useState, useEffect } from "react";
-import { AppContext } from "../contexts/AppContext";
+'use client';
+import React, { useContext, useState, useEffect } from 'react';
+import { AppContext } from '../contexts/AppContext';
 // import { InfoOutlined } from "@mui/icons-material";
-import { translations } from "../app/translations";
+import { translations } from '../app/translations';
 
-type Level = "high" | "medium" | "low";
+type Level = 'high' | 'low';
 type ColorScheme = {
   light: string;
   dark: string;
 };
 
 const colors: Record<Level, ColorScheme> = {
-  high: { light: "#6EE7B7", dark: "#34D399" },
-  medium: { light: "#FCD34D", dark: "#FBBF24" },
-  low: { light: "#D1D5DB", dark: "#4B5563" },
+  high: { light: '#6EE7B7', dark: '#34D399' },
+  low: { light: '#D1D5DB', dark: '#4B5563' },
 };
 
 const timeSlots = [
-  "08:00",
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:00",
+  '08:00',
+  '09:00',
+  '10:00',
+  '11:00',
+  '12:00',
+  '13:00',
+  '14:00',
+  '15:00',
+  '16:00',
+  '17:00',
+  '18:00',
 ];
 
 interface CalendarEvent {
@@ -41,8 +40,8 @@ interface PredictedAvailability {
 }
 
 type SlotInfo =
-  | { type: "calendar"; tooltip: string }
-  | { type: "prediction"; level: Level; tooltip: string };
+  | { type: 'calendar'; tooltip: string }
+  | { type: 'prediction'; level: Level; tooltip: string };
 
 export interface WeeklyAvailabilityViewProps {
   predictedAvailability: PredictedAvailability;
@@ -61,18 +60,18 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
     return () => clearInterval(timer);
   }, []);
 
-  const germanDays: string[] = translations["de"]["daysOfWeek"];
+  const germanDays: string[] = translations['de']['daysOfWeek'];
 
   const isSlotBooked = (day: string, timeSlot: string): boolean => {
     const slotIndex = timeSlots.indexOf(timeSlot);
     const dayIndex = germanDays.indexOf(day);
     const englishDay = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
     ][dayIndex];
 
     for (const event of calendarEvents) {
@@ -88,65 +87,58 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
   const getSlotInfo = (
     day: string,
     timeSlot: string,
-    index: number
+    index: number,
   ): SlotInfo => {
     if (isSlotBooked(day, timeSlot))
-      return { type: "calendar", tooltip: t("tooltipNotAvailableCalendar") };
+      return { type: 'calendar', tooltip: t('tooltipNotAvailableCalendar') };
 
     const dayIndex = germanDays.indexOf(day);
     const englishDay = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
     ][dayIndex];
 
     if (!predictedAvailability || !predictedAvailability[englishDay]) {
       return {
-        type: "prediction",
-        level: "low",
-        tooltip: t("tooltipLikelyNotAvailable"),
+        type: 'prediction',
+        level: 'low',
+        tooltip: t('tooltipLikelyNotAvailable'),
       };
     }
 
     const prob = predictedAvailability[englishDay][index];
-    if (prob > 0.7) {
+    if (prob === 1) {
       return {
-        type: "prediction",
-        level: "high",
-        tooltip: t("tooltipLikelyAvailable"),
-      };
-    }
-    if (prob > 0.3) {
-      return {
-        type: "prediction",
-        level: "medium",
-        tooltip: t("tooltipPossiblyAvailable"),
+        type: 'prediction',
+        level: 'high',
+        tooltip: t('tooltipLikelyAvailable'),
       };
     }
     return {
-      type: "prediction",
-      level: "low",
-      tooltip: t("tooltipLikelyNotAvailable"),
+      type: 'prediction',
+      level: 'low',
+      tooltip: t('tooltipLikelyNotAvailable'),
     };
   };
 
   const getStripeBg = (level: Level): string => {
-    const color = mode === "light" ? colors[level].light : colors[level].dark;
+    const color = mode === 'light' ? colors[level].light : colors[level].dark;
     const bgColor =
-      mode === "light" ? "rgba(255,255,255,0.7)" : "rgba(31,41,55,0.7)";
+      mode === 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(31,41,55,0.7)';
     return `repeating-linear-gradient(-45deg, ${color}, ${color} 4px, ${bgColor} 4px, ${bgColor} 8px)`;
   };
 
-  const dayAbbreviations = t("dayAbbreviations");
+  const dayAbbreviations = t('dayAbbreviations');
   const dayIndex = (now.getDay() + 6) % 7;
   const minutesSinceStart = (now.getHours() - 8) * 60 + now.getMinutes();
   const totalMinutes = (19 - 8) * 60;
   const topPercentage = Math.max(
     0,
-    Math.min(100, (minutesSinceStart / totalMinutes) * 100)
+    Math.min(100, (minutesSinceStart / totalMinutes) * 100),
   );
   const isWeekend = dayIndex >= 6;
   const showIndicator =
@@ -155,7 +147,7 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-        {t("weeklyAvailability")}
+        {t('weeklyAvailability')}
       </h3>
       {/* {isWeekend && (
         <div className="mb-4 p-2 text-sm text-blue-800 bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 rounded-md flex items-center">
@@ -168,7 +160,8 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
           {timeSlots.map((time) => (
             <div
               key={time}
-              className="h-7 text-right text-xs text-gray-500 dark:text-gray-400">
+              className="h-7 text-right text-xs text-gray-500 dark:text-gray-400"
+            >
               {time}
             </div>
           ))}
@@ -179,9 +172,10 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
               key={day}
               className={`rounded p-1 ${
                 day === germanDays[dayIndex]
-                  ? "bg-indigo-50 dark:bg-indigo-900/50"
-                  : "bg-gray-50 dark:bg-gray-900/50"
-              }`}>
+                  ? 'bg-indigo-50 dark:bg-indigo-900/50'
+                  : 'bg-gray-50 dark:bg-gray-900/50'
+              }`}
+            >
               <p className="text-center font-bold text-xs text-gray-600 dark:text-gray-300 mb-1">
                 {dayAbbreviations[d_index]}
               </p>
@@ -189,17 +183,18 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
                 {timeSlots.map((slot, index) => {
                   const slotInfo = getSlotInfo(day, slot, index);
                   const style =
-                    slotInfo.type === "calendar"
-                      ? { backgroundColor: "#64727f" }
+                    slotInfo.type === 'calendar'
+                      ? { backgroundColor: '#64727f' }
                       : {
                           backgroundImage: getStripeBg(slotInfo.level),
-                          backgroundSize: "10px 10px",
+                          backgroundSize: '10px 10px',
                         };
                   return (
                     <div key={index} className="h-7 rounded relative group">
                       <div
                         className="w-full h-full rounded"
-                        style={style}></div>
+                        style={style}
+                      ></div>
                       <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max p-2 text-xs text-white bg-gray-900 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                         {slot}: {slotInfo.tooltip}
                       </div>
@@ -218,7 +213,8 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
                     left: `calc(${(100 / 6) * dayIndex}%)`,
                     width: `calc(${100 / 6}%)`,
                   }}
-                  className="absolute h-0.5">
+                  className="absolute h-0.5"
+                >
                   <div className="relative h-full w-full">
                     <div className="absolute w-full h-full bg-red-500 top-0 left-0 px-1">
                       <div className="w-full h-full bg-red-500 relative">
@@ -233,40 +229,30 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
         </div>
       </div>
       <div className="mt-6 border-t dark:border-gray-700 pt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-gray-600 dark:text-gray-400">
-        <div className="font-bold">{t("legend")}</div>
+        <div className="font-bold">{t('legend')}</div>
         <div className="flex items-center">
           <div className="w-4 h-4 rounded-sm mr-2 bg-[#64727f]"></div>
-          {t("legendNotAvailableCalendar")}
+          {t('legendNotAvailableCalendar')}
         </div>
         <div className="flex items-center">
           <div
             style={{
-              backgroundImage: getStripeBg("high"),
-              backgroundSize: "10px 10px",
+              backgroundImage: getStripeBg('high'),
+              backgroundSize: '10px 10px',
             }}
             className="w-4 h-4 rounded-sm mr-2"
           />
-          {t("legendLikelyAvailable")}
+          {t('legendLikelyAvailable')}
         </div>
         <div className="flex items-center">
           <div
             style={{
-              backgroundImage: getStripeBg("medium"),
-              backgroundSize: "10px 10px",
+              backgroundImage: getStripeBg('low'),
+              backgroundSize: '10px 10px',
             }}
             className="w-4 h-4 rounded-sm mr-2"
           />
-          {t("legendPossiblyAvailable")}
-        </div>
-        <div className="flex items-center">
-          <div
-            style={{
-              backgroundImage: getStripeBg("low"),
-              backgroundSize: "10px 10px",
-            }}
-            className="w-4 h-4 rounded-sm mr-2"
-          />
-          {t("legendLikelyNotAvailable")}
+          {t('legendLikelyNotAvailable')}
         </div>
       </div>
     </div>

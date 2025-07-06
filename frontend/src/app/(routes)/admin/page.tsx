@@ -61,7 +61,7 @@ export default function AdminPage() {
     name: '',
     title: '',
     department: '',
-    accountType: AccountType.Guest,
+    accountType: 'Guest' as AccountType,
     officeId: '',
     isPublic: false,
   });
@@ -78,7 +78,7 @@ export default function AdminPage() {
     severity: 'success' as 'success' | 'error' | 'info' | 'warning',
   });
 
-  const isAdmin = currentUser?.accountType === AccountType.Admin;
+  const isAdmin = currentUser?.accountType === 'Admin';
 
   // Debug information
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function AdminPage() {
         id: currentUser.id,
         name: currentUser.name,
         accountType: currentUser.accountType,
-        isAdmin: currentUser.accountType === AccountType.Admin,
+        isAdmin: currentUser.accountType === 'Admin',
       });
     } else if (status === 'loading') {
       console.log('Admin Page - Session is still loading');
@@ -106,7 +106,7 @@ export default function AdminPage() {
       name: user.name || '',
       title: user.title || '',
       department: user.department || '',
-      accountType: user.accountType || AccountType.Guest,
+      accountType: user.accountType || ('Guest' as AccountType),
       officeId: user.officeId || '',
       isPublic: user.isPublic || userSettings.isPublic || false,
     });
@@ -313,7 +313,7 @@ export default function AdminPage() {
     }
 
     // Check if user is admin, if not redirect to home
-    if (currentUser.accountType !== AccountType.Admin) {
+    if (currentUser.accountType !== 'Admin') {
       // Not an admin
       console.log('Admin Page - User is not an admin, redirecting to home');
       router.push('/home');
@@ -371,6 +371,7 @@ export default function AdminPage() {
           return;
         }
         const data = await response.json();
+        console.log('Fetched users:', data);
         setUsers(data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -839,18 +840,10 @@ export default function AdminPage() {
                   label={t('accountType')}
                   onChange={handleUserFormChange}
                 >
-                  <MenuItem value={AccountType.Admin}>
-                    {AccountType.Admin}
-                  </MenuItem>
-                  <MenuItem value={AccountType.Maintainer}>
-                    {AccountType.Maintainer}
-                  </MenuItem>
-                  <MenuItem value={AccountType.User}>
-                    {AccountType.User}
-                  </MenuItem>
-                  <MenuItem value={AccountType.Guest}>
-                    {AccountType.Guest}
-                  </MenuItem>
+                  <MenuItem value="Admin">Admin</MenuItem>
+                  <MenuItem value="Maintainer">Maintainer</MenuItem>
+                  <MenuItem value="User">User</MenuItem>
+                  <MenuItem value="Guest">Guest</MenuItem>
                 </Select>
               </FormControl>
 
