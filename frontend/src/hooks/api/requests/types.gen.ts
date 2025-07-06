@@ -93,6 +93,12 @@ export type GetApiOfficesByOfficeIdResponse = OfficeDTO;
 
 export type GetApiOfficesResponse = Array<OfficeDTO>;
 
+export type PostApiOfficesData = {
+  requestBody: OfficeDTO;
+};
+
+export type PostApiOfficesResponse = OfficeDTO;
+
 export type GetApiSensorsByIdData = {
   /**
    * The sensor ID
@@ -233,6 +239,23 @@ export type $OpenApiTs = {
          * Successfully retrieved offices
          */
         200: Array<OfficeDTO>;
+        /**
+         * Internal server error
+         */
+        500: string;
+      };
+    };
+    post: {
+      req: PostApiOfficesData;
+      res: {
+        /**
+         * Office created successfully
+         */
+        200: OfficeDTO;
+        /**
+         * Bad request - Missing required fields
+         */
+        400: string;
         /**
          * Internal server error
          */
