@@ -26,7 +26,7 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           <Link href="/home" className="flex-shrink-0 cursor-pointer">
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-              No-<span className="text-indigo-500">Knock</span>
+              {t('appName')}
             </h1>
           </Link>
           <div className="hidden md:block">
@@ -48,7 +48,7 @@ export const Header: React.FC = () => {
                   href="/admin"
                   className="flex items-center text-indigo-600 dark:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  Admin Panel
+                  {t('adminPanel')}
                 </Link>
               )}
             </div>

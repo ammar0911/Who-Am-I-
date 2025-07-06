@@ -36,10 +36,10 @@ const UserSettings: React.FC<UserSettingsProps> = ({
   const calendarSelectionUI = (
     <div className="mt-4 p-4 border rounded-lg dark:border-gray-700">
       <h4 className="font-medium text-gray-700 dark:text-gray-200 mb-2">
-        Select Calendars
+        {t('selectCalendars')}
       </h4>
       {isLoadingCalendars ? (
-        <p className="text-sm text-gray-500">Loading calendars...</p>
+        <p className="text-sm text-gray-500">{t('loadingCalendars')}</p>
       ) : (
         <>
           <CalendarSelection
@@ -55,7 +55,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
             disabled={isSaving}
             onClick={saveSelectedCalendars}
           >
-            {isSaving ? 'Saving...' : 'Save Calendar Selection'}
+            {isSaving ? t('saving') : t('saveCalendarSelection')}
           </Button>
         </>
       )}
@@ -97,7 +97,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
               startIcon={<CalendarMonth />}
               onClick={disconnectGoogleCalendar}
             >
-              Disconnect Google Calendar
+              {t('disconnectGoogle')}
             </Button>
             {calendarSelectionUI}
           </>

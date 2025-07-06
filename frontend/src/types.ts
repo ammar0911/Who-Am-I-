@@ -56,6 +56,12 @@ export interface TranslationStrings {
   publicAvailability: string;
   publicAvailabilityDesc: string;
   connectGoogle: string;
+  disconnectGoogle: string;
+  selectCalendars: string;
+  loadingCalendars: string;
+  noCalendarsAvailable: string;
+  saveCalendarSelection: string;
+  saving: string;
   weeklyAvailability: string;
   availabilityPrivate: string;
   availabilityPrivateDesc: (params: { name: string }) => string;
