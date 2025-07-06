@@ -17,7 +17,7 @@ const UserDataCard: React.FC<UserDataCardProps> = ({ user }) => {
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 text-center">
       <div className="flex justify-center mb-4">
         <UserAvatar
-          userAvatar={user.avatar}
+          userAvatar={user.avatar || ''}
           userName={user.name || ''}
           width={96}
           height={96}
@@ -29,7 +29,7 @@ const UserDataCard: React.FC<UserDataCardProps> = ({ user }) => {
         </h2>
         <p className="text-gray-600 dark:text-gray-400">{user.title}</p>
         <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">
-          {user.officeId}
+          {user.office?.name || t('noOfficeAssigned')}
         </p>
       </div>
 

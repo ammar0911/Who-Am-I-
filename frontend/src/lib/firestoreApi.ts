@@ -21,7 +21,7 @@ import {
   SensorDoc,
   SensorDTO,
   SensorInputDoc,
-  User,
+  DBUser,
   UserDoc,
   UserDTO,
   WorkingBlock,
@@ -48,7 +48,22 @@ export const userApi = {
           ...convertFirebaseTimestampsToDate(docSnap.data()),
         } as UserDoc;
 
-        return mapUserDocToDTO(data);
+        let officeData = null;
+
+        // Get office data for user
+        if (data.office_id) {
+          const officeDoc = await officeApi.getById(data.office_id.id);
+          if (!officeDoc) {
+            throw new Error(
+              `Office with ID ${data.office_id.id} does not exist`,
+            );
+          }
+          officeData = officeDoc;
+        }
+
+        return mapUserDocToDTO(data, {
+          office: officeData,
+        });
       }
       return null;
     } catch (error) {
@@ -90,15 +105,14 @@ export const userApi = {
         ...convertFirebaseTimestampsToDate(doc.data()),
       })) as UserDoc[];
 
-      // @TODO: Add availability data to the DTO
-      return data.map(mapUserDocToDTO);
+      return data.map((user) => mapUserDocToDTO(user));
     } catch (error) {
       console.error('Error getting users:', error);
       throw error;
     }
   },
 
-  async create(userData: Omit<User, 'id'>): Promise<string> {
+  async create(userData: Omit<DBUser, 'id'>): Promise<string> {
     try {
       const docRef = await addDoc(collection(db, COLLECTIONS.USER), userData);
       return docRef.id;
@@ -108,7 +122,7 @@ export const userApi = {
     }
   },
 
-  async update(id: string, userData: Partial<User>): Promise<void> {
+  async update(id: string, userData: Partial<DBUser>): Promise<void> {
     try {
       const docRef = doc(db, COLLECTIONS.USER, id);
       await updateDoc(docRef, userData);

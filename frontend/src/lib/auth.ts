@@ -4,7 +4,8 @@ import NextAuth, { DefaultSession } from 'next-auth';
 import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { AccountType } from '@/types';
+import { DBUser, UserDTO } from '@/types';
+import mapUserDocToDTO from './mapUserDocToDto';
 
 export const firestore = initFirestore({
   credential: cert({
@@ -26,6 +27,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async session({ session }) {
       session.user.id = session.userId;
+      session.userDTO = mapUserDocToDTO(session.user);
+      console.log('Session userDTO:', session.userDTO);
       return session;
     },
   },
@@ -36,20 +39,7 @@ declare module 'next-auth' {
    * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
   interface Session {
-    user: {
-      id?: string;
-      accountType?: AccountType;
-      isPublic?: boolean;
-      displayName?: string;
-      pronouns?: string;
-      title?: string;
-      officeId?: string;
-      /**
-       * By default, TypeScript merges new interface properties and overwrites existing ones.
-       * In this case, the default session user properties will be overwritten,
-       * with the new ones defined above. To keep the default session user properties,
-       * you need to add them back into the newly declared interface.
-       */
-    } & DefaultSession['user'];
+    user: DBUser & DefaultSession['user'];
+    userDTO: UserDTO;
   }
 }

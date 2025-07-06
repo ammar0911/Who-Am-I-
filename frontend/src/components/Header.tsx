@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
   const { data: session } = useSession();
   const [mounted, setMounted] = React.useState(false);
 
-  const isAdmin = session?.user?.accountType === 'Admin';
+  const isAdmin = session?.userDTO?.accountType === 'Admin';
 
   React.useEffect(() => {
     setMounted(true);

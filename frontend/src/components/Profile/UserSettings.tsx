@@ -31,7 +31,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
 }) => {
   const { t } = useContext(AppContext);
   const { data: session } = useSession();
-  const user = session?.user;
+  const user = session?.userDTO;
 
   const calendarSelectionUI = (
     <div className="mt-4 p-4 border rounded-lg dark:border-gray-700">

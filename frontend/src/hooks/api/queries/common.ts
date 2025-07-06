@@ -2,7 +2,6 @@
 
 import { UseQueryResult } from '@tanstack/react-query';
 import {
-  DefaultService,
   OfficesService,
   SensorService,
   UsersService,
@@ -102,6 +101,23 @@ export const UseUsersServiceGetApiUsersByIdKeyFn = (
   },
   queryKey?: Array<unknown>,
 ) => [useUsersServiceGetApiUsersByIdKey, ...(queryKey ?? [{ id }])];
+export type UsersServiceGetApiUsersByIdWorkingBlockDefaultResponse = Awaited<
+  ReturnType<typeof UsersService.getApiUsersByIdWorkingBlock>
+>;
+export type UsersServiceGetApiUsersByIdWorkingBlockQueryResult<
+  TData = UsersServiceGetApiUsersByIdWorkingBlockDefaultResponse,
+  TError = unknown,
+> = UseQueryResult<TData, TError>;
+export const useUsersServiceGetApiUsersByIdWorkingBlockKey =
+  'UsersServiceGetApiUsersByIdWorkingBlock';
+export const UseUsersServiceGetApiUsersByIdWorkingBlockKeyFn = (
+  {
+    id,
+  }: {
+    id: string;
+  },
+  queryKey?: Array<unknown>,
+) => [useUsersServiceGetApiUsersByIdWorkingBlockKey, ...(queryKey ?? [{ id }])];
 export type UsersServiceGetApiUsersGetAllPublicAndAvailableDefaultResponse =
   Awaited<ReturnType<typeof UsersService.getApiUsersGetAllPublicAndAvailable>>;
 export type UsersServiceGetApiUsersGetAllPublicAndAvailableQueryResult<
@@ -127,26 +143,6 @@ export const useUsersServiceGetApiUsersKey = 'UsersServiceGetApiUsers';
 export const UseUsersServiceGetApiUsersKeyFn = (queryKey?: Array<unknown>) => [
   useUsersServiceGetApiUsersKey,
   ...(queryKey ?? []),
-];
-export type DefaultServiceGetApiUsersByIdWorkingBlockDefaultResponse = Awaited<
-  ReturnType<typeof DefaultService.getApiUsersByIdWorkingBlock>
->;
-export type DefaultServiceGetApiUsersByIdWorkingBlockQueryResult<
-  TData = DefaultServiceGetApiUsersByIdWorkingBlockDefaultResponse,
-  TError = unknown,
-> = UseQueryResult<TData, TError>;
-export const useDefaultServiceGetApiUsersByIdWorkingBlockKey =
-  'DefaultServiceGetApiUsersByIdWorkingBlock';
-export const UseDefaultServiceGetApiUsersByIdWorkingBlockKeyFn = (
-  {
-    id,
-  }: {
-    id: string;
-  },
-  queryKey?: Array<unknown>,
-) => [
-  useDefaultServiceGetApiUsersByIdWorkingBlockKey,
-  ...(queryKey ?? [{ id }]),
 ];
 export type SensorServicePostApiSensorsByIdMutationResult = Awaited<
   ReturnType<typeof SensorService.postApiSensorsById>

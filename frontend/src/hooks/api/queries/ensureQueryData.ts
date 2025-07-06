@@ -2,7 +2,6 @@
 
 import { type QueryClient } from '@tanstack/react-query';
 import {
-  DefaultService,
   OfficesService,
   SensorService,
   UsersService,
@@ -72,6 +71,18 @@ export const ensureUseUsersServiceGetApiUsersByIdData = (
     queryKey: Common.UseUsersServiceGetApiUsersByIdKeyFn({ id }),
     queryFn: () => UsersService.getApiUsersById({ id }),
   });
+export const ensureUseUsersServiceGetApiUsersByIdWorkingBlockData = (
+  queryClient: QueryClient,
+  {
+    id,
+  }: {
+    id: string;
+  },
+) =>
+  queryClient.ensureQueryData({
+    queryKey: Common.UseUsersServiceGetApiUsersByIdWorkingBlockKeyFn({ id }),
+    queryFn: () => UsersService.getApiUsersByIdWorkingBlock({ id }),
+  });
 export const ensureUseUsersServiceGetApiUsersGetAllPublicAndAvailableData = (
   queryClient: QueryClient,
 ) =>
@@ -85,16 +96,4 @@ export const ensureUseUsersServiceGetApiUsersData = (
   queryClient.ensureQueryData({
     queryKey: Common.UseUsersServiceGetApiUsersKeyFn(),
     queryFn: () => UsersService.getApiUsers(),
-  });
-export const ensureUseDefaultServiceGetApiUsersByIdWorkingBlockData = (
-  queryClient: QueryClient,
-  {
-    id,
-  }: {
-    id: string;
-  },
-) =>
-  queryClient.ensureQueryData({
-    queryKey: Common.UseDefaultServiceGetApiUsersByIdWorkingBlockKeyFn({ id }),
-    queryFn: () => DefaultService.getApiUsersByIdWorkingBlock({ id }),
   });

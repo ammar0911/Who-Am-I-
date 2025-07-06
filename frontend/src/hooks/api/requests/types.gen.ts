@@ -2,16 +2,24 @@
 
 export type UserDTO = {
   id: string;
-  email: string;
-  name: string;
   accountType: AccountType;
   available: AvailabilityStatus;
-  avatar: string;
-  isPublic: boolean;
-  title?: string | null;
+  /**
+   * URL to the user's chosen avatar image. Uploaded by the user.
+   */
+  avatar: string | null;
   department?: string | null;
+  email: string;
+  /**
+   * File retrieved from OAuth service when creating user account.
+   */
+  image?: string | null;
+  isPublic: boolean;
+  name: string;
+  office?: OfficeDTO | null;
   officeId?: string | null;
   pronouns?: string | null;
+  title?: string | null;
   /**
    * JSON string containing user settings.
    */
@@ -155,19 +163,6 @@ export type PutApiUsersByIdResponse = {
   message?: string;
 };
 
-export type GetApiUsersGetAllPublicAndAvailableResponse = Array<{
-  id?: string;
-  accountType?: number;
-  email?: string;
-  name?: string;
-  officeId?: string;
-  password?: string;
-  pronouns?: string;
-  userSettings?: string;
-}>;
-
-export type GetApiUsersResponse = Array<UserDTO>;
-
 export type GetApiUsersByIdWorkingBlockData = {
   /**
    * The ID of the user to retrieve the working block for.
@@ -180,6 +175,19 @@ export type GetApiUsersByIdWorkingBlockResponse = {
   userId?: string;
   startTime?: string;
 };
+
+export type GetApiUsersGetAllPublicAndAvailableResponse = Array<{
+  id?: string;
+  accountType?: number;
+  email?: string;
+  name?: string;
+  officeId?: string;
+  password?: string;
+  pronouns?: string;
+  userSettings?: string;
+}>;
+
+export type GetApiUsersResponse = Array<UserDTO>;
 
 export type $OpenApiTs = {
   '/api/offices/{officeId}': {
@@ -372,6 +380,21 @@ export type $OpenApiTs = {
       };
     };
   };
+  '/api/users/{id}/workingBlock': {
+    get: {
+      req: GetApiUsersByIdWorkingBlockData;
+      res: {
+        /**
+         * Working block found successfully.
+         */
+        200: {
+          id?: string;
+          userId?: string;
+          startTime?: string;
+        };
+      };
+    };
+  };
   '/api/users/getAllPublicAndAvailable': {
     get: {
       res: {
@@ -406,21 +429,6 @@ export type $OpenApiTs = {
          * Internal Server Error
          */
         500: unknown;
-      };
-    };
-  };
-  '/api/users/{id}/workingBlock': {
-    get: {
-      req: GetApiUsersByIdWorkingBlockData;
-      res: {
-        /**
-         * Working block found successfully.
-         */
-        200: {
-          id?: string;
-          userId?: string;
-          startTime?: string;
-        };
       };
     };
   };

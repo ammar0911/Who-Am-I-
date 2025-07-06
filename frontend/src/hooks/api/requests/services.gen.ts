@@ -20,10 +20,10 @@ import type {
   GetApiUsersByIdResponse,
   PutApiUsersByIdData,
   PutApiUsersByIdResponse,
-  GetApiUsersGetAllPublicAndAvailableResponse,
-  GetApiUsersResponse,
   GetApiUsersByIdWorkingBlockData,
   GetApiUsersByIdWorkingBlockResponse,
+  GetApiUsersGetAllPublicAndAvailableResponse,
+  GetApiUsersResponse,
 } from './types.gen';
 
 export class OfficesService {
@@ -245,6 +245,26 @@ export class UsersService {
   }
 
   /**
+   * Get working block by user ID
+   * Returns the working block for a specific user.
+   * @param data The data for the request.
+   * @param data.id The ID of the user to retrieve the working block for.
+   * @returns unknown Working block found successfully.
+   * @throws ApiError
+   */
+  public static getApiUsersByIdWorkingBlock(
+    data: GetApiUsersByIdWorkingBlockData,
+  ): CancelablePromise<GetApiUsersByIdWorkingBlockResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/users/{id}/workingBlock',
+      path: {
+        id: data.id,
+      },
+    });
+  }
+
+  /**
    * Get all users
    * Returns a list of all users.
    * @returns unknown A list of users.
@@ -272,28 +292,6 @@ export class UsersService {
       url: '/api/users',
       errors: {
         500: 'Internal Server Error',
-      },
-    });
-  }
-}
-
-export class DefaultService {
-  /**
-   * Get working block by user ID
-   * Returns the working block for a specific user.
-   * @param data The data for the request.
-   * @param data.id The ID of the user to retrieve the working block for.
-   * @returns unknown Working block found successfully.
-   * @throws ApiError
-   */
-  public static getApiUsersByIdWorkingBlock(
-    data: GetApiUsersByIdWorkingBlockData,
-  ): CancelablePromise<GetApiUsersByIdWorkingBlockResponse> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/users/{id}/workingBlock',
-      path: {
-        id: data.id,
       },
     });
   }

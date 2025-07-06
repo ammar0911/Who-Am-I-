@@ -31,7 +31,7 @@ const UserCard: React.FC<UserCardProps> = ({
         <UserAvatar
           width={48}
           height={48}
-          userAvatar={user.avatar}
+          userAvatar={user.avatar || ''}
           userName={user.name}
         />
         <div>

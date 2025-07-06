@@ -24,12 +24,6 @@
             "example": "NZYeL9zhepNhAeQavl5X",
             "readonly": true
           },
-          "email": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
           "accountType": {
             "$ref": "#/components/schemas/AccountType"
           },
@@ -37,20 +31,35 @@
             "$ref": "#/components/schemas/AvailabilityStatus"
           },
           "avatar": {
-            "type": "string"
-          },
-          "isPublic": {
-            "type": "boolean"
-          },
-          "title": {
             "type": "string",
             "nullable": true,
-            "example": "Ms. Sc."
+            "example": "https://example.com/avatar.jpg",
+            "description": "URL to the user's chosen avatar image. Uploaded by the user."
           },
           "department": {
             "type": "string",
             "nullable": true,
             "example": "Engineering"
+          },
+          "email": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://example.com/avatar.jpg",
+            "description": "File retrieved from OAuth service when creating user account."
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "office": {
+            "$ref": "#/components/schemas/OfficeDTO",
+            "nullable": true,
+            "readonly": true
           },
           "officeId": {
             "type": "string",
@@ -61,6 +70,11 @@
             "type": "string",
             "nullable": true,
             "example": ""
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "example": "Ms. Sc."
           },
           "userSettings": {
             "type": "string",
@@ -663,6 +677,7 @@
     },
     "/api/users/{id}/workingBlock": {
       "get": {
+        "tags": ["Users"],
         "summary": "Get working block by user ID",
         "description": "Returns the working block for a specific user.",
         "parameters": [

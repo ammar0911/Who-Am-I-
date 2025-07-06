@@ -2,7 +2,6 @@
 
 import { UseQueryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import {
-  DefaultService,
   OfficesService,
   SensorService,
   UsersService,
@@ -113,6 +112,27 @@ export const useUsersServiceGetApiUsersByIdSuspense = <
     queryFn: () => UsersService.getApiUsersById({ id }) as TData,
     ...options,
   });
+export const useUsersServiceGetApiUsersByIdWorkingBlockSuspense = <
+  TData = Common.UsersServiceGetApiUsersByIdWorkingBlockDefaultResponse,
+  TError = unknown,
+  TQueryKey extends Array<unknown> = unknown[],
+>(
+  {
+    id,
+  }: {
+    id: string;
+  },
+  queryKey?: TQueryKey,
+  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
+) =>
+  useSuspenseQuery<TData, TError>({
+    queryKey: Common.UseUsersServiceGetApiUsersByIdWorkingBlockKeyFn(
+      { id },
+      queryKey,
+    ),
+    queryFn: () => UsersService.getApiUsersByIdWorkingBlock({ id }) as TData,
+    ...options,
+  });
 export const useUsersServiceGetApiUsersGetAllPublicAndAvailableSuspense = <
   TData = Common.UsersServiceGetApiUsersGetAllPublicAndAvailableDefaultResponse,
   TError = unknown,
@@ -138,26 +158,5 @@ export const useUsersServiceGetApiUsersSuspense = <
   useSuspenseQuery<TData, TError>({
     queryKey: Common.UseUsersServiceGetApiUsersKeyFn(queryKey),
     queryFn: () => UsersService.getApiUsers() as TData,
-    ...options,
-  });
-export const useDefaultServiceGetApiUsersByIdWorkingBlockSuspense = <
-  TData = Common.DefaultServiceGetApiUsersByIdWorkingBlockDefaultResponse,
-  TError = unknown,
-  TQueryKey extends Array<unknown> = unknown[],
->(
-  {
-    id,
-  }: {
-    id: string;
-  },
-  queryKey?: TQueryKey,
-  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
-) =>
-  useSuspenseQuery<TData, TError>({
-    queryKey: Common.UseDefaultServiceGetApiUsersByIdWorkingBlockKeyFn(
-      { id },
-      queryKey,
-    ),
-    queryFn: () => DefaultService.getApiUsersByIdWorkingBlock({ id }) as TData,
     ...options,
   });

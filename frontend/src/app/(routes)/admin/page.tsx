@@ -39,7 +39,7 @@ import { AppContext } from '@/contexts/AppContext';
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
-  const currentUser = session?.user;
+  const currentUser = session?.userDTO;
   const { t } = useContext(AppContext);
 
   const [users, setUsers] = useState<UserDTO[]>([]);

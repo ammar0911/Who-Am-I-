@@ -2,7 +2,6 @@
 
 import { type QueryClient } from '@tanstack/react-query';
 import {
-  DefaultService,
   OfficesService,
   SensorService,
   UsersService,
@@ -72,6 +71,18 @@ export const prefetchUseUsersServiceGetApiUsersById = (
     queryKey: Common.UseUsersServiceGetApiUsersByIdKeyFn({ id }),
     queryFn: () => UsersService.getApiUsersById({ id }),
   });
+export const prefetchUseUsersServiceGetApiUsersByIdWorkingBlock = (
+  queryClient: QueryClient,
+  {
+    id,
+  }: {
+    id: string;
+  },
+) =>
+  queryClient.prefetchQuery({
+    queryKey: Common.UseUsersServiceGetApiUsersByIdWorkingBlockKeyFn({ id }),
+    queryFn: () => UsersService.getApiUsersByIdWorkingBlock({ id }),
+  });
 export const prefetchUseUsersServiceGetApiUsersGetAllPublicAndAvailable = (
   queryClient: QueryClient,
 ) =>
@@ -83,16 +94,4 @@ export const prefetchUseUsersServiceGetApiUsers = (queryClient: QueryClient) =>
   queryClient.prefetchQuery({
     queryKey: Common.UseUsersServiceGetApiUsersKeyFn(),
     queryFn: () => UsersService.getApiUsers(),
-  });
-export const prefetchUseDefaultServiceGetApiUsersByIdWorkingBlock = (
-  queryClient: QueryClient,
-  {
-    id,
-  }: {
-    id: string;
-  },
-) =>
-  queryClient.prefetchQuery({
-    queryKey: Common.UseDefaultServiceGetApiUsersByIdWorkingBlockKeyFn({ id }),
-    queryFn: () => DefaultService.getApiUsersByIdWorkingBlock({ id }),
   });

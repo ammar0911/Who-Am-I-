@@ -100,6 +100,8 @@ export const translations: Record<Language, TranslationDictionary> = {
     returnToHome: 'Return to Home',
     accessDenied: 'Access Denied!',
     noPermission: 'You do not have permission to access this page.',
+    noOfficesAvailable: 'No office information available',
+    noOfficeAssigned: 'No office assigned',
   },
   de: {
     appName: 'No-Knock',
@@ -206,5 +208,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     returnToHome: 'Zurück zur Startseite',
     accessDenied: 'Zugriff verweigert!',
     noPermission: 'Sie haben keine Berechtigung, auf diese Seite zuzugreifen.',
+    noOfficesAvailable: 'Keine Büroinformationen verfügbar',
+    noOfficeAssigned: 'Kein Büro zugewiesen',
   },
 };

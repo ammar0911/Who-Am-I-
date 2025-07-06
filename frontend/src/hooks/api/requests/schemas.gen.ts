@@ -17,12 +17,6 @@ export const $UserDTO = {
       example: 'NZYeL9zhepNhAeQavl5X',
       readonly: true,
     },
-    email: {
-      type: 'string',
-    },
-    name: {
-      type: 'string',
-    },
     accountType: {
       $ref: '#/components/schemas/AccountType',
     },
@@ -31,19 +25,36 @@ export const $UserDTO = {
     },
     avatar: {
       type: 'string',
-    },
-    isPublic: {
-      type: 'boolean',
-    },
-    title: {
-      type: 'string',
       nullable: true,
-      example: 'Ms. Sc.',
+      example: 'https://example.com/avatar.jpg',
+      description:
+        "URL to the user's chosen avatar image. Uploaded by the user.",
     },
     department: {
       type: 'string',
       nullable: true,
       example: 'Engineering',
+    },
+    email: {
+      type: 'string',
+    },
+    image: {
+      type: 'string',
+      nullable: true,
+      example: 'https://example.com/avatar.jpg',
+      description:
+        'File retrieved from OAuth service when creating user account.',
+    },
+    isPublic: {
+      type: 'boolean',
+    },
+    name: {
+      type: 'string',
+    },
+    office: {
+      $ref: '#/components/schemas/OfficeDTO',
+      nullable: true,
+      readonly: true,
     },
     officeId: {
       type: 'string',
@@ -54,6 +65,11 @@ export const $UserDTO = {
       type: 'string',
       nullable: true,
       example: '',
+    },
+    title: {
+      type: 'string',
+      nullable: true,
+      example: 'Ms. Sc.',
     },
     userSettings: {
       type: 'string',
