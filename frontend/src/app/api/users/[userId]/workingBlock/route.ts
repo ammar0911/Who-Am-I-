@@ -5,6 +5,8 @@ import { NextRequest } from 'next/server';
  * @openapi
  * /api/users/{id}/workingBlock:
  *   get:
+ *     tags:
+ *       - Users
  *     summary: Get working block by user ID
  *     description: Returns the working block for a specific user.
  *     parameters:
@@ -35,7 +37,7 @@ import { NextRequest } from 'next/server';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   const { userId } = await params;
 

@@ -4,6 +4,8 @@ import { sensorApi } from '@/lib/firestoreApi';
  * @openapi
  * /api/sensors:
  *   get:
+ *     tags:
+ *       - Sensor
  *     summary: Get all sensors
  *     description: Returns a list of all sensors.
  *     responses:

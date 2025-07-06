@@ -3,10 +3,10 @@ import { OfficeDTO } from '@/types';
 
 /**
  * @openapi
- * /api/office/{officeId}:
+ * /api/offices/{officeId}:
  *   put:
  *     tags:
- *       - Office
+ *       - Offices
  *     summary: Update an office by ID
  *     description: Update an existing office with the provided data
  *     parameters:
@@ -68,6 +68,64 @@ export const PUT = async (
 
     const updatedOffice = await officeApi.update(officeId, body);
     return Response.json(updatedOffice);
+  } catch (error) {
+    console.error('API Error:', error);
+    return new Response(`Webhook error: ${String(error)}`, {
+      status: 500,
+    });
+  }
+};
+
+/**
+ * @openapi
+ * /api/offices/{officeId}:
+ *   get:
+ *     tags:
+ *       - Offices
+ *     summary: Get an office by ID
+ *     description: Returns a single office by its ID.
+ *     parameters:
+ *       - name: officeId
+ *         in: path
+ *         required: true
+ *         description: The unique identifier of the office to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Office retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/OfficeDTO'
+ *       404:
+ *         description: Office not found
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: "Office with ID 'abc123' not found"
+ */
+export const GET = async (
+  request: Request,
+  { params }: { params: Promise<{ officeId: string }> },
+) => {
+  try {
+    const { officeId } = await params;
+
+    if (typeof officeId !== 'string') {
+      return new Response(`Invalid office ID`, {
+        status: 404,
+      });
+    }
+
+    const office = await officeApi.getById(officeId);
+    if (!office) {
+      return new Response(`Office with ID '${officeId}' not found`, {
+        status: 404,
+      });
+    }
+    return Response.json(office);
   } catch (error) {
     console.error('API Error:', error);
     return new Response(`Webhook error: ${String(error)}`, {

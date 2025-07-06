@@ -1,7 +1,7 @@
 'use client';
 import UserCard from '@/components/UserCard';
 import { AppContext } from '@/contexts/AppContext';
-import { useDefaultServiceGetApiUsers } from '@/hooks/api/queries';
+import { useUsersServiceGetApiUsers } from '@/hooks/api/queries';
 import { Search } from '@mui/icons-material';
 import dynamic from 'next/dynamic';
 import { useContext, useEffect, useState } from 'react';
@@ -28,7 +28,7 @@ export default function SearchPage() {
   const { t } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const { data: users } = useDefaultServiceGetApiUsers();
+  const { data: users } = useUsersServiceGetApiUsers();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);

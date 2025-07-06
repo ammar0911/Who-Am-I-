@@ -64,7 +64,7 @@ export type SensorInputDTO = {
   sensorId: string;
 };
 
-export type PutApiOfficeByOfficeIdData = {
+export type PutApiOfficesByOfficeIdData = {
   /**
    * The unique identifier of the office to update
    */
@@ -72,9 +72,18 @@ export type PutApiOfficeByOfficeIdData = {
   requestBody: OfficeDTO;
 };
 
-export type PutApiOfficeByOfficeIdResponse = OfficeDTO;
+export type PutApiOfficesByOfficeIdResponse = OfficeDTO;
 
-export type GetApiOfficeResponse = Array<OfficeDTO>;
+export type GetApiOfficesByOfficeIdData = {
+  /**
+   * The unique identifier of the office to retrieve
+   */
+  officeId: string;
+};
+
+export type GetApiOfficesByOfficeIdResponse = OfficeDTO;
+
+export type GetApiOfficesResponse = Array<OfficeDTO>;
 
 export type GetApiSensorsByIdData = {
   /**
@@ -146,19 +155,6 @@ export type PutApiUsersByIdResponse = {
   message?: string;
 };
 
-export type GetApiUsersByIdWorkingBlockData = {
-  /**
-   * The ID of the user to retrieve the working block for.
-   */
-  id: string;
-};
-
-export type GetApiUsersByIdWorkingBlockResponse = {
-  id?: string;
-  userId?: string;
-  startTime?: string;
-};
-
 export type GetApiUsersGetAllPublicAndAvailableResponse = Array<{
   id?: string;
   accountType?: number;
@@ -172,10 +168,23 @@ export type GetApiUsersGetAllPublicAndAvailableResponse = Array<{
 
 export type GetApiUsersResponse = Array<UserDTO>;
 
+export type GetApiUsersByIdWorkingBlockData = {
+  /**
+   * The ID of the user to retrieve the working block for.
+   */
+  id: string;
+};
+
+export type GetApiUsersByIdWorkingBlockResponse = {
+  id?: string;
+  userId?: string;
+  startTime?: string;
+};
+
 export type $OpenApiTs = {
-  '/api/office/{officeId}': {
+  '/api/offices/{officeId}': {
     put: {
-      req: PutApiOfficeByOfficeIdData;
+      req: PutApiOfficesByOfficeIdData;
       res: {
         /**
          * Office updated successfully
@@ -195,8 +204,21 @@ export type $OpenApiTs = {
         500: string;
       };
     };
+    get: {
+      req: GetApiOfficesByOfficeIdData;
+      res: {
+        /**
+         * Office retrieved successfully
+         */
+        200: OfficeDTO;
+        /**
+         * Office not found
+         */
+        404: string;
+      };
+    };
   };
-  '/api/office': {
+  '/api/offices': {
     get: {
       res: {
         /**
@@ -350,21 +372,6 @@ export type $OpenApiTs = {
       };
     };
   };
-  '/api/users/{id}/workingBlock': {
-    get: {
-      req: GetApiUsersByIdWorkingBlockData;
-      res: {
-        /**
-         * Working block found successfully.
-         */
-        200: {
-          id?: string;
-          userId?: string;
-          startTime?: string;
-        };
-      };
-    };
-  };
   '/api/users/getAllPublicAndAvailable': {
     get: {
       res: {
@@ -399,6 +406,21 @@ export type $OpenApiTs = {
          * Internal Server Error
          */
         500: unknown;
+      };
+    };
+  };
+  '/api/users/{id}/workingBlock': {
+    get: {
+      req: GetApiUsersByIdWorkingBlockData;
+      res: {
+        /**
+         * Working block found successfully.
+         */
+        200: {
+          id?: string;
+          userId?: string;
+          startTime?: string;
+        };
       };
     };
   };

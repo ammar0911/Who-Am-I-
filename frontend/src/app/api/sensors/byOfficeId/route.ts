@@ -6,6 +6,8 @@ import { sensorApi } from '@/lib/firestoreApi';
  * @openapi
  * /api/sensors/byOfficeId:
  *   get:
+ *     tags:
+ *       - Sensor
  *     summary: Get sensors by office ID
  *     description: Returns a list of sensors associated with a specific office ID.
  *     parameters:

@@ -2,6 +2,8 @@
  * @openapi
  * /api/users/{id}:
  *   get:
+ *     tags:
+ *       - Users
  *     summary: Get a user by ID
  *     description: Returns a single user by their ID.
  *     parameters:
@@ -40,6 +42,8 @@
  *       500:
  *         description: Internal Server Error
  *   put:
+ *     tags:
+ *       - Users
  *     summary: Update a user by ID
  *     description: Updates a user's information by their ID.
  *     parameters:

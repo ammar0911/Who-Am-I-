@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import React, { useContext, useRef } from 'react';
 
 import UserCard from '@/components/UserCard';
-import { useDefaultServiceGetApiUsers } from '@/hooks/api/queries';
+import { useUsersServiceGetApiUsers } from '@/hooks/api/queries';
 
 export default function HomePage() {
   const { t } = useContext(AppContext);
-  const { data: users } = useDefaultServiceGetApiUsers();
+  const { data: users } = useUsersServiceGetApiUsers();
   const router = useRouter();
   const searchInput = useRef<HTMLInputElement>(null);
 

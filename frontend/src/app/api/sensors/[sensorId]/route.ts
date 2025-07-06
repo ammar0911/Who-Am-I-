@@ -5,6 +5,8 @@ import { sensorApi } from '@/lib/firestoreApi';
  * @openapi
  * /api/sensors/{id}:
  *   get:
+ *     tags:
+ *       - Sensor
  *     summary: Get a sensor by ID
  *     description: Returns a single sensor by its ID.
  *     parameters:
@@ -49,6 +51,8 @@ import { sensorApi } from '@/lib/firestoreApi';
  *       500:
  *         description: Internal Server Error
  *   post:
+ *     tags:
+ *       - Sensor
  *     summary: Update a sensor by ID
  *     description: Creates a new entry of sensor status
  *     parameters:

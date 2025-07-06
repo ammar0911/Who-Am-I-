@@ -4,9 +4,11 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 import type {
-  PutApiOfficeByOfficeIdData,
-  PutApiOfficeByOfficeIdResponse,
-  GetApiOfficeResponse,
+  PutApiOfficesByOfficeIdData,
+  PutApiOfficesByOfficeIdResponse,
+  GetApiOfficesByOfficeIdData,
+  GetApiOfficesByOfficeIdResponse,
+  GetApiOfficesResponse,
   GetApiSensorsByIdData,
   GetApiSensorsByIdResponse,
   PostApiSensorsByIdData,
@@ -18,13 +20,13 @@ import type {
   GetApiUsersByIdResponse,
   PutApiUsersByIdData,
   PutApiUsersByIdResponse,
-  GetApiUsersByIdWorkingBlockData,
-  GetApiUsersByIdWorkingBlockResponse,
   GetApiUsersGetAllPublicAndAvailableResponse,
   GetApiUsersResponse,
+  GetApiUsersByIdWorkingBlockData,
+  GetApiUsersByIdWorkingBlockResponse,
 } from './types.gen';
 
-export class OfficeService {
+export class OfficesService {
   /**
    * Update an office by ID
    * Update an existing office with the provided data
@@ -34,12 +36,12 @@ export class OfficeService {
    * @returns OfficeDTO Office updated successfully
    * @throws ApiError
    */
-  public static putApiOfficeByOfficeId(
-    data: PutApiOfficeByOfficeIdData,
-  ): CancelablePromise<PutApiOfficeByOfficeIdResponse> {
+  public static putApiOfficesByOfficeId(
+    data: PutApiOfficesByOfficeIdData,
+  ): CancelablePromise<PutApiOfficesByOfficeIdResponse> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/api/office/{officeId}',
+      url: '/api/offices/{officeId}',
       path: {
         officeId: data.officeId,
       },
@@ -54,15 +56,38 @@ export class OfficeService {
   }
 
   /**
+   * Get an office by ID
+   * Returns a single office by its ID.
+   * @param data The data for the request.
+   * @param data.officeId The unique identifier of the office to retrieve
+   * @returns OfficeDTO Office retrieved successfully
+   * @throws ApiError
+   */
+  public static getApiOfficesByOfficeId(
+    data: GetApiOfficesByOfficeIdData,
+  ): CancelablePromise<GetApiOfficesByOfficeIdResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/offices/{officeId}',
+      path: {
+        officeId: data.officeId,
+      },
+      errors: {
+        404: 'Office not found',
+      },
+    });
+  }
+
+  /**
    * Get all offices
    * Retrieve a list of all offices from the database
    * @returns OfficeDTO Successfully retrieved offices
    * @throws ApiError
    */
-  public static getApiOffice(): CancelablePromise<GetApiOfficeResponse> {
+  public static getApiOffices(): CancelablePromise<GetApiOfficesResponse> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/api/office',
+      url: '/api/offices',
       errors: {
         500: 'Internal server error',
       },
@@ -70,7 +95,7 @@ export class OfficeService {
   }
 }
 
-export class DefaultService {
+export class SensorService {
   /**
    * Get a sensor by ID
    * Returns a single sensor by its ID.
@@ -163,7 +188,9 @@ export class DefaultService {
       },
     });
   }
+}
 
+export class UsersService {
   /**
    * Get a user by ID
    * Returns a single user by their ID.
@@ -218,26 +245,6 @@ export class DefaultService {
   }
 
   /**
-   * Get working block by user ID
-   * Returns the working block for a specific user.
-   * @param data The data for the request.
-   * @param data.id The ID of the user to retrieve the working block for.
-   * @returns unknown Working block found successfully.
-   * @throws ApiError
-   */
-  public static getApiUsersByIdWorkingBlock(
-    data: GetApiUsersByIdWorkingBlockData,
-  ): CancelablePromise<GetApiUsersByIdWorkingBlockResponse> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/users/{id}/workingBlock',
-      path: {
-        id: data.id,
-      },
-    });
-  }
-
-  /**
    * Get all users
    * Returns a list of all users.
    * @returns unknown A list of users.
@@ -265,6 +272,28 @@ export class DefaultService {
       url: '/api/users',
       errors: {
         500: 'Internal Server Error',
+      },
+    });
+  }
+}
+
+export class DefaultService {
+  /**
+   * Get working block by user ID
+   * Returns the working block for a specific user.
+   * @param data The data for the request.
+   * @param data.id The ID of the user to retrieve the working block for.
+   * @returns unknown Working block found successfully.
+   * @throws ApiError
+   */
+  public static getApiUsersByIdWorkingBlock(
+    data: GetApiUsersByIdWorkingBlockData,
+  ): CancelablePromise<GetApiUsersByIdWorkingBlockResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/users/{id}/workingBlock',
+      path: {
+        id: data.id,
       },
     });
   }

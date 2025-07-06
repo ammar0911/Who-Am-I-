@@ -1,45 +1,22 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2
 
 import { UseQueryResult } from '@tanstack/react-query';
-import { DefaultService, OfficeService } from '../requests/services.gen';
-export type OfficeServiceGetApiOfficeDefaultResponse = Awaited<
-  ReturnType<typeof OfficeService.getApiOffice>
+import {
+  DefaultService,
+  OfficesService,
+  SensorService,
+  UsersService,
+} from '../requests/services.gen';
+export type OfficesServiceGetApiOfficesByOfficeIdDefaultResponse = Awaited<
+  ReturnType<typeof OfficesService.getApiOfficesByOfficeId>
 >;
-export type OfficeServiceGetApiOfficeQueryResult<
-  TData = OfficeServiceGetApiOfficeDefaultResponse,
+export type OfficesServiceGetApiOfficesByOfficeIdQueryResult<
+  TData = OfficesServiceGetApiOfficesByOfficeIdDefaultResponse,
   TError = unknown,
 > = UseQueryResult<TData, TError>;
-export const useOfficeServiceGetApiOfficeKey = 'OfficeServiceGetApiOffice';
-export const UseOfficeServiceGetApiOfficeKeyFn = (
-  queryKey?: Array<unknown>,
-) => [useOfficeServiceGetApiOfficeKey, ...(queryKey ?? [])];
-export type DefaultServiceGetApiSensorsByIdDefaultResponse = Awaited<
-  ReturnType<typeof DefaultService.getApiSensorsById>
->;
-export type DefaultServiceGetApiSensorsByIdQueryResult<
-  TData = DefaultServiceGetApiSensorsByIdDefaultResponse,
-  TError = unknown,
-> = UseQueryResult<TData, TError>;
-export const useDefaultServiceGetApiSensorsByIdKey =
-  'DefaultServiceGetApiSensorsById';
-export const UseDefaultServiceGetApiSensorsByIdKeyFn = (
-  {
-    id,
-  }: {
-    id: string;
-  },
-  queryKey?: Array<unknown>,
-) => [useDefaultServiceGetApiSensorsByIdKey, ...(queryKey ?? [{ id }])];
-export type DefaultServiceGetApiSensorsByOfficeIdDefaultResponse = Awaited<
-  ReturnType<typeof DefaultService.getApiSensorsByOfficeId>
->;
-export type DefaultServiceGetApiSensorsByOfficeIdQueryResult<
-  TData = DefaultServiceGetApiSensorsByOfficeIdDefaultResponse,
-  TError = unknown,
-> = UseQueryResult<TData, TError>;
-export const useDefaultServiceGetApiSensorsByOfficeIdKey =
-  'DefaultServiceGetApiSensorsByOfficeId';
-export const UseDefaultServiceGetApiSensorsByOfficeIdKeyFn = (
+export const useOfficesServiceGetApiOfficesByOfficeIdKey =
+  'OfficesServiceGetApiOfficesByOfficeId';
+export const UseOfficesServiceGetApiOfficesByOfficeIdKeyFn = (
   {
     officeId,
   }: {
@@ -47,37 +24,110 @@ export const UseDefaultServiceGetApiSensorsByOfficeIdKeyFn = (
   },
   queryKey?: Array<unknown>,
 ) => [
-  useDefaultServiceGetApiSensorsByOfficeIdKey,
+  useOfficesServiceGetApiOfficesByOfficeIdKey,
   ...(queryKey ?? [{ officeId }]),
 ];
-export type DefaultServiceGetApiSensorsDefaultResponse = Awaited<
-  ReturnType<typeof DefaultService.getApiSensors>
+export type OfficesServiceGetApiOfficesDefaultResponse = Awaited<
+  ReturnType<typeof OfficesService.getApiOffices>
 >;
-export type DefaultServiceGetApiSensorsQueryResult<
-  TData = DefaultServiceGetApiSensorsDefaultResponse,
+export type OfficesServiceGetApiOfficesQueryResult<
+  TData = OfficesServiceGetApiOfficesDefaultResponse,
   TError = unknown,
 > = UseQueryResult<TData, TError>;
-export const useDefaultServiceGetApiSensorsKey = 'DefaultServiceGetApiSensors';
-export const UseDefaultServiceGetApiSensorsKeyFn = (
+export const useOfficesServiceGetApiOfficesKey = 'OfficesServiceGetApiOffices';
+export const UseOfficesServiceGetApiOfficesKeyFn = (
   queryKey?: Array<unknown>,
-) => [useDefaultServiceGetApiSensorsKey, ...(queryKey ?? [])];
-export type DefaultServiceGetApiUsersByIdDefaultResponse = Awaited<
-  ReturnType<typeof DefaultService.getApiUsersById>
+) => [useOfficesServiceGetApiOfficesKey, ...(queryKey ?? [])];
+export type SensorServiceGetApiSensorsByIdDefaultResponse = Awaited<
+  ReturnType<typeof SensorService.getApiSensorsById>
 >;
-export type DefaultServiceGetApiUsersByIdQueryResult<
-  TData = DefaultServiceGetApiUsersByIdDefaultResponse,
+export type SensorServiceGetApiSensorsByIdQueryResult<
+  TData = SensorServiceGetApiSensorsByIdDefaultResponse,
   TError = unknown,
 > = UseQueryResult<TData, TError>;
-export const useDefaultServiceGetApiUsersByIdKey =
-  'DefaultServiceGetApiUsersById';
-export const UseDefaultServiceGetApiUsersByIdKeyFn = (
+export const useSensorServiceGetApiSensorsByIdKey =
+  'SensorServiceGetApiSensorsById';
+export const UseSensorServiceGetApiSensorsByIdKeyFn = (
   {
     id,
   }: {
     id: string;
   },
   queryKey?: Array<unknown>,
-) => [useDefaultServiceGetApiUsersByIdKey, ...(queryKey ?? [{ id }])];
+) => [useSensorServiceGetApiSensorsByIdKey, ...(queryKey ?? [{ id }])];
+export type SensorServiceGetApiSensorsByOfficeIdDefaultResponse = Awaited<
+  ReturnType<typeof SensorService.getApiSensorsByOfficeId>
+>;
+export type SensorServiceGetApiSensorsByOfficeIdQueryResult<
+  TData = SensorServiceGetApiSensorsByOfficeIdDefaultResponse,
+  TError = unknown,
+> = UseQueryResult<TData, TError>;
+export const useSensorServiceGetApiSensorsByOfficeIdKey =
+  'SensorServiceGetApiSensorsByOfficeId';
+export const UseSensorServiceGetApiSensorsByOfficeIdKeyFn = (
+  {
+    officeId,
+  }: {
+    officeId: string;
+  },
+  queryKey?: Array<unknown>,
+) => [
+  useSensorServiceGetApiSensorsByOfficeIdKey,
+  ...(queryKey ?? [{ officeId }]),
+];
+export type SensorServiceGetApiSensorsDefaultResponse = Awaited<
+  ReturnType<typeof SensorService.getApiSensors>
+>;
+export type SensorServiceGetApiSensorsQueryResult<
+  TData = SensorServiceGetApiSensorsDefaultResponse,
+  TError = unknown,
+> = UseQueryResult<TData, TError>;
+export const useSensorServiceGetApiSensorsKey = 'SensorServiceGetApiSensors';
+export const UseSensorServiceGetApiSensorsKeyFn = (
+  queryKey?: Array<unknown>,
+) => [useSensorServiceGetApiSensorsKey, ...(queryKey ?? [])];
+export type UsersServiceGetApiUsersByIdDefaultResponse = Awaited<
+  ReturnType<typeof UsersService.getApiUsersById>
+>;
+export type UsersServiceGetApiUsersByIdQueryResult<
+  TData = UsersServiceGetApiUsersByIdDefaultResponse,
+  TError = unknown,
+> = UseQueryResult<TData, TError>;
+export const useUsersServiceGetApiUsersByIdKey = 'UsersServiceGetApiUsersById';
+export const UseUsersServiceGetApiUsersByIdKeyFn = (
+  {
+    id,
+  }: {
+    id: string;
+  },
+  queryKey?: Array<unknown>,
+) => [useUsersServiceGetApiUsersByIdKey, ...(queryKey ?? [{ id }])];
+export type UsersServiceGetApiUsersGetAllPublicAndAvailableDefaultResponse =
+  Awaited<ReturnType<typeof UsersService.getApiUsersGetAllPublicAndAvailable>>;
+export type UsersServiceGetApiUsersGetAllPublicAndAvailableQueryResult<
+  TData = UsersServiceGetApiUsersGetAllPublicAndAvailableDefaultResponse,
+  TError = unknown,
+> = UseQueryResult<TData, TError>;
+export const useUsersServiceGetApiUsersGetAllPublicAndAvailableKey =
+  'UsersServiceGetApiUsersGetAllPublicAndAvailable';
+export const UseUsersServiceGetApiUsersGetAllPublicAndAvailableKeyFn = (
+  queryKey?: Array<unknown>,
+) => [
+  useUsersServiceGetApiUsersGetAllPublicAndAvailableKey,
+  ...(queryKey ?? []),
+];
+export type UsersServiceGetApiUsersDefaultResponse = Awaited<
+  ReturnType<typeof UsersService.getApiUsers>
+>;
+export type UsersServiceGetApiUsersQueryResult<
+  TData = UsersServiceGetApiUsersDefaultResponse,
+  TError = unknown,
+> = UseQueryResult<TData, TError>;
+export const useUsersServiceGetApiUsersKey = 'UsersServiceGetApiUsers';
+export const UseUsersServiceGetApiUsersKeyFn = (queryKey?: Array<unknown>) => [
+  useUsersServiceGetApiUsersKey,
+  ...(queryKey ?? []),
+];
 export type DefaultServiceGetApiUsersByIdWorkingBlockDefaultResponse = Awaited<
   ReturnType<typeof DefaultService.getApiUsersByIdWorkingBlock>
 >;
@@ -98,39 +148,12 @@ export const UseDefaultServiceGetApiUsersByIdWorkingBlockKeyFn = (
   useDefaultServiceGetApiUsersByIdWorkingBlockKey,
   ...(queryKey ?? [{ id }]),
 ];
-export type DefaultServiceGetApiUsersGetAllPublicAndAvailableDefaultResponse =
-  Awaited<
-    ReturnType<typeof DefaultService.getApiUsersGetAllPublicAndAvailable>
-  >;
-export type DefaultServiceGetApiUsersGetAllPublicAndAvailableQueryResult<
-  TData = DefaultServiceGetApiUsersGetAllPublicAndAvailableDefaultResponse,
-  TError = unknown,
-> = UseQueryResult<TData, TError>;
-export const useDefaultServiceGetApiUsersGetAllPublicAndAvailableKey =
-  'DefaultServiceGetApiUsersGetAllPublicAndAvailable';
-export const UseDefaultServiceGetApiUsersGetAllPublicAndAvailableKeyFn = (
-  queryKey?: Array<unknown>,
-) => [
-  useDefaultServiceGetApiUsersGetAllPublicAndAvailableKey,
-  ...(queryKey ?? []),
-];
-export type DefaultServiceGetApiUsersDefaultResponse = Awaited<
-  ReturnType<typeof DefaultService.getApiUsers>
+export type SensorServicePostApiSensorsByIdMutationResult = Awaited<
+  ReturnType<typeof SensorService.postApiSensorsById>
 >;
-export type DefaultServiceGetApiUsersQueryResult<
-  TData = DefaultServiceGetApiUsersDefaultResponse,
-  TError = unknown,
-> = UseQueryResult<TData, TError>;
-export const useDefaultServiceGetApiUsersKey = 'DefaultServiceGetApiUsers';
-export const UseDefaultServiceGetApiUsersKeyFn = (
-  queryKey?: Array<unknown>,
-) => [useDefaultServiceGetApiUsersKey, ...(queryKey ?? [])];
-export type DefaultServicePostApiSensorsByIdMutationResult = Awaited<
-  ReturnType<typeof DefaultService.postApiSensorsById>
+export type OfficesServicePutApiOfficesByOfficeIdMutationResult = Awaited<
+  ReturnType<typeof OfficesService.putApiOfficesByOfficeId>
 >;
-export type OfficeServicePutApiOfficeByOfficeIdMutationResult = Awaited<
-  ReturnType<typeof OfficeService.putApiOfficeByOfficeId>
->;
-export type DefaultServicePutApiUsersByIdMutationResult = Awaited<
-  ReturnType<typeof DefaultService.putApiUsersById>
+export type UsersServicePutApiUsersByIdMutationResult = Awaited<
+  ReturnType<typeof UsersService.putApiUsersById>
 >;

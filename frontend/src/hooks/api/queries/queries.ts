@@ -6,42 +6,16 @@ import {
   useMutation,
   useQuery,
 } from '@tanstack/react-query';
-import { DefaultService, OfficeService } from '../requests/services.gen';
+import {
+  DefaultService,
+  OfficesService,
+  SensorService,
+  UsersService,
+} from '../requests/services.gen';
 import { OfficeDTO, SensorInputDTO } from '../requests/types.gen';
 import * as Common from './common';
-export const useOfficeServiceGetApiOffice = <
-  TData = Common.OfficeServiceGetApiOfficeDefaultResponse,
-  TError = unknown,
-  TQueryKey extends Array<unknown> = unknown[],
->(
-  queryKey?: TQueryKey,
-  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
-) =>
-  useQuery<TData, TError>({
-    queryKey: Common.UseOfficeServiceGetApiOfficeKeyFn(queryKey),
-    queryFn: () => OfficeService.getApiOffice() as TData,
-    ...options,
-  });
-export const useDefaultServiceGetApiSensorsById = <
-  TData = Common.DefaultServiceGetApiSensorsByIdDefaultResponse,
-  TError = unknown,
-  TQueryKey extends Array<unknown> = unknown[],
->(
-  {
-    id,
-  }: {
-    id: string;
-  },
-  queryKey?: TQueryKey,
-  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
-) =>
-  useQuery<TData, TError>({
-    queryKey: Common.UseDefaultServiceGetApiSensorsByIdKeyFn({ id }, queryKey),
-    queryFn: () => DefaultService.getApiSensorsById({ id }) as TData,
-    ...options,
-  });
-export const useDefaultServiceGetApiSensorsByOfficeId = <
-  TData = Common.DefaultServiceGetApiSensorsByOfficeIdDefaultResponse,
+export const useOfficesServiceGetApiOfficesByOfficeId = <
+  TData = Common.OfficesServiceGetApiOfficesByOfficeIdDefaultResponse,
   TError = unknown,
   TQueryKey extends Array<unknown> = unknown[],
 >(
@@ -54,16 +28,16 @@ export const useDefaultServiceGetApiSensorsByOfficeId = <
   options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery<TData, TError>({
-    queryKey: Common.UseDefaultServiceGetApiSensorsByOfficeIdKeyFn(
+    queryKey: Common.UseOfficesServiceGetApiOfficesByOfficeIdKeyFn(
       { officeId },
       queryKey,
     ),
     queryFn: () =>
-      DefaultService.getApiSensorsByOfficeId({ officeId }) as TData,
+      OfficesService.getApiOfficesByOfficeId({ officeId }) as TData,
     ...options,
   });
-export const useDefaultServiceGetApiSensors = <
-  TData = Common.DefaultServiceGetApiSensorsDefaultResponse,
+export const useOfficesServiceGetApiOffices = <
+  TData = Common.OfficesServiceGetApiOfficesDefaultResponse,
   TError = unknown,
   TQueryKey extends Array<unknown> = unknown[],
 >(
@@ -71,12 +45,12 @@ export const useDefaultServiceGetApiSensors = <
   options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery<TData, TError>({
-    queryKey: Common.UseDefaultServiceGetApiSensorsKeyFn(queryKey),
-    queryFn: () => DefaultService.getApiSensors() as TData,
+    queryKey: Common.UseOfficesServiceGetApiOfficesKeyFn(queryKey),
+    queryFn: () => OfficesService.getApiOffices() as TData,
     ...options,
   });
-export const useDefaultServiceGetApiUsersById = <
-  TData = Common.DefaultServiceGetApiUsersByIdDefaultResponse,
+export const useSensorServiceGetApiSensorsById = <
+  TData = Common.SensorServiceGetApiSensorsByIdDefaultResponse,
   TError = unknown,
   TQueryKey extends Array<unknown> = unknown[],
 >(
@@ -89,8 +63,87 @@ export const useDefaultServiceGetApiUsersById = <
   options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery<TData, TError>({
-    queryKey: Common.UseDefaultServiceGetApiUsersByIdKeyFn({ id }, queryKey),
-    queryFn: () => DefaultService.getApiUsersById({ id }) as TData,
+    queryKey: Common.UseSensorServiceGetApiSensorsByIdKeyFn({ id }, queryKey),
+    queryFn: () => SensorService.getApiSensorsById({ id }) as TData,
+    ...options,
+  });
+export const useSensorServiceGetApiSensorsByOfficeId = <
+  TData = Common.SensorServiceGetApiSensorsByOfficeIdDefaultResponse,
+  TError = unknown,
+  TQueryKey extends Array<unknown> = unknown[],
+>(
+  {
+    officeId,
+  }: {
+    officeId: string;
+  },
+  queryKey?: TQueryKey,
+  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<TData, TError>({
+    queryKey: Common.UseSensorServiceGetApiSensorsByOfficeIdKeyFn(
+      { officeId },
+      queryKey,
+    ),
+    queryFn: () => SensorService.getApiSensorsByOfficeId({ officeId }) as TData,
+    ...options,
+  });
+export const useSensorServiceGetApiSensors = <
+  TData = Common.SensorServiceGetApiSensorsDefaultResponse,
+  TError = unknown,
+  TQueryKey extends Array<unknown> = unknown[],
+>(
+  queryKey?: TQueryKey,
+  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<TData, TError>({
+    queryKey: Common.UseSensorServiceGetApiSensorsKeyFn(queryKey),
+    queryFn: () => SensorService.getApiSensors() as TData,
+    ...options,
+  });
+export const useUsersServiceGetApiUsersById = <
+  TData = Common.UsersServiceGetApiUsersByIdDefaultResponse,
+  TError = unknown,
+  TQueryKey extends Array<unknown> = unknown[],
+>(
+  {
+    id,
+  }: {
+    id: string;
+  },
+  queryKey?: TQueryKey,
+  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<TData, TError>({
+    queryKey: Common.UseUsersServiceGetApiUsersByIdKeyFn({ id }, queryKey),
+    queryFn: () => UsersService.getApiUsersById({ id }) as TData,
+    ...options,
+  });
+export const useUsersServiceGetApiUsersGetAllPublicAndAvailable = <
+  TData = Common.UsersServiceGetApiUsersGetAllPublicAndAvailableDefaultResponse,
+  TError = unknown,
+  TQueryKey extends Array<unknown> = unknown[],
+>(
+  queryKey?: TQueryKey,
+  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<TData, TError>({
+    queryKey:
+      Common.UseUsersServiceGetApiUsersGetAllPublicAndAvailableKeyFn(queryKey),
+    queryFn: () => UsersService.getApiUsersGetAllPublicAndAvailable() as TData,
+    ...options,
+  });
+export const useUsersServiceGetApiUsers = <
+  TData = Common.UsersServiceGetApiUsersDefaultResponse,
+  TError = unknown,
+  TQueryKey extends Array<unknown> = unknown[],
+>(
+  queryKey?: TQueryKey,
+  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<TData, TError>({
+    queryKey: Common.UseUsersServiceGetApiUsersKeyFn(queryKey),
+    queryFn: () => UsersService.getApiUsers() as TData,
     ...options,
   });
 export const useDefaultServiceGetApiUsersByIdWorkingBlock = <
@@ -114,38 +167,8 @@ export const useDefaultServiceGetApiUsersByIdWorkingBlock = <
     queryFn: () => DefaultService.getApiUsersByIdWorkingBlock({ id }) as TData,
     ...options,
   });
-export const useDefaultServiceGetApiUsersGetAllPublicAndAvailable = <
-  TData = Common.DefaultServiceGetApiUsersGetAllPublicAndAvailableDefaultResponse,
-  TError = unknown,
-  TQueryKey extends Array<unknown> = unknown[],
->(
-  queryKey?: TQueryKey,
-  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
-) =>
-  useQuery<TData, TError>({
-    queryKey:
-      Common.UseDefaultServiceGetApiUsersGetAllPublicAndAvailableKeyFn(
-        queryKey,
-      ),
-    queryFn: () =>
-      DefaultService.getApiUsersGetAllPublicAndAvailable() as TData,
-    ...options,
-  });
-export const useDefaultServiceGetApiUsers = <
-  TData = Common.DefaultServiceGetApiUsersDefaultResponse,
-  TError = unknown,
-  TQueryKey extends Array<unknown> = unknown[],
->(
-  queryKey?: TQueryKey,
-  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
-) =>
-  useQuery<TData, TError>({
-    queryKey: Common.UseDefaultServiceGetApiUsersKeyFn(queryKey),
-    queryFn: () => DefaultService.getApiUsers() as TData,
-    ...options,
-  });
-export const useDefaultServicePostApiSensorsById = <
-  TData = Common.DefaultServicePostApiSensorsByIdMutationResult,
+export const useSensorServicePostApiSensorsById = <
+  TData = Common.SensorServicePostApiSensorsByIdMutationResult,
   TError = unknown,
   TContext = unknown,
 >(
@@ -172,14 +195,14 @@ export const useDefaultServicePostApiSensorsById = <
     TContext
   >({
     mutationFn: ({ id, requestBody }) =>
-      DefaultService.postApiSensorsById({
+      SensorService.postApiSensorsById({
         id,
         requestBody,
       }) as unknown as Promise<TData>,
     ...options,
   });
-export const useOfficeServicePutApiOfficeByOfficeId = <
-  TData = Common.OfficeServicePutApiOfficeByOfficeIdMutationResult,
+export const useOfficesServicePutApiOfficesByOfficeId = <
+  TData = Common.OfficesServicePutApiOfficesByOfficeIdMutationResult,
   TError = unknown,
   TContext = unknown,
 >(
@@ -206,14 +229,14 @@ export const useOfficeServicePutApiOfficeByOfficeId = <
     TContext
   >({
     mutationFn: ({ officeId, requestBody }) =>
-      OfficeService.putApiOfficeByOfficeId({
+      OfficesService.putApiOfficesByOfficeId({
         officeId,
         requestBody,
       }) as unknown as Promise<TData>,
     ...options,
   });
-export const useDefaultServicePutApiUsersById = <
-  TData = Common.DefaultServicePutApiUsersByIdMutationResult,
+export const useUsersServicePutApiUsersById = <
+  TData = Common.UsersServicePutApiUsersByIdMutationResult,
   TError = unknown,
   TContext = unknown,
 >(
@@ -240,7 +263,7 @@ export const useDefaultServicePutApiUsersById = <
     TContext
   >({
     mutationFn: ({ id, requestBody }) =>
-      DefaultService.putApiUsersById({
+      UsersService.putApiUsersById({
         id,
         requestBody,
       }) as unknown as Promise<TData>,

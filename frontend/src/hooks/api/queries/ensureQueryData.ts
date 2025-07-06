@@ -1,28 +1,14 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2
 
 import { type QueryClient } from '@tanstack/react-query';
-import { DefaultService, OfficeService } from '../requests/services.gen';
+import {
+  DefaultService,
+  OfficesService,
+  SensorService,
+  UsersService,
+} from '../requests/services.gen';
 import * as Common from './common';
-export const ensureUseOfficeServiceGetApiOfficeData = (
-  queryClient: QueryClient,
-) =>
-  queryClient.ensureQueryData({
-    queryKey: Common.UseOfficeServiceGetApiOfficeKeyFn(),
-    queryFn: () => OfficeService.getApiOffice(),
-  });
-export const ensureUseDefaultServiceGetApiSensorsByIdData = (
-  queryClient: QueryClient,
-  {
-    id,
-  }: {
-    id: string;
-  },
-) =>
-  queryClient.ensureQueryData({
-    queryKey: Common.UseDefaultServiceGetApiSensorsByIdKeyFn({ id }),
-    queryFn: () => DefaultService.getApiSensorsById({ id }),
-  });
-export const ensureUseDefaultServiceGetApiSensorsByOfficeIdData = (
+export const ensureUseOfficesServiceGetApiOfficesByOfficeIdData = (
   queryClient: QueryClient,
   {
     officeId,
@@ -31,19 +17,19 @@ export const ensureUseDefaultServiceGetApiSensorsByOfficeIdData = (
   },
 ) =>
   queryClient.ensureQueryData({
-    queryKey: Common.UseDefaultServiceGetApiSensorsByOfficeIdKeyFn({
+    queryKey: Common.UseOfficesServiceGetApiOfficesByOfficeIdKeyFn({
       officeId,
     }),
-    queryFn: () => DefaultService.getApiSensorsByOfficeId({ officeId }),
+    queryFn: () => OfficesService.getApiOfficesByOfficeId({ officeId }),
   });
-export const ensureUseDefaultServiceGetApiSensorsData = (
+export const ensureUseOfficesServiceGetApiOfficesData = (
   queryClient: QueryClient,
 ) =>
   queryClient.ensureQueryData({
-    queryKey: Common.UseDefaultServiceGetApiSensorsKeyFn(),
-    queryFn: () => DefaultService.getApiSensors(),
+    queryKey: Common.UseOfficesServiceGetApiOfficesKeyFn(),
+    queryFn: () => OfficesService.getApiOffices(),
   });
-export const ensureUseDefaultServiceGetApiUsersByIdData = (
+export const ensureUseSensorServiceGetApiSensorsByIdData = (
   queryClient: QueryClient,
   {
     id,
@@ -52,8 +38,53 @@ export const ensureUseDefaultServiceGetApiUsersByIdData = (
   },
 ) =>
   queryClient.ensureQueryData({
-    queryKey: Common.UseDefaultServiceGetApiUsersByIdKeyFn({ id }),
-    queryFn: () => DefaultService.getApiUsersById({ id }),
+    queryKey: Common.UseSensorServiceGetApiSensorsByIdKeyFn({ id }),
+    queryFn: () => SensorService.getApiSensorsById({ id }),
+  });
+export const ensureUseSensorServiceGetApiSensorsByOfficeIdData = (
+  queryClient: QueryClient,
+  {
+    officeId,
+  }: {
+    officeId: string;
+  },
+) =>
+  queryClient.ensureQueryData({
+    queryKey: Common.UseSensorServiceGetApiSensorsByOfficeIdKeyFn({ officeId }),
+    queryFn: () => SensorService.getApiSensorsByOfficeId({ officeId }),
+  });
+export const ensureUseSensorServiceGetApiSensorsData = (
+  queryClient: QueryClient,
+) =>
+  queryClient.ensureQueryData({
+    queryKey: Common.UseSensorServiceGetApiSensorsKeyFn(),
+    queryFn: () => SensorService.getApiSensors(),
+  });
+export const ensureUseUsersServiceGetApiUsersByIdData = (
+  queryClient: QueryClient,
+  {
+    id,
+  }: {
+    id: string;
+  },
+) =>
+  queryClient.ensureQueryData({
+    queryKey: Common.UseUsersServiceGetApiUsersByIdKeyFn({ id }),
+    queryFn: () => UsersService.getApiUsersById({ id }),
+  });
+export const ensureUseUsersServiceGetApiUsersGetAllPublicAndAvailableData = (
+  queryClient: QueryClient,
+) =>
+  queryClient.ensureQueryData({
+    queryKey: Common.UseUsersServiceGetApiUsersGetAllPublicAndAvailableKeyFn(),
+    queryFn: () => UsersService.getApiUsersGetAllPublicAndAvailable(),
+  });
+export const ensureUseUsersServiceGetApiUsersData = (
+  queryClient: QueryClient,
+) =>
+  queryClient.ensureQueryData({
+    queryKey: Common.UseUsersServiceGetApiUsersKeyFn(),
+    queryFn: () => UsersService.getApiUsers(),
   });
 export const ensureUseDefaultServiceGetApiUsersByIdWorkingBlockData = (
   queryClient: QueryClient,
@@ -66,19 +97,4 @@ export const ensureUseDefaultServiceGetApiUsersByIdWorkingBlockData = (
   queryClient.ensureQueryData({
     queryKey: Common.UseDefaultServiceGetApiUsersByIdWorkingBlockKeyFn({ id }),
     queryFn: () => DefaultService.getApiUsersByIdWorkingBlock({ id }),
-  });
-export const ensureUseDefaultServiceGetApiUsersGetAllPublicAndAvailableData = (
-  queryClient: QueryClient,
-) =>
-  queryClient.ensureQueryData({
-    queryKey:
-      Common.UseDefaultServiceGetApiUsersGetAllPublicAndAvailableKeyFn(),
-    queryFn: () => DefaultService.getApiUsersGetAllPublicAndAvailable(),
-  });
-export const ensureUseDefaultServiceGetApiUsersData = (
-  queryClient: QueryClient,
-) =>
-  queryClient.ensureQueryData({
-    queryKey: Common.UseDefaultServiceGetApiUsersKeyFn(),
-    queryFn: () => DefaultService.getApiUsers(),
   });

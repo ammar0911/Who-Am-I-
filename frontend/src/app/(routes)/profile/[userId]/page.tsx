@@ -12,7 +12,7 @@ import UserSettings from '@/components/Profile/UserSettings';
 import { WeeklyAvailabilityView } from '@/components/WeeklyAvailabilityView';
 import { AppContext } from '@/contexts/AppContext';
 import useCalendar from '@/hooks/useCalendar';
-import { useDefaultServiceGetApiUsersById } from '@/hooks/api/queries';
+import { useUsersServiceGetApiUsersById } from '@/hooks/api/queries';
 
 export default function ProfilePage() {
   const { t } = useContext(AppContext);
@@ -37,7 +37,7 @@ export default function ProfilePage() {
     data: user,
     isFetching: isUserFetching,
     isLoading: isUserLoading,
-  } = useDefaultServiceGetApiUsersById(
+  } = useUsersServiceGetApiUsersById(
     {
       id: userId || '',
     },

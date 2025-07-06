@@ -1,28 +1,14 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2
 
 import { type QueryClient } from '@tanstack/react-query';
-import { DefaultService, OfficeService } from '../requests/services.gen';
+import {
+  DefaultService,
+  OfficesService,
+  SensorService,
+  UsersService,
+} from '../requests/services.gen';
 import * as Common from './common';
-export const prefetchUseOfficeServiceGetApiOffice = (
-  queryClient: QueryClient,
-) =>
-  queryClient.prefetchQuery({
-    queryKey: Common.UseOfficeServiceGetApiOfficeKeyFn(),
-    queryFn: () => OfficeService.getApiOffice(),
-  });
-export const prefetchUseDefaultServiceGetApiSensorsById = (
-  queryClient: QueryClient,
-  {
-    id,
-  }: {
-    id: string;
-  },
-) =>
-  queryClient.prefetchQuery({
-    queryKey: Common.UseDefaultServiceGetApiSensorsByIdKeyFn({ id }),
-    queryFn: () => DefaultService.getApiSensorsById({ id }),
-  });
-export const prefetchUseDefaultServiceGetApiSensorsByOfficeId = (
+export const prefetchUseOfficesServiceGetApiOfficesByOfficeId = (
   queryClient: QueryClient,
   {
     officeId,
@@ -31,19 +17,19 @@ export const prefetchUseDefaultServiceGetApiSensorsByOfficeId = (
   },
 ) =>
   queryClient.prefetchQuery({
-    queryKey: Common.UseDefaultServiceGetApiSensorsByOfficeIdKeyFn({
+    queryKey: Common.UseOfficesServiceGetApiOfficesByOfficeIdKeyFn({
       officeId,
     }),
-    queryFn: () => DefaultService.getApiSensorsByOfficeId({ officeId }),
+    queryFn: () => OfficesService.getApiOfficesByOfficeId({ officeId }),
   });
-export const prefetchUseDefaultServiceGetApiSensors = (
+export const prefetchUseOfficesServiceGetApiOffices = (
   queryClient: QueryClient,
 ) =>
   queryClient.prefetchQuery({
-    queryKey: Common.UseDefaultServiceGetApiSensorsKeyFn(),
-    queryFn: () => DefaultService.getApiSensors(),
+    queryKey: Common.UseOfficesServiceGetApiOfficesKeyFn(),
+    queryFn: () => OfficesService.getApiOffices(),
   });
-export const prefetchUseDefaultServiceGetApiUsersById = (
+export const prefetchUseSensorServiceGetApiSensorsById = (
   queryClient: QueryClient,
   {
     id,
@@ -52,8 +38,51 @@ export const prefetchUseDefaultServiceGetApiUsersById = (
   },
 ) =>
   queryClient.prefetchQuery({
-    queryKey: Common.UseDefaultServiceGetApiUsersByIdKeyFn({ id }),
-    queryFn: () => DefaultService.getApiUsersById({ id }),
+    queryKey: Common.UseSensorServiceGetApiSensorsByIdKeyFn({ id }),
+    queryFn: () => SensorService.getApiSensorsById({ id }),
+  });
+export const prefetchUseSensorServiceGetApiSensorsByOfficeId = (
+  queryClient: QueryClient,
+  {
+    officeId,
+  }: {
+    officeId: string;
+  },
+) =>
+  queryClient.prefetchQuery({
+    queryKey: Common.UseSensorServiceGetApiSensorsByOfficeIdKeyFn({ officeId }),
+    queryFn: () => SensorService.getApiSensorsByOfficeId({ officeId }),
+  });
+export const prefetchUseSensorServiceGetApiSensors = (
+  queryClient: QueryClient,
+) =>
+  queryClient.prefetchQuery({
+    queryKey: Common.UseSensorServiceGetApiSensorsKeyFn(),
+    queryFn: () => SensorService.getApiSensors(),
+  });
+export const prefetchUseUsersServiceGetApiUsersById = (
+  queryClient: QueryClient,
+  {
+    id,
+  }: {
+    id: string;
+  },
+) =>
+  queryClient.prefetchQuery({
+    queryKey: Common.UseUsersServiceGetApiUsersByIdKeyFn({ id }),
+    queryFn: () => UsersService.getApiUsersById({ id }),
+  });
+export const prefetchUseUsersServiceGetApiUsersGetAllPublicAndAvailable = (
+  queryClient: QueryClient,
+) =>
+  queryClient.prefetchQuery({
+    queryKey: Common.UseUsersServiceGetApiUsersGetAllPublicAndAvailableKeyFn(),
+    queryFn: () => UsersService.getApiUsersGetAllPublicAndAvailable(),
+  });
+export const prefetchUseUsersServiceGetApiUsers = (queryClient: QueryClient) =>
+  queryClient.prefetchQuery({
+    queryKey: Common.UseUsersServiceGetApiUsersKeyFn(),
+    queryFn: () => UsersService.getApiUsers(),
   });
 export const prefetchUseDefaultServiceGetApiUsersByIdWorkingBlock = (
   queryClient: QueryClient,
@@ -66,19 +95,4 @@ export const prefetchUseDefaultServiceGetApiUsersByIdWorkingBlock = (
   queryClient.prefetchQuery({
     queryKey: Common.UseDefaultServiceGetApiUsersByIdWorkingBlockKeyFn({ id }),
     queryFn: () => DefaultService.getApiUsersByIdWorkingBlock({ id }),
-  });
-export const prefetchUseDefaultServiceGetApiUsersGetAllPublicAndAvailable = (
-  queryClient: QueryClient,
-) =>
-  queryClient.prefetchQuery({
-    queryKey:
-      Common.UseDefaultServiceGetApiUsersGetAllPublicAndAvailableKeyFn(),
-    queryFn: () => DefaultService.getApiUsersGetAllPublicAndAvailable(),
-  });
-export const prefetchUseDefaultServiceGetApiUsers = (
-  queryClient: QueryClient,
-) =>
-  queryClient.prefetchQuery({
-    queryKey: Common.UseDefaultServiceGetApiUsersKeyFn(),
-    queryFn: () => DefaultService.getApiUsers(),
   });

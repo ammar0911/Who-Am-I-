@@ -4,6 +4,8 @@ import { userApi } from '@/lib/firestoreApi';
  * @openapi
  * /api/users:
  *   get:
+ *     tags:
+ *       - Users
  *     summary: Get all users
  *     description: Returns a list of all users.
  *     responses:

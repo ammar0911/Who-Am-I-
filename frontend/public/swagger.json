@@ -163,9 +163,9 @@
     }
   },
   "paths": {
-    "/api/office/{officeId}": {
+    "/api/offices/{officeId}": {
       "put": {
-        "tags": ["Office"],
+        "tags": ["Offices"],
         "summary": "Update an office by ID",
         "description": "Update an existing office with the provided data",
         "parameters": [
@@ -234,11 +234,50 @@
             }
           }
         }
+      },
+      "get": {
+        "tags": ["Offices"],
+        "summary": "Get an office by ID",
+        "description": "Returns a single office by its ID.",
+        "parameters": [
+          {
+            "name": "officeId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the office to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Office retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficeDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Office not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Office with ID 'abc123' not found"
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/api/office": {
+    "/api/offices": {
       "get": {
-        "tags": ["Office"],
+        "tags": ["Offices"],
         "summary": "Get all offices",
         "description": "Retrieve a list of all offices from the database",
         "responses": {
@@ -271,6 +310,7 @@
     },
     "/api/sensors/{id}": {
       "get": {
+        "tags": ["Sensor"],
         "summary": "Get a sensor by ID",
         "description": "Returns a single sensor by its ID.",
         "parameters": [
@@ -336,6 +376,7 @@
         }
       },
       "post": {
+        "tags": ["Sensor"],
         "summary": "Update a sensor by ID",
         "description": "Creates a new entry of sensor status",
         "parameters": [
@@ -394,6 +435,7 @@
     },
     "/api/sensors/byOfficeId": {
       "get": {
+        "tags": ["Sensor"],
         "summary": "Get sensors by office ID",
         "description": "Returns a list of sensors associated with a specific office ID.",
         "parameters": [
@@ -451,6 +493,7 @@
     },
     "/api/sensors": {
       "get": {
+        "tags": ["Sensor"],
         "summary": "Get all sensors",
         "description": "Returns a list of all sensors.",
         "responses": {
@@ -506,6 +549,7 @@
     },
     "/api/users/{id}": {
       "get": {
+        "tags": ["Users"],
         "summary": "Get a user by ID",
         "description": "Returns a single user by their ID.",
         "parameters": [
@@ -560,6 +604,7 @@
         }
       },
       "put": {
+        "tags": ["Users"],
         "summary": "Update a user by ID",
         "description": "Updates a user's information by their ID.",
         "parameters": [
@@ -662,6 +707,7 @@
     },
     "/api/users/getAllPublicAndAvailable": {
       "get": {
+        "tags": ["Users"],
         "summary": "Get all users",
         "description": "Returns a list of all users.",
         "responses": {
@@ -736,6 +782,7 @@
     },
     "/api/users": {
       "get": {
+        "tags": ["Users"],
         "summary": "Get all users",
         "description": "Returns a list of all users.",
         "responses": {

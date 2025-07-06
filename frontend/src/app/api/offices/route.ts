@@ -2,10 +2,10 @@ import { officeApi } from '@/lib/firestoreApi';
 
 /**
  * @openapi
- * /api/office:
+ * /api/offices:
  *   get:
  *     tags:
- *       - Office
+ *       - Offices
  *     summary: Get all offices
  *     description: Retrieve a list of all offices from the database
  *     responses:
