@@ -94,7 +94,7 @@ export const $AvailabilityStatus = {
 
 export const $OfficeDTO = {
   type: 'object',
-  required: ['id', 'name', 'batteryStatus', 'isOpen'],
+  required: ['id'],
   properties: {
     id: {
       type: 'string',

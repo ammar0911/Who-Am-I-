@@ -66,8 +66,8 @@ export const PUT = async (
       });
     }
 
-    const updatedOffice = await officeApi.update(officeId, body);
-    return Response.json(updatedOffice);
+    await officeApi.update(officeId, body);
+    return Response.json({ message: 'Office data added successfully' });
   } catch (error) {
     console.error('API Error:', error);
     return new Response(`Webhook error: ${String(error)}`, {

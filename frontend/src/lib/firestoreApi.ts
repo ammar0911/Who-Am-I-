@@ -35,6 +35,8 @@ import mapWorkingBlockDocToDto from './mapWorkingBlockDocToDto';
 import mapSensorDocToDTO from './mapSensorDocToDto';
 import mapOfficeDocToDTO from './mapOfficeDocToDto';
 import { SensorInputDTO } from '@/hooks/api/requests';
+import pick from 'lodash/pick';
+import pickPropertiesIfDefined from './pickPropertiesIfDefined';
 
 export const userApi = {
   async getById(id: string): Promise<UserDTO | null> {
@@ -432,10 +434,30 @@ export const officeApi = {
     }
   },
 
-  async update(id: string, officeData: Partial<DBOffice>): Promise<void> {
+  async update(id: string, officeData: Partial<OfficeDTO>): Promise<void> {
     try {
       const docRef = doc(db, COLLECTIONS.OFFICE, id);
-      await updateDoc(docRef, officeData);
+
+      const filteredOffice = pickPropertiesIfDefined(officeData, [
+        'name',
+        'sensorId',
+      ]);
+
+      let newOffice: Partial<DBOffice> = {
+        name: filteredOffice.name,
+      };
+
+      if (filteredOffice.sensorId) {
+        const sensorDocRef = doc(
+          db,
+          COLLECTIONS.SENSOR,
+          filteredOffice.sensorId,
+        );
+
+        newOffice.sensor_id = sensorDocRef;
+      }
+
+      await updateDoc(docRef, newOffice);
     } catch (error) {
       console.error('Error updating office:', error);
       throw error;

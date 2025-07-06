@@ -132,7 +132,6 @@ export async function POST(
   try {
     const { batteryStatus, isOpen } =
       (await request.json()) satisfies SensorInputDTO;
-    console.log('POST request body:', { batteryStatus, isOpen });
     if (typeof batteryStatus !== 'number' || typeof isOpen !== 'boolean') {
       return new Response(`Invalid request body`, {
         status: 400,

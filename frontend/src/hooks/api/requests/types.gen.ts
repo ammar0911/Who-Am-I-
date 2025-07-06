@@ -38,7 +38,7 @@ export type AvailabilityStatus = 'Available' | 'NotAvailable' | 'Private';
 
 export type OfficeDTO = {
   id: string;
-  name: string;
+  name?: string;
   /**
    * Sensor associated with the office.
    */

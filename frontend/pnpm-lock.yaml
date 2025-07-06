@@ -52,6 +52,9 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       mobx:
         specifier: ^6.13.7
         version: 6.13.7
@@ -92,6 +95,9 @@ importers:
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^5.2.2
         version: 5.2.2(prettier@3.6.2)
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
       '@types/node':
         specifier: ^20
         version: 20.19.0
@@ -2228,6 +2234,12 @@ packages:
     resolution:
       {
         integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==,
+      }
+
+  '@types/lodash@4.17.20':
+    resolution:
+      {
+        integrity: sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA==,
       }
 
   '@types/long@4.0.2':
@@ -9473,6 +9485,8 @@ snapshots:
     dependencies:
       '@types/ms': 2.1.0
       '@types/node': 20.19.0
+
+  '@types/lodash@4.17.20': {}
 
   '@types/long@4.0.2':
     optional: true
