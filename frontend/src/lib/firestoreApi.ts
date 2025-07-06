@@ -429,7 +429,7 @@ export const officeApi = {
 
   async create(officeData: Omit<OfficeDTO, 'id'>): Promise<string> {
     try {
-      let newOffice: Partial<DBOffice> = {
+      const newOffice: Partial<DBOffice> = {
         ...officeData,
       };
 
@@ -460,7 +460,7 @@ export const officeApi = {
     try {
       const docRef = doc(db, COLLECTIONS.OFFICE, id);
 
-      let newOffice: Partial<DBOffice> = {
+      const newOffice: Partial<DBOffice> = {
         ...officeData,
       };
 

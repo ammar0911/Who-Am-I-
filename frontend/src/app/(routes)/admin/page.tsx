@@ -117,7 +117,7 @@ export default function AdminPage() {
     if (office) {
       setSelectedOffice(office);
       setOfficeForm({
-        name: office.name,
+        name: office.name || '',
         sensorId: office.sensorId || '',
       });
     } else {
