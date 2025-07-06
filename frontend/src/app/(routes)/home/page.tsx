@@ -1,12 +1,10 @@
 'use client';
-import React, { useContext, useRef } from 'react';
-import { Search } from '@mui/icons-material';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { AppContext } from '@/contexts/AppContext';
-import { AvailabilityChip } from '@/components/AvailabilityChip';
+import { Search } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
+import React, { useContext, useRef } from 'react';
 
-import UserAvatar from '@/components/UserAvatar';
+import UserCard from '@/components/UserCard';
 import { useDefaultServiceGetApiUsers } from '@/hooks/api/queries';
 
 export default function HomePage() {
@@ -72,33 +70,7 @@ export default function HomePage() {
           {availableUsers.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {availableUsers.map((user) => (
-                <Link
-                  key={user.id}
-                  href={`/profile/${user.id}`}
-                  className="cursor-pointer bg-white/5 backdrop-blur-sm rounded-lg p-6 hover:bg-white/10 transition-all duration-300 border border-white/10"
-                >
-                  <div className="flex items-center space-x-4 mb-4">
-                    <UserAvatar
-                      width={48}
-                      height={48}
-                      userAvatar={user.avatar}
-                      userName={user.name}
-                    />
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">
-                        {user.name}
-                      </h3>
-                      <p className="text-sm text-white/70">{user.title}</p>
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <AvailabilityChip
-                      status={user.available}
-                      isPublic={user.isPublic}
-                      isLoggedIn={false}
-                    />
-                  </div>
-                </Link>
+                <UserCard key={user.id} user={user} hasDarkBackground />
               ))}
             </div>
           ) : (

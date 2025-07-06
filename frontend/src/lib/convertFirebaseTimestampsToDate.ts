@@ -11,7 +11,7 @@ const convertFirebaseTimestampsToDate = (data: Record<string, unknown>) => {
   const converted = { ...data };
   Object.keys(converted).forEach((key) => {
     if (converted[key] instanceof Timestamp) {
-      converted[key] = converted[key].toDate();
+      converted[key] = new Date(converted[key].toMillis());
     }
   });
   return converted;

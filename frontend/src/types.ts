@@ -1,9 +1,23 @@
 // Types and interfaces for the application
 import { DocumentReference } from 'firebase/firestore';
 import { ReactNode } from 'react';
-import { AvailabilityStatus, AccountType, UserDTO } from './hooks/api/requests';
+import {
+  AvailabilityStatus,
+  AccountType,
+  UserDTO,
+  OfficeDTO,
+  SensorDTO,
+  SensorInputDTO,
+} from './hooks/api/requests';
 
-export type { AvailabilityStatus, AccountType, UserDTO };
+export type {
+  AvailabilityStatus,
+  AccountType,
+  UserDTO,
+  OfficeDTO,
+  SensorDTO,
+  SensorInputDTO,
+};
 // Translation types
 export type ArrayTranslationKeys = 'daysOfWeek' | 'dayAbbreviations';
 export type TranslationKey = keyof TranslationStrings;
@@ -200,7 +214,7 @@ export interface User {
   title: string;
   department: string;
   avatar: string;
-  isPublic: boolean;
+  is_public: boolean;
 }
 
 export interface WorkingBlock {
@@ -212,22 +226,12 @@ export interface WorkingBlock {
 }
 
 export interface Sensor {
-  battery_status: number;
-  input_time: Date; // Firestore timestamp
-  is_open: boolean;
+  name: string;
 }
 
 export interface Office {
   name: string;
   sensor_id: DocumentReference;
-}
-
-export interface UserDoc extends User {
-  id: string;
-}
-
-export interface WorkingBlockDoc extends WorkingBlock {
-  id: string;
 }
 
 export interface WorkingBlockDTO {
@@ -239,25 +243,31 @@ export interface WorkingBlockDTO {
   weekDay: number;
 }
 
+export interface DBSensorInput {
+  battery_status: number;
+  input_time: Date;
+  is_open: boolean;
+  sensor_id: DocumentReference;
+}
+
+export interface SensorInputDoc extends DBSensorInput {
+  id: string;
+}
+
+export interface UserDoc extends User {
+  id: string;
+}
+
+export interface WorkingBlockDoc extends WorkingBlock {
+  id: string;
+}
+
 export interface SensorDoc extends Sensor {
   id: string;
 }
 
-export interface SensorDTO {
-  id: string;
-  batteryStatus: number;
-  inputTime: Date;
-  isOpen: boolean;
-}
-
 export interface OfficeDoc extends Office {
   id: string;
-}
-
-export interface OfficeDTO {
-  id: string;
-  name: string;
-  sensorId: string;
 }
 
 // Collection names as constants
@@ -266,4 +276,5 @@ export const COLLECTIONS = {
   WORKING_BLOCK: 'working_block',
   SENSOR: 'sensor',
   OFFICE: 'office',
+  SENSOR_INPUT: 'sensor_input',
 } as const;

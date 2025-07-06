@@ -1,3 +1,4 @@
+import { SensorInputDTO } from '@/hooks/api/requests';
 import { sensorApi } from '@/lib/firestoreApi';
 
 /**
@@ -47,9 +48,9 @@ import { sensorApi } from '@/lib/firestoreApi';
  *         description: Sensor not found
  *       500:
  *         description: Internal Server Error
- *   put:
+ *   post:
  *     summary: Update a sensor by ID
- *     description: Updates a sensor's battery status and open state by its ID.
+ *     description: Creates a new entry of sensor status
  *     parameters:
  *       - in: path
  *         name: id
@@ -62,17 +63,10 @@ import { sensorApi } from '@/lib/firestoreApi';
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               batteryStatus:
- *                 type: integer
- *                 example: 42
- *               isOpen:
- *                 type: boolean
- *                 example: true
+ *             $ref: '#/components/schemas/SensorInputDTO'
  *           example:
- *             batteryStatus: 42
- *             isOpen: true
+ *            batteryStatus: 45
+ *            isOpen: true
  *     responses:
  *       200:
  *         description: Sensor updated successfully
@@ -94,7 +88,7 @@ import { sensorApi } from '@/lib/firestoreApi';
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ sensorId: string }> }
+  { params }: { params: Promise<{ sensorId: string }> },
 ) {
   const { sensorId: id } = await params;
 
@@ -119,14 +113,9 @@ export async function GET(
   }
 }
 
-interface SensorPUTRequestBody {
-  batteryStatus: number;
-  isOpen: boolean;
-}
-
-export async function PUT(
+export async function POST(
   request: Request,
-  { params }: { params: Promise<{ sensorId: string }> }
+  { params }: { params: Promise<{ sensorId: string }> },
 ) {
   const { sensorId: id } = await params;
 
@@ -138,18 +127,20 @@ export async function PUT(
 
   try {
     const { batteryStatus, isOpen } =
-      (await request.json()) satisfies SensorPUTRequestBody;
-    console.log('PUT request body:', { batteryStatus, isOpen });
+      (await request.json()) satisfies SensorInputDTO;
+    console.log('POST request body:', { batteryStatus, isOpen });
     if (typeof batteryStatus !== 'number' || typeof isOpen !== 'boolean') {
       return new Response(`Invalid request body`, {
         status: 400,
       });
     }
-    await sensorApi.update(id, {
-      battery_status: batteryStatus,
-      is_open: isOpen,
+    await sensorApi.addSensorInput({
+      sensorId: id,
+      batteryStatus,
+      isOpen,
+      inputTime: new Date().toUTCString(),
     });
-    return Response.json({ message: 'Sensor updated successfully' });
+    return Response.json({ message: 'Sensor data added successfully' });
   } catch (error) {
     console.error('API Error:', error);
     return new Response(`Webhook error: ${String(error)}`, {

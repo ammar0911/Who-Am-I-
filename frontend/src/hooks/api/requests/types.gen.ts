@@ -28,6 +28,54 @@ export type AccountType = 'Admin' | 'Maintainer' | 'User' | 'Guest';
  */
 export type AvailabilityStatus = 'Available' | 'NotAvailable' | 'Private';
 
+export type OfficeDTO = {
+  id: string;
+  name: string;
+  /**
+   * Sensor associated with the office.
+   */
+  sensor?: SensorDTO | null;
+  /**
+   * ID of the sensor associated with the office.
+   */
+  sensorId?: string | null;
+};
+
+export type SensorDTO = {
+  id: string;
+  name: string | null;
+  status?: SensorInputDTO | null;
+};
+
+export type SensorInputDTO = {
+  id: string;
+  inputTime?: string;
+  /**
+   * Battery status of the sensor in percentage.
+   */
+  batteryStatus: number;
+  /**
+   * Indicates if the office is open.
+   */
+  isOpen: boolean;
+  /**
+   * ID of the sensor associated with the input.
+   */
+  sensorId: string;
+};
+
+export type PutApiOfficeByOfficeIdData = {
+  /**
+   * The unique identifier of the office to update
+   */
+  officeId: string;
+  requestBody: OfficeDTO;
+};
+
+export type PutApiOfficeByOfficeIdResponse = OfficeDTO;
+
+export type GetApiOfficeResponse = Array<OfficeDTO>;
+
 export type GetApiSensorsByIdData = {
   /**
    * The sensor ID
@@ -42,18 +90,15 @@ export type GetApiSensorsByIdResponse = {
   isOpen?: boolean;
 };
 
-export type PutApiSensorsByIdData = {
+export type PostApiSensorsByIdData = {
   /**
    * The sensor ID
    */
   id: string;
-  requestBody: {
-    batteryStatus?: number;
-    isOpen?: boolean;
-  };
+  requestBody: SensorInputDTO;
 };
 
-export type PutApiSensorsByIdResponse = {
+export type PostApiSensorsByIdResponse = {
   message?: string;
 };
 
@@ -128,6 +173,43 @@ export type GetApiUsersGetAllPublicAndAvailableResponse = Array<{
 export type GetApiUsersResponse = Array<UserDTO>;
 
 export type $OpenApiTs = {
+  '/api/office/{officeId}': {
+    put: {
+      req: PutApiOfficeByOfficeIdData;
+      res: {
+        /**
+         * Office updated successfully
+         */
+        200: OfficeDTO;
+        /**
+         * Bad request - Invalid input data
+         */
+        400: string;
+        /**
+         * Office not found
+         */
+        404: string;
+        /**
+         * Internal server error
+         */
+        500: string;
+      };
+    };
+  };
+  '/api/office': {
+    get: {
+      res: {
+        /**
+         * Successfully retrieved offices
+         */
+        200: Array<OfficeDTO>;
+        /**
+         * Internal server error
+         */
+        500: string;
+      };
+    };
+  };
   '/api/sensors/{id}': {
     get: {
       req: GetApiSensorsByIdData;
@@ -155,8 +237,8 @@ export type $OpenApiTs = {
         500: unknown;
       };
     };
-    put: {
-      req: PutApiSensorsByIdData;
+    post: {
+      req: PostApiSensorsByIdData;
       res: {
         /**
          * Sensor updated successfully

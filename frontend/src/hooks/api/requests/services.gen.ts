@@ -4,10 +4,13 @@ import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
 import type {
+  PutApiOfficeByOfficeIdData,
+  PutApiOfficeByOfficeIdResponse,
+  GetApiOfficeResponse,
   GetApiSensorsByIdData,
   GetApiSensorsByIdResponse,
-  PutApiSensorsByIdData,
-  PutApiSensorsByIdResponse,
+  PostApiSensorsByIdData,
+  PostApiSensorsByIdResponse,
   GetApiSensorsByOfficeIdData,
   GetApiSensorsByOfficeIdResponse,
   GetApiSensorsResponse,
@@ -20,6 +23,52 @@ import type {
   GetApiUsersGetAllPublicAndAvailableResponse,
   GetApiUsersResponse,
 } from './types.gen';
+
+export class OfficeService {
+  /**
+   * Update an office by ID
+   * Update an existing office with the provided data
+   * @param data The data for the request.
+   * @param data.officeId The unique identifier of the office to update
+   * @param data.requestBody
+   * @returns OfficeDTO Office updated successfully
+   * @throws ApiError
+   */
+  public static putApiOfficeByOfficeId(
+    data: PutApiOfficeByOfficeIdData,
+  ): CancelablePromise<PutApiOfficeByOfficeIdResponse> {
+    return __request(OpenAPI, {
+      method: 'PUT',
+      url: '/api/office/{officeId}',
+      path: {
+        officeId: data.officeId,
+      },
+      body: data.requestBody,
+      mediaType: 'application/json',
+      errors: {
+        400: 'Bad request - Invalid input data',
+        404: 'Office not found',
+        500: 'Internal server error',
+      },
+    });
+  }
+
+  /**
+   * Get all offices
+   * Retrieve a list of all offices from the database
+   * @returns OfficeDTO Successfully retrieved offices
+   * @throws ApiError
+   */
+  public static getApiOffice(): CancelablePromise<GetApiOfficeResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/office',
+      errors: {
+        500: 'Internal server error',
+      },
+    });
+  }
+}
 
 export class DefaultService {
   /**
@@ -49,18 +98,18 @@ export class DefaultService {
 
   /**
    * Update a sensor by ID
-   * Updates a sensor's battery status and open state by its ID.
+   * Creates a new entry of sensor status
    * @param data The data for the request.
    * @param data.id The sensor ID
    * @param data.requestBody
    * @returns unknown Sensor updated successfully
    * @throws ApiError
    */
-  public static putApiSensorsById(
-    data: PutApiSensorsByIdData,
-  ): CancelablePromise<PutApiSensorsByIdResponse> {
+  public static postApiSensorsById(
+    data: PostApiSensorsByIdData,
+  ): CancelablePromise<PostApiSensorsByIdResponse> {
     return __request(OpenAPI, {
-      method: 'PUT',
+      method: 'POST',
       url: '/api/sensors/{id}',
       path: {
         id: data.id,

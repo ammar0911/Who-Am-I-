@@ -1,11 +1,21 @@
-import { SensorDoc, SensorDTO } from '@/types';
+import { SensorDoc, SensorDTO, SensorInputDoc } from '@/types';
 
-const mapSensorDocToDTO = (doc: SensorDoc): SensorDTO => {
+const mapSensorDocToDTO = (
+  doc: SensorDoc,
+  status: SensorInputDoc | null = null,
+): SensorDTO => {
   return {
     id: doc.id,
-    batteryStatus: doc.battery_status,
-    inputTime: doc.input_time,
-    isOpen: doc.is_open,
+    status: status
+      ? {
+          id: status.id,
+          isOpen: status.is_open,
+          batteryStatus: status.battery_status,
+          inputTime: status.input_time?.toUTCString(),
+          sensorId: status.sensor_id?.id,
+        }
+      : null,
+    name: doc.name,
   };
 };
 

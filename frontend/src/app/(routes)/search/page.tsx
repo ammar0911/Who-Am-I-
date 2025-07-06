@@ -1,36 +1,34 @@
 'use client';
-import React, { useContext, useState, useEffect } from 'react';
-import { Search } from '@mui/icons-material';
-import Image from 'next/image';
-import Link from 'next/link';
+import UserCard from '@/components/UserCard';
 import { AppContext } from '@/contexts/AppContext';
-import { AvailabilityChip } from '@/components/AvailabilityChip';
+import { useDefaultServiceGetApiUsers } from '@/hooks/api/queries';
+import { Search } from '@mui/icons-material';
 import dynamic from 'next/dynamic';
-import useUsers from '@/hooks/useUsersData';
+import { useContext, useEffect, useState } from 'react';
 
 // Dynamically import Material-UI components
 const FormControl = dynamic(
   () => import('@mui/material').then((mod) => mod.FormControl),
-  { ssr: false }
+  { ssr: false },
 );
 const InputLabel = dynamic(
   () => import('@mui/material').then((mod) => mod.InputLabel),
-  { ssr: false }
+  { ssr: false },
 );
 const Select = dynamic(
   () => import('@mui/material').then((mod) => mod.Select),
-  { ssr: false }
+  { ssr: false },
 );
 const MenuItem = dynamic(
   () => import('@mui/material').then((mod) => mod.MenuItem),
-  { ssr: false }
+  { ssr: false },
 );
 
 export default function SearchPage() {
   const { t } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const { users } = useUsers();
+  const { data: users } = useDefaultServiceGetApiUsers();
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -57,8 +55,8 @@ export default function SearchPage() {
     const matchesSearch =
       searchQuery === '' ||
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.department.toLowerCase().includes(searchQuery.toLowerCase());
+      user.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.department?.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesDepartment =
       departmentFilter === t('allDepartments') ||
@@ -94,7 +92,7 @@ export default function SearchPage() {
               onChange={(e) => setDepartmentFilter(e.target.value as string)}
             >
               {departments.map((dept) => (
-                <MenuItem key={dept} value={dept}>
+                <MenuItem key={dept} value={String(dept)}>
                   {dept}
                 </MenuItem>
               ))}
@@ -105,41 +103,7 @@ export default function SearchPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredUsers.length > 0 ? (
-          filteredUsers.map((person) => (
-            <Link
-              key={person.id}
-              href={`/profile/${person.id}`}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center space-x-4">
-                <Image
-                  width={48}
-                  height={48}
-                  src={person.avatar}
-                  alt={person.name}
-                  className="w-12 h-12 rounded-full"
-                />
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">
-                    {person.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {person.title}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {person.department}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4">
-                <AvailabilityChip
-                  status={person.available}
-                  isPublic={person.isPublic}
-                  isLoggedIn={false}
-                />
-              </div>
-            </Link>
-          ))
+          filteredUsers.map((user) => <UserCard key={user.id} user={user} />)
         ) : (
           <div className="col-span-full text-center text-gray-500 dark:text-gray-400">
             {t('noResults')}

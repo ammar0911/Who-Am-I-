@@ -20,6 +20,7 @@ import {
   Sensor,
   SensorDoc,
   SensorDTO,
+  SensorInputDoc,
   User,
   UserDoc,
   UserDTO,
@@ -33,6 +34,7 @@ import mapUserDocToDTO from './mapUserDocToDto';
 import mapWorkingBlockDocToDto from './mapWorkingBlockDocToDto';
 import mapSensorDocToDTO from './mapSensorDocToDto';
 import mapOfficeDocToDTO from './mapOfficeDocToDto';
+import { SensorInputDTO } from '@/hooks/api/requests';
 
 export const userApi = {
   async getById(id: string): Promise<UserDTO | null> {
@@ -60,7 +62,7 @@ export const userApi = {
       const q = query(
         collection(db, COLLECTIONS.USER),
         where('email', '==', email),
-        limit(1)
+        limit(1),
       );
       const querySnapshot = await getDocs(q);
 
@@ -123,7 +125,7 @@ export const workingBlockApi = {
       const q = query(
         collection(db, COLLECTIONS.WORKING_BLOCK),
         where('user_id', '==', userId),
-        orderBy('start_ms', 'desc')
+        orderBy('start_ms', 'desc'),
       );
       const querySnapshot = await getDocs(q);
       const data = querySnapshot.docs.map((doc) => ({
@@ -142,7 +144,7 @@ export const workingBlockApi = {
     try {
       const docRef = await addDoc(
         collection(db, COLLECTIONS.WORKING_BLOCK),
-        workingBlockData
+        workingBlockData,
       );
       return docRef.id;
     } catch (error) {
@@ -153,7 +155,7 @@ export const workingBlockApi = {
 
   async update(
     id: string,
-    workingBlockData: Partial<WorkingBlock>
+    workingBlockData: Partial<WorkingBlock>,
   ): Promise<void> {
     try {
       const docRef = doc(db, COLLECTIONS.WORKING_BLOCK, id);
@@ -180,22 +182,41 @@ export const sensorApi = {
       const docRef = doc(db, COLLECTIONS.SENSOR, id);
       const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        const data = {
-          id: docSnap.id,
-          ...convertFirebaseTimestampsToDate(docSnap.data()),
-        } as SensorDoc;
-
-        return mapSensorDocToDTO(data);
+      if (!docSnap.exists()) {
+        return null;
       }
-      return null;
+      const data = {
+        id: docSnap.id,
+        ...convertFirebaseTimestampsToDate(docSnap.data()),
+      } as SensorDoc;
+
+      // Find latest sensor input by sensor ID
+      const sensorInputQuery = query(
+        collection(db, COLLECTIONS.SENSOR_INPUT),
+        where('sensor_id', '==', docRef),
+        orderBy('input_time', 'desc'),
+        limit(1),
+      );
+      const sensorInputSnap = await getDocs(sensorInputQuery);
+
+      if (sensorInputSnap.empty) {
+        return mapSensorDocToDTO(data, null);
+      }
+
+      const sensorInputData = sensorInputSnap.docs[0].data();
+      const sensorInputDoc = {
+        id: sensorInputSnap.docs[0].id,
+        ...convertFirebaseTimestampsToDate(sensorInputData),
+      } as SensorInputDoc;
+
+      return mapSensorDocToDTO(data, sensorInputDoc);
     } catch (error) {
       console.error('Error getting sensor:', error);
       throw error;
     }
   },
 
-  async getByOfficeId(officeId: string): Promise<SensorDTO> {
+  async getByOfficeId(officeId: string): Promise<SensorDTO | null> {
     try {
       const docRef = doc(db, COLLECTIONS.OFFICE, officeId);
       const docSnap = await getDoc(docRef);
@@ -208,16 +229,7 @@ export const sensorApi = {
         ...convertFirebaseTimestampsToDate(docSnap.data()),
       } as OfficeDoc;
 
-      const sensorSnap = await getDoc(data.sensor_id);
-      if (!sensorSnap.exists()) {
-        throw new Error(`Sensor with ID ${data.sensor_id} does not exist`);
-      }
-      const sensorData = {
-        id: sensorSnap.id,
-        ...convertFirebaseTimestampsToDate(sensorSnap.data()),
-      } as SensorDoc;
-
-      return mapSensorDocToDTO(sensorData);
+      return await sensorApi.getById(data.sensor_id?.id);
     } catch (error) {
       console.error('Error getting sensors by office ID:', error);
       throw error;
@@ -226,17 +238,37 @@ export const sensorApi = {
 
   async getAll(): Promise<SensorDTO[]> {
     try {
-      const q = query(
-        collection(db, COLLECTIONS.SENSOR),
-        orderBy('input_time', 'desc')
-      );
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(collection(db, COLLECTIONS.SENSOR));
       const data = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...convertFirebaseTimestampsToDate(doc.data()),
       })) as SensorDoc[];
+      // Fetch latest sensor input for each sensor
+      const sensorInputs = await Promise.all(
+        data.map(async (sensor) => {
+          const sensorInputQuery = query(
+            collection(db, COLLECTIONS.SENSOR_INPUT),
+            where('sensor_id', '==', doc(db, COLLECTIONS.SENSOR, sensor.id)),
+            orderBy('input_time', 'desc'),
+            limit(1),
+          );
+          const sensorInputSnap = await getDocs(sensorInputQuery);
+          if (!sensorInputSnap.empty) {
+            const sensorInputData = sensorInputSnap.docs[0].data();
+            return {
+              id: sensorInputSnap.docs[0].id,
+              ...convertFirebaseTimestampsToDate(sensorInputData),
+            } as SensorInputDoc;
+          }
+          return null;
+        }),
+      );
 
-      return data.map(mapSensorDocToDTO);
+      // Map sensor data to DTOs with latest input
+      return data.map((sensor, index) => {
+        const sensorInput = sensorInputs[index];
+        return mapSensorDocToDTO(sensor, sensorInput);
+      });
     } catch (error) {
       console.error('Error getting sensors:', error);
       throw error;
@@ -256,15 +288,33 @@ export const sensorApi = {
     }
   },
 
-  async update(
-    id: string,
-    sensorData: Partial<Omit<Sensor, 'input_time'>>
-  ): Promise<void> {
+  async update(id: string, sensorData: SensorDTO): Promise<void> {
     try {
       const docRef = doc(db, COLLECTIONS.SENSOR, id);
       await updateDoc(docRef, sensorData);
     } catch (error) {
       console.error('Error updating sensor:', error);
+      throw error;
+    }
+  },
+
+  async addSensorInput(
+    sensorInputData: Omit<SensorInputDTO, 'id'>,
+  ): Promise<void> {
+    try {
+      const sensorDocRef = doc(
+        db,
+        COLLECTIONS.SENSOR,
+        sensorInputData.sensorId,
+      );
+      await addDoc(collection(db, COLLECTIONS.SENSOR_INPUT), {
+        sensor_id: sensorDocRef,
+        input_time: serverTimestamp(),
+        is_open: sensorInputData.isOpen,
+        battery_status: sensorInputData.batteryStatus,
+      });
+    } catch (error) {
+      console.error('Error adding sensor input:', error);
       throw error;
     }
   },
@@ -282,7 +332,15 @@ export const officeApi = {
           ...convertFirebaseTimestampsToDate(docSnap.data()),
         } as OfficeDoc;
 
-        return mapOfficeDocToDTO(data);
+        const sensor = await sensorApi.getById(data.sensor_id?.id);
+
+        if (!sensor) {
+          throw new Error(`Sensor with ID ${data.sensor_id} does not exist`);
+        }
+
+        const dataWithSensor = { sensor, ...data };
+
+        return mapOfficeDocToDTO(dataWithSensor);
       }
       return null;
     } catch (error) {
@@ -299,7 +357,17 @@ export const officeApi = {
         ...convertFirebaseTimestampsToDate(doc.data()),
       })) as OfficeDoc[];
 
-      return data.map(mapOfficeDocToDTO);
+      const allSensors = await sensorApi.getAll();
+      const sensorMap = new Map(allSensors.map((s) => [s.id, s]));
+      const dataWithSensors = data.map((office) => {
+        const sensor = sensorMap.get(office.sensor_id?.id);
+        return {
+          ...office,
+          sensor: sensor || null,
+        };
+      });
+
+      return dataWithSensors.map(mapOfficeDocToDTO);
     } catch (error) {
       console.error('Error getting offices:', error);
       throw error;
@@ -311,7 +379,7 @@ export const officeApi = {
       const q = query(
         collection(db, COLLECTIONS.OFFICE),
         where('sensor_id', '==', sensorId),
-        limit(1)
+        limit(1),
       );
       const querySnapshot = await getDocs(q);
 
@@ -322,7 +390,13 @@ export const officeApi = {
           ...convertFirebaseTimestampsToDate(doc.data()),
         } as OfficeDoc;
 
-        return mapOfficeDocToDTO(data);
+        const sensor = await sensorApi.getById(sensorId);
+        if (!sensor) {
+          throw new Error(`Sensor with ID ${data.sensor_id} does not exist`);
+        }
+        const dataWithSensor = { sensor, ...data };
+
+        return mapOfficeDocToDTO(dataWithSensor);
       }
       return null;
     } catch (error) {
@@ -335,7 +409,7 @@ export const officeApi = {
     try {
       const docRef = await addDoc(
         collection(db, COLLECTIONS.OFFICE),
-        officeData
+        officeData,
       );
       return docRef.id;
     } catch (error) {
@@ -344,7 +418,10 @@ export const officeApi = {
     }
   },
 
-  async update(id: string, officeData: Partial<Office>): Promise<void> {
+  async update(
+    id: string,
+    officeData: Partial<Omit<Office, 'id'>>,
+  ): Promise<void> {
     try {
       const docRef = doc(db, COLLECTIONS.OFFICE, id);
       await updateDoc(docRef, officeData);

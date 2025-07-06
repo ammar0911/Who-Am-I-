@@ -21,7 +21,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "example": "NZYeL9zhepNhAeQavl5X"
+            "example": "NZYeL9zhepNhAeQavl5X",
+            "readonly": true
           },
           "email": {
             "type": "string"
@@ -78,10 +79,196 @@
         "type": "string",
         "enum": ["Available", "NotAvailable", "Private"],
         "description": "The availability status of the user."
+      },
+      "OfficeDTO": {
+        "type": "object",
+        "required": ["id", "name", "batteryStatus", "isOpen"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "NZYeL9zhepNhAeQavl5X",
+            "readonly": true
+          },
+          "name": {
+            "type": "string",
+            "example": "Main Office"
+          },
+          "sensor": {
+            "$ref": "#/components/schemas/SensorDTO",
+            "description": "Sensor associated with the office.",
+            "nullable": true,
+            "readonly": true
+          },
+          "sensorId": {
+            "type": "string",
+            "nullable": true,
+            "example": "h9yRIrq5y6qEeh3IflZ5",
+            "description": "ID of the sensor associated with the office."
+          }
+        }
+      },
+      "SensorDTO": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "h9yRIrq5y6qEeh3IflZ5",
+            "readonly": true
+          },
+          "name": {
+            "type": "string",
+            "example": "Main Sensor",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/SensorInputDTO",
+            "nullable": true
+          }
+        }
+      },
+      "SensorInputDTO": {
+        "type": "object",
+        "required": ["id", "batteryStatus", "isOpen", "sensorId"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "h9yRIrq5y6qEeh3IflZ5",
+            "readonly": true
+          },
+          "inputTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-10-01T12:00:00Z",
+            "readonly": true
+          },
+          "batteryStatus": {
+            "type": "number",
+            "example": "85",
+            "description": "Battery status of the sensor in percentage."
+          },
+          "isOpen": {
+            "type": "boolean",
+            "example": true,
+            "description": "Indicates if the office is open."
+          },
+          "sensorId": {
+            "type": "string",
+            "example": "h9yRIrq5y6qEeh3IflZ5",
+            "description": "ID of the sensor associated with the input.",
+            "writeOnly": true
+          }
+        }
       }
     }
   },
   "paths": {
+    "/api/office/{officeId}": {
+      "put": {
+        "tags": ["Office"],
+        "summary": "Update an office by ID",
+        "description": "Update an existing office with the provided data",
+        "parameters": [
+          {
+            "name": "officeId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the office to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfficeDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Office updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficeDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Invalid office data provided"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Office not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Office with ID 'abc123' not  found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Webhook error: Database connection failed"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/office": {
+      "get": {
+        "tags": ["Office"],
+        "summary": "Get all offices",
+        "description": "Retrieve a list of all offices from the database",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved offices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfficeDTO"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Webhook error: Database connection failed"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sensors/{id}": {
       "get": {
         "summary": "Get a sensor by ID",
@@ -148,9 +335,9 @@
           }
         }
       },
-      "put": {
+      "post": {
         "summary": "Update a sensor by ID",
-        "description": "Updates a sensor's battery status and open state by its ID.",
+        "description": "Creates a new entry of sensor status",
         "parameters": [
           {
             "in": "path",
@@ -167,20 +354,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "batteryStatus": {
-                    "type": "integer",
-                    "example": 42
-                  },
-                  "isOpen": {
-                    "type": "boolean",
-                    "example": true
-                  }
-                }
+                "$ref": "#/components/schemas/SensorInputDTO"
               },
               "example": {
-                "batteryStatus": 42,
+                "batteryStatus": 45,
                 "isOpen": true
               }
             }

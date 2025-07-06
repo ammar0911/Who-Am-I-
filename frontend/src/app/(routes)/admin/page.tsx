@@ -61,7 +61,7 @@ export default function AdminPage() {
     name: '',
     title: '',
     department: '',
-    accountType: AccountType.Guest,
+    accountType: 'Guest' as AccountType,
     officeId: '',
     isPublic: false,
   });
@@ -78,7 +78,7 @@ export default function AdminPage() {
     severity: 'success' as 'success' | 'error' | 'info' | 'warning',
   });
 
-  const isAdmin = currentUser?.accountType === AccountType.Admin;
+  const isAdmin = currentUser?.accountType === 'Admin';
 
   // Debug information
   useEffect(() => {
@@ -87,7 +87,7 @@ export default function AdminPage() {
         id: currentUser.id,
         name: currentUser.name,
         accountType: currentUser.accountType,
-        isAdmin: currentUser.accountType === AccountType.Admin,
+        isAdmin: currentUser.accountType === 'Admin',
       });
     } else if (status === 'loading') {
       console.log('Admin Page - Session is still loading');
@@ -106,7 +106,7 @@ export default function AdminPage() {
       name: user.name || '',
       title: user.title || '',
       department: user.department || '',
-      accountType: user.accountType || AccountType.Guest,
+      accountType: user.accountType || 'Guest',
       officeId: user.officeId || '',
       isPublic: user.isPublic || userSettings.isPublic || false,
     });
@@ -313,7 +313,7 @@ export default function AdminPage() {
     }
 
     // Check if user is admin, if not redirect to home
-    if (currentUser.accountType !== AccountType.Admin) {
+    if (currentUser.accountType !== 'Admin') {
       // Not an admin
       console.log('Admin Page - User is not an admin, redirecting to home');
       router.push('/home');
@@ -728,21 +728,27 @@ export default function AdminPage() {
                           {sensor.id}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {renderBatteryStatus(sensor.batteryStatus)}
+                          {renderBatteryStatus(
+                            sensor.status?.batteryStatus || 0,
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              sensor.isOpen
+                              sensor.status?.isOpen
                                 ? 'bg-green-100 text-green-800'
                                 : 'bg-gray-100 text-gray-800'
                             }`}
                           >
-                            {sensor.isOpen ? t('available') : t('notAvailable')}
+                            {sensor.status?.isOpen
+                              ? t('available')
+                              : t('notAvailable')}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(sensor.inputTime).toLocaleString()}
+                          {new Date(
+                            sensor.status?.inputTime || '',
+                          ).toLocaleString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {offices.find((o) => o.sensorId === sensor.id)
@@ -839,18 +845,10 @@ export default function AdminPage() {
                   label={t('accountType')}
                   onChange={handleUserFormChange}
                 >
-                  <MenuItem value={AccountType.Admin}>
-                    {AccountType.Admin}
-                  </MenuItem>
-                  <MenuItem value={AccountType.Maintainer}>
-                    {AccountType.Maintainer}
-                  </MenuItem>
-                  <MenuItem value={AccountType.User}>
-                    {AccountType.User}
-                  </MenuItem>
-                  <MenuItem value={AccountType.Guest}>
-                    {AccountType.Guest}
-                  </MenuItem>
+                  <MenuItem value={'Admin'}>{'Admin'}</MenuItem>
+                  <MenuItem value={'Maintainer'}>{'Maintainer'}</MenuItem>
+                  <MenuItem value={'User'}>{'User'}</MenuItem>
+                  <MenuItem value={'Guest'}>{'Guest'}</MenuItem>
                 </Select>
               </FormControl>
 
@@ -975,7 +973,9 @@ export default function AdminPage() {
                     .map((sensor) => (
                       <MenuItem key={sensor.id} value={sensor.id}>
                         {sensor.id} - {t('batteryStatus')}:{' '}
-                        {sensor.batteryStatus}%
+                        {sensor.status?.batteryStatus
+                          ? `${sensor.status.batteryStatus}%`
+                          : 'Unknown'}
                       </MenuItem>
                     ))}
                 </Select>

@@ -1,7 +1,18 @@
 // generated with @7nohe/openapi-react-query-codegen@1.6.2
 
 import { UseQueryResult } from '@tanstack/react-query';
-import { DefaultService } from '../requests/services.gen';
+import { DefaultService, OfficeService } from '../requests/services.gen';
+export type OfficeServiceGetApiOfficeDefaultResponse = Awaited<
+  ReturnType<typeof OfficeService.getApiOffice>
+>;
+export type OfficeServiceGetApiOfficeQueryResult<
+  TData = OfficeServiceGetApiOfficeDefaultResponse,
+  TError = unknown,
+> = UseQueryResult<TData, TError>;
+export const useOfficeServiceGetApiOfficeKey = 'OfficeServiceGetApiOffice';
+export const UseOfficeServiceGetApiOfficeKeyFn = (
+  queryKey?: Array<unknown>,
+) => [useOfficeServiceGetApiOfficeKey, ...(queryKey ?? [])];
 export type DefaultServiceGetApiSensorsByIdDefaultResponse = Awaited<
   ReturnType<typeof DefaultService.getApiSensorsById>
 >;
@@ -114,8 +125,11 @@ export const useDefaultServiceGetApiUsersKey = 'DefaultServiceGetApiUsers';
 export const UseDefaultServiceGetApiUsersKeyFn = (
   queryKey?: Array<unknown>,
 ) => [useDefaultServiceGetApiUsersKey, ...(queryKey ?? [])];
-export type DefaultServicePutApiSensorsByIdMutationResult = Awaited<
-  ReturnType<typeof DefaultService.putApiSensorsById>
+export type DefaultServicePostApiSensorsByIdMutationResult = Awaited<
+  ReturnType<typeof DefaultService.postApiSensorsById>
+>;
+export type OfficeServicePutApiOfficeByOfficeIdMutationResult = Awaited<
+  ReturnType<typeof OfficeService.putApiOfficeByOfficeId>
 >;
 export type DefaultServicePutApiUsersByIdMutationResult = Awaited<
   ReturnType<typeof DefaultService.putApiUsersById>

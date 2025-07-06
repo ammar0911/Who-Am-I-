@@ -6,8 +6,22 @@ import {
   useMutation,
   useQuery,
 } from '@tanstack/react-query';
-import { DefaultService } from '../requests/services.gen';
+import { DefaultService, OfficeService } from '../requests/services.gen';
+import { OfficeDTO, SensorInputDTO } from '../requests/types.gen';
 import * as Common from './common';
+export const useOfficeServiceGetApiOffice = <
+  TData = Common.OfficeServiceGetApiOfficeDefaultResponse,
+  TError = unknown,
+  TQueryKey extends Array<unknown> = unknown[],
+>(
+  queryKey?: TQueryKey,
+  options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery<TData, TError>({
+    queryKey: Common.UseOfficeServiceGetApiOfficeKeyFn(queryKey),
+    queryFn: () => OfficeService.getApiOffice() as TData,
+    ...options,
+  });
 export const useDefaultServiceGetApiSensorsById = <
   TData = Common.DefaultServiceGetApiSensorsByIdDefaultResponse,
   TError = unknown,
@@ -130,8 +144,8 @@ export const useDefaultServiceGetApiUsers = <
     queryFn: () => DefaultService.getApiUsers() as TData,
     ...options,
   });
-export const useDefaultServicePutApiSensorsById = <
-  TData = Common.DefaultServicePutApiSensorsByIdMutationResult,
+export const useDefaultServicePostApiSensorsById = <
+  TData = Common.DefaultServicePostApiSensorsByIdMutationResult,
   TError = unknown,
   TContext = unknown,
 >(
@@ -141,7 +155,7 @@ export const useDefaultServicePutApiSensorsById = <
       TError,
       {
         id: string;
-        requestBody: { batteryStatus?: number; isOpen?: boolean };
+        requestBody: SensorInputDTO;
       },
       TContext
     >,
@@ -153,13 +167,47 @@ export const useDefaultServicePutApiSensorsById = <
     TError,
     {
       id: string;
-      requestBody: { batteryStatus?: number; isOpen?: boolean };
+      requestBody: SensorInputDTO;
     },
     TContext
   >({
     mutationFn: ({ id, requestBody }) =>
-      DefaultService.putApiSensorsById({
+      DefaultService.postApiSensorsById({
         id,
+        requestBody,
+      }) as unknown as Promise<TData>,
+    ...options,
+  });
+export const useOfficeServicePutApiOfficeByOfficeId = <
+  TData = Common.OfficeServicePutApiOfficeByOfficeIdMutationResult,
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: Omit<
+    UseMutationOptions<
+      TData,
+      TError,
+      {
+        officeId: string;
+        requestBody: OfficeDTO;
+      },
+      TContext
+    >,
+    'mutationFn'
+  >,
+) =>
+  useMutation<
+    TData,
+    TError,
+    {
+      officeId: string;
+      requestBody: OfficeDTO;
+    },
+    TContext
+  >({
+    mutationFn: ({ officeId, requestBody }) =>
+      OfficeService.putApiOfficeByOfficeId({
+        officeId,
         requestBody,
       }) as unknown as Promise<TData>,
     ...options,

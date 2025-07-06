@@ -3,18 +3,17 @@ import { UserDoc, UserDTO } from '@/types';
 function mapUserDocToDTO(user: UserDoc): UserDTO {
   return {
     id: user.id,
-    accountType: user.account_type,
+    accountType: user.account_type || 'Guest',
     email: user.email,
     name: user.name,
-    officeId: user.office_id?.id,
-    password: user.password,
-    pronouns: user.pronouns,
-    userSettings: user.user_settings,
-    avatar: user.avatar || '', // Default to empty string if avatar is not provided
-    title: user.title || '', // Default to empty string if title is not provided
-    department: user.department || '', // Default to empty string if department is not provided
-    isPublic: user.isPublic || false, // Default to false if is_public is not set
-    available: 'Private', // Default to Private if not set
+    officeId: user.office_id?.id || null,
+    pronouns: user.pronouns || null,
+    userSettings: user.user_settings || '{}',
+    avatar: user.avatar || '',
+    title: user.title || '',
+    department: user.department || '',
+    isPublic: user.is_public || false,
+    available: 'Private',
   };
 }
 

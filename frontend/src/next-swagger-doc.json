@@ -21,7 +21,11 @@
             "isPublic"
           ],
           "properties": {
-            "id": { "type": "string", "example": "NZYeL9zhepNhAeQavl5X" },
+            "id": {
+              "type": "string",
+              "example": "NZYeL9zhepNhAeQavl5X",
+              "readonly": true
+            },
             "email": { "type": "string" },
             "name": { "type": "string" },
             "accountType": {
@@ -65,6 +69,83 @@
           "type": "string",
           "enum": ["Available", "NotAvailable", "Private"],
           "description": "The availability status of the user."
+        },
+        "OfficeDTO": {
+          "type": "object",
+          "required": ["id", "name", "batteryStatus", "isOpen"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "NZYeL9zhepNhAeQavl5X",
+              "readonly": true
+            },
+            "name": { "type": "string", "example": "Main Office" },
+            "sensor": {
+              "$ref": "#/components/schemas/SensorDTO",
+              "description": "Sensor associated with the office.",
+              "nullable": true,
+              "readonly": true
+            },
+            "sensorId": {
+              "type": "string",
+              "nullable": true,
+              "example": "h9yRIrq5y6qEeh3IflZ5",
+              "description": "ID of the sensor associated with the office."
+            }
+          }
+        },
+        "SensorDTO": {
+          "type": "object",
+          "required": ["id", "name"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "h9yRIrq5y6qEeh3IflZ5",
+              "readonly": true
+            },
+            "name": {
+              "type": "string",
+              "example": "Main Sensor",
+              "nullable": true
+            },
+            "status": {
+              "$ref": "#/components/schemas/SensorInputDTO",
+              "nullable": true
+            }
+          }
+        },
+        "SensorInputDTO": {
+          "type": "object",
+          "required": ["id", "batteryStatus", "isOpen", "sensorId"],
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "h9yRIrq5y6qEeh3IflZ5",
+              "readonly": true
+            },
+            "inputTime": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2023-10-01T12:00:00Z",
+              "readonly": true
+            },
+            "batteryStatus": {
+              "type": "number",
+              "example": "85",
+              "description": "Battery status of the sensor in percentage."
+            },
+            "isOpen": {
+              "type": "boolean",
+              "example": true,
+              "description": "Indicates if the office is open."
+            },
+            "sensorId": {
+              "type": "string",
+              "example": "h9yRIrq5y6qEeh3IflZ5",
+              "description": "ID of the sensor associated with the input.",
+              "writeOnly": true
+            }
+          }
         }
       }
     }
