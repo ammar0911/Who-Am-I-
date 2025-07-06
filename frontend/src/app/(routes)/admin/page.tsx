@@ -78,8 +78,6 @@ export default function AdminPage() {
     severity: 'success' as 'success' | 'error' | 'info' | 'warning',
   });
 
-  const isAdmin = currentUser?.accountType === 'Admin';
-
   // Debug information
   useEffect(() => {
     if (currentUser) {
@@ -87,7 +85,6 @@ export default function AdminPage() {
         id: currentUser.id,
         name: currentUser.name,
         accountType: currentUser.accountType,
-        isAdmin: currentUser.accountType === 'Admin',
       });
     } else if (status === 'loading') {
       console.log('Admin Page - Session is still loading');
@@ -212,8 +209,11 @@ export default function AdminPage() {
       let response;
       if (selectedOffice) {
         // Update existing office
+        console.log('Updating office:', selectedOffice.id);
+        console.log('Office form data:', officeForm);
+
         response = await fetch(`/api/offices/${selectedOffice.id}`, {
-          method: 'PATCH',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -444,7 +444,7 @@ export default function AdminPage() {
     );
   }
 
-  if (!isAdmin) {
+  if (currentUser?.accountType !== 'Admin') {
     return (
       <div className="container mx-auto p-4 flex flex-col items-center justify-center min-h-[70vh]">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative max-w-md">
@@ -755,7 +755,6 @@ export default function AdminPage() {
                           {offices.find((o) => o.sensorId === sensor.id)
                             ?.name || t('notAssigned')}
                         </td>
-                        {/* Edit button removed */}
                       </tr>
                     ))}
                   </tbody>
@@ -853,18 +852,7 @@ export default function AdminPage() {
                 </Select>
               </FormControl>
 
-              <TextField
-                margin="dense"
-                id="officeId"
-                name="officeId"
-                label={t('office')}
-                type="text"
-                fullWidth
-                value={userForm.officeId}
-                onChange={handleUserFormChange}
-              />
-
-              {/* <FormControl fullWidth margin="dense">
+              <FormControl fullWidth margin="dense">
                 <InputLabel id="office-select-label">Office</InputLabel>
                 <Select
                   labelId="office-select-label"
@@ -883,7 +871,7 @@ export default function AdminPage() {
                     </MenuItem>
                   ))}
                 </Select>
-              </FormControl> */}
+              </FormControl>
 
               <FormControlLabel
                 control={

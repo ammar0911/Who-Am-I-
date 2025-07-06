@@ -25,7 +25,7 @@ const MenuItem = dynamic(
 );
 
 export default function SearchPage() {
-  const { t } = useContext(AppContext);
+  const { t, language } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const { data: users } = useUsersServiceGetApiUsers();
@@ -34,21 +34,27 @@ export default function SearchPage() {
     const searchParams = new URLSearchParams(window.location.search);
     setSearchQuery(searchParams.get('query') || '');
   }, []);
-  const [departmentFilter, setDepartmentFilter] = useState<string>('');
+
+  const [departmentFilter, setDepartmentFilter] = useState<string>('all');
 
   // Early return if context is not yet available
   if (!t || !users) {
-    return null; // Or a loading state
+    return null;
   }
 
-  // Set initial department filter after we know t is available
-  if (departmentFilter === '') {
-    setDepartmentFilter(t('allDepartments'));
-  }
+  // Extract unique departments from users
+  const uniqueDepartments = [
+    ...new Set(
+      users
+        .map((user) => user.department)
+        .filter((dept): dept is string => dept != null),
+    ),
+  ];
 
-  const departments = [
-    t('allDepartments'),
-    ...new Set(users.map((user) => user.department)),
+  // Create department options with language-independent values
+  const departmentOptions = [
+    { value: 'all', label: t('allDepartments') },
+    ...uniqueDepartments.map((dept) => ({ value: dept, label: dept })),
   ];
 
   const filteredUsers = users.filter((user) => {
@@ -59,8 +65,7 @@ export default function SearchPage() {
       user.department?.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesDepartment =
-      departmentFilter === t('allDepartments') ||
-      user.department === departmentFilter;
+      departmentFilter === 'all' || user.department === departmentFilter;
 
     return matchesSearch && matchesDepartment;
   });
@@ -91,9 +96,9 @@ export default function SearchPage() {
               label={t('department')}
               onChange={(e) => setDepartmentFilter(e.target.value as string)}
             >
-              {departments.map((dept) => (
-                <MenuItem key={dept} value={String(dept)}>
-                  {dept}
+              {departmentOptions.map((dept) => (
+                <MenuItem key={dept.value} value={dept.value}>
+                  {dept.label}
                 </MenuItem>
               ))}
             </Select>

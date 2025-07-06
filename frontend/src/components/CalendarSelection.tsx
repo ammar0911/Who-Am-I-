@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from 'react';
+import { AppContext } from '@/contexts/AppContext';
 
 interface Calendar {
   id: string;
@@ -16,6 +17,7 @@ const CalendarSelection: React.FC<CalendarSelectionProps> = ({
   selectedCalendarIds,
   onCalendarSelectionChange,
 }) => {
+  const { t } = useContext(AppContext);
   const [currentSelectedIds, setCurrentSelectedIds] =
     useState<string[]>(selectedCalendarIds);
 
@@ -38,7 +40,7 @@ const CalendarSelection: React.FC<CalendarSelectionProps> = ({
     <div className="space-y-2">
       {availableCalendars.length === 0 ? (
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          No calendars available.
+          {t('noCalendarsAvailable')}
         </p>
       ) : (
         <ul className="space-y-2">

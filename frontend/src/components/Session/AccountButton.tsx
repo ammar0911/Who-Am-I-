@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import LogoutButton from './LogoutButton';
 import { useSession } from 'next-auth/react';
 
@@ -16,9 +17,11 @@ const AccountButton: React.FC = () => {
         href={`/profile/${session.userDTO?.id}`}
         className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
       >
-        <img
+        <Image
           className="h-8 w-8 rounded-full"
-          src={session.userDTO?.image || ''}
+          src={
+            session.userDTO?.image || 'https://placecats.com/millie_neo/300/300'
+          }
           alt="User avatar"
           width={32}
           height={32}
