@@ -371,6 +371,7 @@ export default function AdminPage() {
           return;
         }
         const data = await response.json();
+        console.log('Fetched users:', data);
         setUsers(data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -845,10 +846,10 @@ export default function AdminPage() {
                   label={t('accountType')}
                   onChange={handleUserFormChange}
                 >
-                  <MenuItem value={'Admin'}>{'Admin'}</MenuItem>
-                  <MenuItem value={'Maintainer'}>{'Maintainer'}</MenuItem>
-                  <MenuItem value={'User'}>{'User'}</MenuItem>
-                  <MenuItem value={'Guest'}>{'Guest'}</MenuItem>
+                  <MenuItem value="Admin">Admin</MenuItem>
+                  <MenuItem value="Maintainer">Maintainer</MenuItem>
+                  <MenuItem value="User">User</MenuItem>
+                  <MenuItem value="Guest">Guest</MenuItem>
                 </Select>
               </FormControl>
 
