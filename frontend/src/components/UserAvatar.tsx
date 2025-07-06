@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface UserAvatarProps {
   userAvatar?: string;
   userName: string;
@@ -27,10 +29,11 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   }
 
   return (
-    <img
+    <Image
       width={width}
       height={height}
       src={userAvatar}
+      alt="User avatar"
       className="rounded-full"
       aria-hidden
     />
