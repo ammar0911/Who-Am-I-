@@ -144,6 +144,9 @@ export const UseUsersServiceGetApiUsersKeyFn = (queryKey?: Array<unknown>) => [
   useUsersServiceGetApiUsersKey,
   ...(queryKey ?? []),
 ];
+export type OfficesServicePostApiOfficesMutationResult = Awaited<
+  ReturnType<typeof OfficesService.postApiOffices>
+>;
 export type SensorServicePostApiSensorsByIdMutationResult = Awaited<
   ReturnType<typeof SensorService.postApiSensorsById>
 >;

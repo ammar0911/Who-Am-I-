@@ -427,11 +427,27 @@ export const officeApi = {
     }
   },
 
-  async create(officeData: Omit<DBOffice, 'id'>): Promise<string> {
+  async create(officeData: Omit<OfficeDTO, 'id'>): Promise<string> {
     try {
+      let newOffice: Partial<DBOffice> = {
+        ...officeData,
+      };
+
+      if (officeData.sensorId) {
+        const sensorDocRef = doc(db, COLLECTIONS.SENSOR, officeData.sensorId);
+        const docSnap = await getDoc(sensorDocRef);
+        if (!docSnap.exists()) {
+          throw new Error(
+            `Sensor with ID ${officeData.sensorId} does not exist`,
+          );
+        }
+
+        newOffice.sensor_id = sensorDocRef;
+      }
+
       const docRef = await addDoc(
         collection(db, COLLECTIONS.OFFICE),
-        officeData,
+        pickPropertiesIfDefined(newOffice, ['name', 'sensor_id']),
       );
       return docRef.id;
     } catch (error) {

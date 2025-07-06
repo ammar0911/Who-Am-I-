@@ -9,6 +9,8 @@ import type {
   GetApiOfficesByOfficeIdData,
   GetApiOfficesByOfficeIdResponse,
   GetApiOfficesResponse,
+  PostApiOfficesData,
+  PostApiOfficesResponse,
   GetApiSensorsByIdData,
   GetApiSensorsByIdResponse,
   PostApiSensorsByIdData,
@@ -89,6 +91,29 @@ export class OfficesService {
       method: 'GET',
       url: '/api/offices',
       errors: {
+        500: 'Internal server error',
+      },
+    });
+  }
+
+  /**
+   * Create a new office
+   * Create a new office with the provided data
+   * @param data The data for the request.
+   * @param data.requestBody
+   * @returns OfficeDTO Office created successfully
+   * @throws ApiError
+   */
+  public static postApiOffices(
+    data: PostApiOfficesData,
+  ): CancelablePromise<PostApiOfficesResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/offices',
+      body: data.requestBody,
+      mediaType: 'application/json',
+      errors: {
+        400: 'Bad request - Missing required fields',
         500: 'Internal server error',
       },
     });

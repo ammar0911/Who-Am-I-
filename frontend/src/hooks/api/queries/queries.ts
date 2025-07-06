@@ -166,6 +166,37 @@ export const useUsersServiceGetApiUsers = <
     queryFn: () => UsersService.getApiUsers() as TData,
     ...options,
   });
+export const useOfficesServicePostApiOffices = <
+  TData = Common.OfficesServicePostApiOfficesMutationResult,
+  TError = unknown,
+  TContext = unknown,
+>(
+  options?: Omit<
+    UseMutationOptions<
+      TData,
+      TError,
+      {
+        requestBody: OfficeDTO;
+      },
+      TContext
+    >,
+    'mutationFn'
+  >,
+) =>
+  useMutation<
+    TData,
+    TError,
+    {
+      requestBody: OfficeDTO;
+    },
+    TContext
+  >({
+    mutationFn: ({ requestBody }) =>
+      OfficesService.postApiOffices({
+        requestBody,
+      }) as unknown as Promise<TData>,
+    ...options,
+  });
 export const useSensorServicePostApiSensorsById = <
   TData = Common.SensorServicePostApiSensorsByIdMutationResult,
   TError = unknown,
