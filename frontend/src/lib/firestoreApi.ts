@@ -14,7 +14,7 @@ import {
 } from 'firebase/firestore';
 import {
   COLLECTIONS,
-  Office,
+  DBOffice,
   OfficeDoc,
   OfficeDTO,
   Sensor,
@@ -419,7 +419,7 @@ export const officeApi = {
     }
   },
 
-  async create(officeData: Omit<Office, 'id'>): Promise<string> {
+  async create(officeData: Omit<DBOffice, 'id'>): Promise<string> {
     try {
       const docRef = await addDoc(
         collection(db, COLLECTIONS.OFFICE),
@@ -432,10 +432,7 @@ export const officeApi = {
     }
   },
 
-  async update(
-    id: string,
-    officeData: Partial<Omit<Office, 'id'>>,
-  ): Promise<void> {
+  async update(id: string, officeData: Partial<DBOffice>): Promise<void> {
     try {
       const docRef = doc(db, COLLECTIONS.OFFICE, id);
       await updateDoc(docRef, officeData);

@@ -237,7 +237,7 @@ export interface Sensor {
   name: string;
 }
 
-export interface Office {
+export interface DBOffice {
   name: string;
   sensor_id: DocumentReference;
 }
@@ -274,7 +274,7 @@ export interface SensorDoc extends Sensor {
   id: string;
 }
 
-export interface OfficeDoc extends Office {
+export interface OfficeDoc extends DBOffice {
   id: string;
 }
 
