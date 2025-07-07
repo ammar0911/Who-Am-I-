@@ -14,7 +14,7 @@ function predictSample(forest: any, sample: MLModelFeature) {
     }
   }
 
-  let votes = [0, 0];
+  const votes = [0, 0];
   for (const tree of forest) {
     const pred = traverseTree(tree);
     votes[pred]++;

@@ -163,7 +163,7 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
                 {timeSlots.map((slot, index) => {
                   const slotInfo = getSlotInfo(day, slot);
                   if (!slotInfo) {
-                    return <div />;
+                    return <div key={index} />;
                   }
 
                   const style =

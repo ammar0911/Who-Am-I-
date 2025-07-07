@@ -43,7 +43,7 @@ const createWorkingBlockDTOFromDate = ({
   available,
 }: {
   date: Date;
-  available: Boolean;
+  available: boolean;
 }): Omit<WorkingBlockDTO, 'id'> => {
   return {
     endTime: new Date(date.getTime() + 60 * 60 * 1000).toISOString(),

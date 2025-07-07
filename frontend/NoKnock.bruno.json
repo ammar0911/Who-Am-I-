@@ -4,6 +4,135 @@
   "items": [
     {
       "type": "folder",
+      "name": "Offices",
+      "filename": "Offices",
+      "seq": 4,
+      "root": {
+        "meta": {
+          "name": "Offices",
+          "seq": 4
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Create Office",
+          "filename": "Create Office.bru",
+          "seq": 4,
+          "request": {
+            "url": "{{host}}/api/offices",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"name\": \"This is a test with name and random property\",\n  \"random\": \"test\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get All Offices",
+          "filename": "Get All Offices.bru",
+          "seq": 2,
+          "request": {
+            "url": "{{host}}/api/offices",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {
+              "res": [
+                {
+                  "name": "officeId",
+                  "value": "res.body[0][\"id\"]",
+                  "enabled": true,
+                  "local": false
+                }
+              ]
+            },
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get Office by ID",
+          "filename": "Get Office by ID.bru",
+          "seq": 2,
+          "request": {
+            "url": "{{host}}/api/offices/{{officeId}}",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Update Office",
+          "filename": "Update Office.bru",
+          "seq": 3,
+          "request": {
+            "url": "{{host}}/api/offices/{{officeId}}",
+            "method": "PUT",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"sensorId\": \"h9yRIrq5y6qEeh3IflZ5\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
       "name": "Sensors",
       "filename": "Sensors",
       "seq": 2,
@@ -14,6 +143,35 @@
         }
       },
       "items": [
+        {
+          "type": "http",
+          "name": "Add Sensor Input by ID",
+          "filename": "Add Sensor Input by ID.bru",
+          "seq": 3,
+          "request": {
+            "url": "{{host}}/api/sensors/{{sensorId}}",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {
+              "req": "const randomBatteryValue = Math.floor(Math.random() * 100);\nconst randomIsOpen = Math.random() > 0.5;\n\nreq.setBody({\n  batteryStatus: randomBatteryValue,\n  isOpen: randomIsOpen\n})"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
         {
           "type": "http",
           "name": "Get All Sensors",
@@ -66,35 +224,6 @@
               "file": []
             },
             "script": {},
-            "vars": {},
-            "assertions": [],
-            "tests": "",
-            "docs": "",
-            "auth": {
-              "mode": "inherit"
-            }
-          }
-        },
-        {
-          "type": "http",
-          "name": "Add Sensor Input by ID",
-          "filename": "Add Sensor Input by ID.bru",
-          "seq": 3,
-          "request": {
-            "url": "{{host}}/api/sensors/{{sensorId}}",
-            "method": "POST",
-            "headers": [],
-            "params": [],
-            "body": {
-              "mode": "json",
-              "json": "",
-              "formUrlEncoded": [],
-              "multipartForm": [],
-              "file": []
-            },
-            "script": {
-              "req": "const randomBatteryValue = Math.floor(Math.random() * 100);\nconst randomIsOpen = Math.random() > 0.5;\n\nreq.setBody({\n  batteryStatus: randomBatteryValue,\n  isOpen: randomIsOpen\n})"
-            },
             "vars": {},
             "assertions": [],
             "tests": "",
@@ -209,59 +338,24 @@
     },
     {
       "type": "folder",
-      "name": "Offices",
-      "filename": "Offices",
+      "name": "Triggers",
+      "filename": "Triggers",
       "seq": 4,
       "root": {
         "meta": {
-          "name": "Offices",
+          "name": "Triggers",
           "seq": 4
         }
       },
       "items": [
         {
           "type": "http",
-          "name": "Get All Offices",
-          "filename": "Get All Offices.bru",
-          "seq": 2,
+          "name": "Retrieve Google Calendar Events",
+          "filename": "Retrieve Google Calendar Events.bru",
+          "seq": 1,
           "request": {
-            "url": "{{host}}/api/offices",
-            "method": "GET",
-            "headers": [],
-            "params": [],
-            "body": {
-              "mode": "none",
-              "formUrlEncoded": [],
-              "multipartForm": [],
-              "file": []
-            },
-            "script": {},
-            "vars": {
-              "res": [
-                {
-                  "name": "officeId",
-                  "value": "res.body[0][\"id\"]",
-                  "enabled": true,
-                  "local": false
-                }
-              ]
-            },
-            "assertions": [],
-            "tests": "",
-            "docs": "",
-            "auth": {
-              "mode": "inherit"
-            }
-          }
-        },
-        {
-          "type": "http",
-          "name": "Get Office by ID",
-          "filename": "Get Office by ID.bru",
-          "seq": 2,
-          "request": {
-            "url": "{{host}}/api/offices/{{officeId}}",
-            "method": "GET",
+            "url": "{{host}}/api/triggers/retrieveGoogleCalendarEvents",
+            "method": "POST",
             "headers": [],
             "params": [],
             "body": {
@@ -282,17 +376,16 @@
         },
         {
           "type": "http",
-          "name": "Update Office",
-          "filename": "Update Office.bru",
-          "seq": 3,
+          "name": "Parse and Upload Test Data",
+          "filename": "Parse and Upload Test Data.bru",
+          "seq": 2,
           "request": {
-            "url": "{{host}}/api/offices/{{officeId}}",
-            "method": "PUT",
+            "url": "{{host}}/api/triggers/parseAndUploadTestData",
+            "method": "POST",
             "headers": [],
             "params": [],
             "body": {
-              "mode": "json",
-              "json": "{\n  \"sensorId\": \"h9yRIrq5y6qEeh3IflZ5\"\n}",
+              "mode": "none",
               "formUrlEncoded": [],
               "multipartForm": [],
               "file": []
@@ -309,17 +402,43 @@
         },
         {
           "type": "http",
-          "name": "Create Office",
-          "filename": "Create Office.bru",
+          "name": "Delete all working blocks",
+          "filename": "Delete all working blocks.bru",
           "seq": 4,
           "request": {
-            "url": "{{host}}/api/offices",
+            "url": "{{host}}/api/triggers/deleteAllWorkingBlocks",
+            "method": "DELETE",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Predict User Availability",
+          "filename": "Predict User Availability.bru",
+          "seq": 3,
+          "request": {
+            "url": "{{host}}/api/triggers/predictAvailabilityForUser",
             "method": "POST",
             "headers": [],
             "params": [],
             "body": {
               "mode": "json",
-              "json": "{\n  \"name\": \"This is a test with name and random property\",\n  \"random\": \"test\"\n}",
+              "json": "{\n  \"userId\": \"2IHP6pwqgy0R5B5DYHLI\",\n  \"date\": \"Mon, 07 Jul 2025 12:01:34 GMT\"\n}",
               "formUrlEncoded": [],
               "multipartForm": [],
               "file": []
@@ -347,14 +466,14 @@
             "value": "http://localhost:3000",
             "enabled": true,
             "local": false,
-            "uid": "XCc6MNQ0vfXs8bsORwAOD"
+            "uid": "mxMWRIqTM7GZ3RW0VJYLQ"
           },
           {
             "name": "host",
             "value": "https://ubi-sys-lab-no-knock.vercel.app/",
             "enabled": false,
             "local": false,
-            "uid": "yTbPtOFRy1piI9Zkonjxv"
+            "uid": "jCnYX2iQDcZuiM504bApx"
           }
         ]
       }
@@ -365,7 +484,7 @@
     "name": "UbiSys",
     "type": "collection",
     "ignore": ["node_modules", ".git"],
-    "size": 0.001323699951171875,
-    "filesCount": 7
+    "size": 0.002178192138671875,
+    "filesCount": 14
   }
 }

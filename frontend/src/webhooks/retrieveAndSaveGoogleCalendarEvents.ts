@@ -2,7 +2,7 @@ import { userApi, workingBlockApi } from '@/lib/firestoreApi';
 import mapGoogleCalendarEventToWorkingBlock from '@/lib/mapGoogleCalendarEventToNewWorkingBlock';
 import { GoogleCalendarEvent, UserSettings } from '@/types';
 
-import googleAPIs from '@googleapis/calendar';
+import * as googleAPIs from '@googleapis/calendar';
 
 googleAPIs.calendar('v3');
 
