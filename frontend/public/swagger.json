@@ -1,0 +1,898 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "No-Knock API Documentation",
+    "version": "1.0"
+  },
+  "security": [],
+  "components": {
+    "schemas": {
+      "UserDTO": {
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name",
+          "accountType",
+          "avatar",
+          "available",
+          "isPublic"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "NZYeL9zhepNhAeQavl5X",
+            "readonly": true
+          },
+          "accountType": {
+            "$ref": "#/components/schemas/AccountType"
+          },
+          "available": {
+            "$ref": "#/components/schemas/AvailabilityStatus"
+          },
+          "avatar": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://example.com/avatar.jpg",
+            "description": "URL to the user's chosen avatar image. Uploaded by the user."
+          },
+          "department": {
+            "type": "string",
+            "nullable": true,
+            "example": "Engineering"
+          },
+          "email": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://example.com/avatar.jpg",
+            "description": "File retrieved from OAuth service when creating user account."
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "office": {
+            "$ref": "#/components/schemas/OfficeDTO",
+            "nullable": true,
+            "readonly": true
+          },
+          "officeId": {
+            "type": "string",
+            "nullable": true,
+            "example": "NZYeL9zhepNhAeQavl5X"
+          },
+          "pronouns": {
+            "type": "string",
+            "nullable": true,
+            "example": ""
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "example": "Ms. Sc."
+          },
+          "userSettings": {
+            "type": "string",
+            "nullable": true,
+            "example": "{}",
+            "description": "JSON string containing user settings."
+          }
+        }
+      },
+      "AccountType": {
+        "type": "string",
+        "enum": ["Admin", "Maintainer", "User", "Guest"],
+        "description": "The type of account for the user."
+      },
+      "AvailabilityStatus": {
+        "type": "string",
+        "enum": ["Available", "NotAvailable", "Private"],
+        "description": "The availability status of the user."
+      },
+      "OfficeDTO": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "NZYeL9zhepNhAeQavl5X",
+            "readonly": true
+          },
+          "name": {
+            "type": "string",
+            "example": "Main Office"
+          },
+          "sensor": {
+            "$ref": "#/components/schemas/SensorDTO",
+            "description": "Sensor associated with the office.",
+            "nullable": true,
+            "readonly": true
+          },
+          "sensorId": {
+            "type": "string",
+            "nullable": true,
+            "example": "h9yRIrq5y6qEeh3IflZ5",
+            "description": "ID of the sensor associated with the office."
+          }
+        }
+      },
+      "SensorDTO": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "h9yRIrq5y6qEeh3IflZ5",
+            "readonly": true
+          },
+          "name": {
+            "type": "string",
+            "example": "Main Sensor",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/SensorInputDTO",
+            "nullable": true
+          }
+        }
+      },
+      "SensorInputDTO": {
+        "type": "object",
+        "required": ["id", "batteryStatus", "isOpen", "sensorId"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "h9yRIrq5y6qEeh3IflZ5",
+            "readonly": true
+          },
+          "inputTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2023-10-01T12:00:00Z",
+            "readonly": true
+          },
+          "batteryStatus": {
+            "type": "number",
+            "example": "85",
+            "description": "Battery status of the sensor in percentage."
+          },
+          "isOpen": {
+            "type": "boolean",
+            "example": true,
+            "description": "Indicates if the office is open."
+          },
+          "sensorId": {
+            "type": "string",
+            "example": "h9yRIrq5y6qEeh3IflZ5",
+            "description": "ID of the sensor associated with the input.",
+            "writeOnly": true
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/offices/{officeId}": {
+      "put": {
+        "tags": ["Offices"],
+        "summary": "Update an office by ID",
+        "description": "Update an existing office with the provided data",
+        "parameters": [
+          {
+            "name": "officeId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the office to update",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfficeDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Office updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficeDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Invalid office data provided"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Office not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Office with ID 'abc123' not  found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Webhook error: Database connection failed"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Offices"],
+        "summary": "Get an office by ID",
+        "description": "Returns a single office by its ID.",
+        "parameters": [
+          {
+            "name": "officeId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the office to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Office retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficeDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Office not found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Office with ID 'abc123' not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/offices": {
+      "get": {
+        "tags": ["Offices"],
+        "summary": "Get all offices",
+        "description": "Retrieve a list of all offices from the database",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved offices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OfficeDTO"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Webhook error: Database connection failed"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Offices"],
+        "summary": "Create a new office",
+        "description": "Create a new office with the provided data",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfficeDTO"
+              },
+              "example": {
+                "name": "Main Office",
+                "sensorId": "sensor-123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Office created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfficeDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing required fields",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Office name is required"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Webhook error: Database connection failed"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sensors/{id}": {
+      "get": {
+        "tags": ["Sensor"],
+        "summary": "Get a sensor by ID",
+        "description": "Returns a single sensor by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The sensor ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The sensor object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "jtXtrYmcN8D0zLpjKzWI"
+                    },
+                    "batteryStatus": {
+                      "type": "integer",
+                      "example": 35
+                    },
+                    "inputTime": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-06-04T15:47:43.913Z"
+                    },
+                    "isOpen": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                },
+                "examples": {
+                  "sensor": {
+                    "value": {
+                      "id": "jtXtrYmcN8D0zLpjKzWI",
+                      "batteryStatus": 35,
+                      "inputTime": "2025-06-04T15:47:43.913Z",
+                      "isOpen": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid sensor ID"
+          },
+          "404": {
+            "description": "Sensor not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Sensor"],
+        "summary": "Update a sensor by ID",
+        "description": "Creates a new entry of sensor status",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The sensor ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorInputDTO"
+              },
+              "example": {
+                "batteryStatus": 45,
+                "isOpen": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sensor updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Sensor updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid sensor ID or request body"
+          },
+          "404": {
+            "description": "Sensor not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/sensors/byOfficeId": {
+      "get": {
+        "tags": ["Sensor"],
+        "summary": "Get sensors by office ID",
+        "description": "Returns a list of sensors associated with a specific office ID.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "officeId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the office to filter sensors by."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of sensors for the specified office ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "sensor123"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Temperature Sensor"
+                      },
+                      "officeId": {
+                        "type": "string",
+                        "example": "office456"
+                      },
+                      "inputTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T12:00:00Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid office ID provided."
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/sensors": {
+      "get": {
+        "tags": ["Sensor"],
+        "summary": "Get all sensors",
+        "description": "Returns a list of all sensors.",
+        "responses": {
+          "200": {
+            "description": "A list of sensors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "jtXtrYmcN8D0zLpjKzWI"
+                      },
+                      "batteryStatus": {
+                        "type": "integer",
+                        "example": 35
+                      },
+                      "inputTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-06-04T15:47:43.913Z"
+                      },
+                      "isOpen": {
+                        "type": "boolean",
+                        "example": false
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "sensors": {
+                    "value": [
+                      {
+                        "id": "jtXtrYmcN8D0zLpjKzWI",
+                        "batteryStatus": 35,
+                        "inputTime": "2025-06-04T15:47:43.913Z",
+                        "isOpen": false
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get a user by ID",
+        "description": "Returns a single user by their ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The user ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDTO"
+                },
+                "examples": {
+                  "user": {
+                    "value": {
+                      "id": "yXGO7YkiXpQDSSqyxHz1",
+                      "accountType": 1,
+                      "email": "me@robruizr.dev",
+                      "name": "Roberto Ruiz",
+                      "officeId": "NZYeL9zhepNhAeQavl5X",
+                      "pronouns": "he/him",
+                      "userSettings": "{}",
+                      "title": "Ms. Sc.",
+                      "department": "Engineering",
+                      "avatar": "https://example.com/avatar.jpg",
+                      "isPublic": true,
+                      "available": "Available"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update a user by ID",
+        "description": "Updates a user's information by their ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The user ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "name": "Roberto Ruiz",
+                "email": "me@robruizr.dev"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/workingBlock": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get working block by user ID",
+        "description": "Returns the working block for a specific user.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the user to retrieve the working block for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Working block found successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "block123"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "example": "user123"
+                    },
+                    "startTime": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-06-04T15:47:43.913Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/getAllPublicAndAvailable": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "description": "Returns a list of all users.",
+        "responses": {
+          "200": {
+            "description": "A list of users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "yXGO7YkiXpQDSSqyxHz1"
+                      },
+                      "accountType": {
+                        "type": "integer",
+                        "example": 1
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "me@robruizr.dev"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Roberto Ruiz"
+                      },
+                      "officeId": {
+                        "type": "string",
+                        "example": "NZYeL9zhepNhAeQavl5X"
+                      },
+                      "password": {
+                        "type": "string",
+                        "example": "1234"
+                      },
+                      "pronouns": {
+                        "type": "string",
+                        "example": "he/him"
+                      },
+                      "userSettings": {
+                        "type": "string",
+                        "example": "{}"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "users": {
+                    "value": [
+                      {
+                        "id": "yXGO7YkiXpQDSSqyxHz1",
+                        "accountType": 1,
+                        "email": "me@robruizr.dev",
+                        "name": "Roberto Ruiz",
+                        "officeId": "NZYeL9zhepNhAeQavl5X",
+                        "password": "1234",
+                        "pronouns": "he/him",
+                        "userSettings": "{}"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users",
+        "description": "Returns a list of all users.",
+        "responses": {
+          "200": {
+            "description": "A list of users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDTO"
+                  }
+                },
+                "examples": {
+                  "users": {
+                    "value": [
+                      {
+                        "id": "yXGO7YkiXpQDSSqyxHz1",
+                        "accountType": 1,
+                        "email": "me@robruizr.dev",
+                        "name": "Roberto Ruiz",
+                        "officeId": "NZYeL9zhepNhAeQavl5X",
+                        "pronouns": "he/him",
+                        "userSettings": "{}",
+                        "title": "Ms. Sc.",
+                        "department": "Engineering",
+                        "avatar": "https://example.com/avatar.jpg",
+                        "isPublic": true,
+                        "available": "Available"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}
