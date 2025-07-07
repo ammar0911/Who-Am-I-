@@ -44,18 +44,14 @@ export default function ProfilePage() {
     [`user/${userId}`],
     {
       enabled: !!userId,
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
       refetchOnReconnect: false,
       refetchOnMount: false,
+      refetchInterval: 5 * 1000, // 5 seconds
     },
   );
 
-  if (
-    !t ||
-    sessionLoadingStatus === 'loading' ||
-    isUserLoading ||
-    isUserFetching
-  ) {
+  if (!t || sessionLoadingStatus === 'loading' || isUserLoading) {
     return (
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 flex justify-center">
         <span className="loading loading-spinner loading-xl my-10 scale-150" />

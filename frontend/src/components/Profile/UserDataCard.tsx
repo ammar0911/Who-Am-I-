@@ -39,7 +39,9 @@ const UserDataCard: React.FC<UserDataCardProps> = ({ user }) => {
         </h3>
         <div className="flex justify-center">
           <AvailabilityChip
-            status={user.available}
+            status={
+              user.office?.sensor?.status?.isOpen ? 'Available' : 'NotAvailable'
+            }
             isPublic={Boolean(user.isPublic)}
             isLoggedIn={true}
           />

@@ -49,7 +49,9 @@ const UserCard: React.FC<UserCardProps> = ({
       </div>
       <div className="mt-2">
         <AvailabilityChip
-          status={user.available}
+          status={
+            user.office?.sensor?.status?.isOpen ? 'Available' : 'NotAvailable'
+          }
           isPublic={user.isPublic}
           isLoggedIn={false}
         />

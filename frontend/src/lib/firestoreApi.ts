@@ -106,7 +106,23 @@ export const userApi = {
         ...convertFirebaseTimestampsToDate(doc.data()),
       })) as UserDoc[];
 
-      return data.map((user) => mapUserDocToDTO(user));
+      const promises = data.map(async (user) => {
+        // Get office data for each user
+        let officeData = null;
+        if (user.office_id) {
+          officeData = await officeApi.getById(user.office_id.id);
+          if (!officeData) {
+            console.error(
+              `Office with ID ${user.office_id.id} does not exist for user ${user.id}`,
+            );
+          }
+        }
+
+        return mapUserDocToDTO(user, {
+          office: officeData,
+        });
+      });
+      return Promise.all(promises);
     } catch (error) {
       console.error('Error getting users:', error);
       throw error;
@@ -457,6 +473,8 @@ export const officeApi = {
           id: docSnap.id,
           ...convertFirebaseTimestampsToDate(docSnap.data()),
         } as OfficeDoc;
+
+        console.log({ data });
 
         if (!data.sensor_id) {
           return mapOfficeDocToDTO(data);
