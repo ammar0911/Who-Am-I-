@@ -19,6 +19,7 @@
     "@auth/firebase-adapter": "^2.10.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@googleapis/calendar": "^10.0.1",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
     "@next-auth/firebase-adapter": "0.0.2-canary.207",

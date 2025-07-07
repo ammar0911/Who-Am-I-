@@ -16,6 +16,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.14.0
         version: 11.14.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0)
+      '@googleapis/calendar':
+        specifier: ^10.0.1
+        version: 10.0.1
       '@mui/icons-material':
         specifier: ^7.1.1
         version: 7.1.1(@mui/material@7.1.1(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react@19.1.0))(@types/react@19.1.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@types/react@19.1.6)(react@19.1.0)
@@ -896,6 +899,13 @@ packages:
         integrity: sha512-7/5LRgykyOfQENcm6hDKP8SX/u9XxE5YOiWOkgkwcoO+cG8xT/cyOvp9wwN3IxfdYgpHs8CE7Nq2PKX2lNaEXw==,
       }
     engines: { node: '>=14' }
+
+  '@googleapis/calendar@10.0.1':
+    resolution:
+      {
+        integrity: sha512-lOYg3r1MkGsLTQfuIjspIaSvFv0a7Ldi/SvRuQnQ5E6d9DdXbILOhlPpXefxN6hi7BIvWKG0F5pLoc6kK12chA==,
+      }
+    engines: { node: '>=12.0.0' }
 
   '@grpc/grpc-js@1.13.4':
     resolution:
@@ -8479,6 +8489,12 @@ snapshots:
       - encoding
       - supports-color
     optional: true
+
+  '@googleapis/calendar@10.0.1':
+    dependencies:
+      googleapis-common: 8.0.2-rc.0
+    transitivePeerDependencies:
+      - supports-color
 
   '@grpc/grpc-js@1.13.4':
     dependencies:

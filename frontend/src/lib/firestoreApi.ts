@@ -34,7 +34,7 @@ import mapUserDocToDTO from './mapUserDocToDto';
 import mapWorkingBlockDocToDto from './mapWorkingBlockDocToDto';
 import mapSensorDocToDTO from './mapSensorDocToDto';
 import mapOfficeDocToDTO from './mapOfficeDocToDto';
-import { SensorInputDTO } from '@/hooks/api/requests';
+import { SensorInputDTO, WorkingBlockSource } from '@/hooks/api/requests';
 import pickPropertiesIfDefined from './pickPropertiesIfDefined';
 
 export const userApi = {
@@ -157,11 +157,50 @@ export const workingBlockApi = {
     }
   },
 
-  async create(workingBlockData: Omit<DBWorkingBlock, 'id'>): Promise<string> {
+  async create(
+    workingBlockData: Omit<WorkingBlockDTO, 'id'>,
+    { source }: { source: WorkingBlockSource },
+  ): Promise<string> {
     try {
+      const mappedWorkingBlockData: DBWorkingBlock = {
+        start_time: new Date(workingBlockData.startTime),
+        end_time: new Date(workingBlockData.endTime),
+        user_id: doc(db, COLLECTIONS.USER, workingBlockData.userId!),
+        source,
+        availability: 'NotAvailable',
+        google_calendar_event_id:
+          workingBlockData.googleCalendarEventId || null,
+      };
+
+      // Check if event exists if it is from Google Calendar
+      if (
+        source === 'Calendar' &&
+        mappedWorkingBlockData.google_calendar_event_id
+      ) {
+        const q = query(
+          collection(db, COLLECTIONS.WORKING_BLOCK),
+          where(
+            'google_calendar_event_id',
+            '==',
+            mappedWorkingBlockData.google_calendar_event_id,
+          ),
+          limit(1),
+        );
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.size > 0) {
+          const eventDocSnap = querySnapshot.docs[0];
+          console.info(
+            `Event with ID ${mappedWorkingBlockData.google_calendar_event_id} already exists with ID ${eventDocSnap.id}`,
+          );
+
+          return eventDocSnap.id;
+        }
+      }
+
       const docRef = await addDoc(
         collection(db, COLLECTIONS.WORKING_BLOCK),
-        workingBlockData,
+        mappedWorkingBlockData,
       );
       return docRef.id;
     } catch (error) {

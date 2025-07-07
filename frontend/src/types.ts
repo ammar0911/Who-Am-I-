@@ -240,6 +240,7 @@ export interface DBWorkingBlock {
   start_time: Date;
   source: WorkingBlockSource;
   user_id: DocumentReference;
+  google_calendar_event_id: string | null;
 }
 
 export interface Sensor {
@@ -286,3 +287,32 @@ export const COLLECTIONS = {
   OFFICE: 'office',
   SENSOR_INPUT: 'sensor_input',
 } as const;
+
+/**
+ * Partial interface for Google Calendar events.
+ * Retrieved from https://developers.google.com/workspace/calendar/api/v3/reference/events
+ */
+export interface GoogleCalendarEvent {
+  id: string;
+  start: {
+    dateTime: string;
+    date: string;
+  };
+  end: {
+    dateTime: string;
+    date: string;
+  };
+}
+
+export interface GoogleAuthSettings {
+  accessToken: string;
+  refreshToken: string;
+  expiryDate: number;
+  updatedAt: string;
+}
+
+export interface UserSettings extends Record<string, unknown> {
+  googleAuth?: GoogleAuthSettings;
+  selectedCalendars?: string[];
+  [key: string]: unknown;
+}

@@ -97,6 +97,10 @@ export type WorkingBlockDTO = {
    * Availability status of the user during the working block.
    */
   availability?: AvailabilityStatus;
+  /**
+   * ID of the Google Calendar event associated with the working block.
+   */
+  googleCalendarEventId?: string | null;
 };
 
 export type PutApiOfficesByOfficeIdData = {

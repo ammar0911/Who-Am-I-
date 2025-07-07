@@ -221,5 +221,11 @@ export const $WorkingBlockDTO = {
       description: 'Availability status of the user during the working block.',
       nullable: false,
     },
+    googleCalendarEventId: {
+      type: 'string',
+      nullable: true,
+      description:
+        'ID of the Google Calendar event associated with the working block.',
+    },
   },
 } as const;
