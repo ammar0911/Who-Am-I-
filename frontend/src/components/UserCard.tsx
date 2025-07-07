@@ -19,7 +19,7 @@ const UserCard: React.FC<UserCardProps> = ({
       key={user.id}
       href={`/profile/${user.id}`}
       className={`
-        cursor-pointer backdrop-blur-sm rounded-lg p-6 transition-all duration-300  
+        cursor-pointer backdrop-blur-sm rounded-lg px-6 py-5 transition-all duration-300  
         ${
           hasDarkBackground
             ? 'bg-white/5 hover:bg-white/10 border-white/10 border'

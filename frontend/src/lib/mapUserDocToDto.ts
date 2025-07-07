@@ -1,4 +1,4 @@
-import { OfficeDTO, UserDoc, UserDTO } from '@/types';
+import { AvailabilityStatus, OfficeDTO, UserDoc, UserDTO } from '@/types';
 
 interface ExtraUserFields {
   office?: OfficeDTO | null;
@@ -9,6 +9,13 @@ function mapUserDocToDTO(
   extraFields?: ExtraUserFields,
 ): UserDTO {
   const { office } = extraFields || {};
+
+  let available: AvailabilityStatus = 'Private';
+
+  if (user.is_public) {
+    available = user.available || 'Private';
+  }
+
   return {
     id: user.id,
     accountType: user.account_type || 'Guest',
@@ -22,7 +29,7 @@ function mapUserDocToDTO(
     title: user.title || '',
     department: user.department || '',
     isPublic: user.is_public || false,
-    available: user.available || 'Private',
+    available,
   };
 }
 

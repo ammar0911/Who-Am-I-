@@ -148,8 +148,6 @@ export const workingBlockApi = {
         ...convertFirebaseTimestampsToDate(doc.data()),
       })) as WorkingBlockDoc[];
 
-      console.log(data);
-
       return data.map(mapWorkingBlockDocToDto);
     } catch (error) {
       console.error('Error getting working blocks by user:', error);
@@ -246,7 +244,6 @@ export const sensorApi = {
         ...convertFirebaseTimestampsToDate(docSnap.data()),
       } as SensorDoc;
 
-      // Find latest sensor input by sensor ID
       const sensorInputQuery = query(
         collection(db, COLLECTIONS.SENSOR_INPUT),
         where('sensor_id', '==', docRef),

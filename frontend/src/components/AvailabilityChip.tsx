@@ -1,6 +1,11 @@
 'use client';
 import React, { useContext } from 'react';
-import { CheckCircle, Cancel, AccessTime } from '@mui/icons-material';
+import {
+  CheckCircle,
+  Cancel,
+  AccessTime,
+  LockOutline,
+} from '@mui/icons-material';
 import { AppContext } from '../contexts/AppContext';
 import { AvailabilityStatus } from '@/hooks/api/requests';
 
@@ -19,7 +24,7 @@ const availabilityIcons: Record<AvailabilityStatus, React.ReactElement> = {
     <Cancel className="w-4 h-4 mr-2 text-red-600 dark:text-red-400" />
   ),
   Private: (
-    <AccessTime className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+    <LockOutline className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
   ),
 };
 
@@ -32,13 +37,16 @@ export interface AvailabilityChipProps {
 export const AvailabilityChip: React.FC<AvailabilityChipProps> = ({
   status,
   isPublic,
-  isLoggedIn,
 }) => {
   const { t } = useContext(AppContext);
 
-  const displayStatus = isPublic || isLoggedIn ? status : 'Private';
+  const displayStatus = isPublic ? status : 'Private';
 
   const getLocalizedStatus = (status: AvailabilityStatus) => {
+    if (!isPublic) {
+      return t('availabilityPrivate');
+    }
+
     switch (status) {
       case 'Available':
         return t('available');

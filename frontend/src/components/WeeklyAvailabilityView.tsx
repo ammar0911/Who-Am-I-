@@ -125,11 +125,11 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
     };
   };
 
-  const getStripeBg = (level: Level): string => {
+  const getStripeBg = (level: Level, reverse = false): string => {
     const color = mode === 'light' ? colors[level].light : colors[level].dark;
     const bgColor =
       mode === 'light' ? 'rgba(255,255,255,0.7)' : 'rgba(31,41,55,0.7)';
-    return `repeating-linear-gradient(-45deg, ${color}, ${color} 4px, ${bgColor} 4px, ${bgColor} 8px)`;
+    return `repeating-linear-gradient(${reverse ? 45 : -45}deg, ${color}, ${color} 4px, ${bgColor} 4px, ${bgColor} 8px)`;
   };
 
   const dayAbbreviations = t('dayAbbreviations');

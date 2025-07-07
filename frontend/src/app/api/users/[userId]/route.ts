@@ -128,10 +128,8 @@ export async function PUT(
       });
     }
 
-    // Parse the request body
     const requestBody = await request.json();
 
-    // Update the user
     await userApi.update(id, requestBody);
 
     return Response.json({
