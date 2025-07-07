@@ -8,6 +8,8 @@ import {
   OfficeDTO,
   SensorDTO,
   SensorInputDTO,
+  WorkingBlockDTO,
+  WorkingBlockSource,
 } from './hooks/api/requests';
 
 export type {
@@ -17,6 +19,7 @@ export type {
   OfficeDTO,
   SensorDTO,
   SensorInputDTO,
+  WorkingBlockDTO,
 };
 // Translation types
 export type ArrayTranslationKeys = 'daysOfWeek' | 'dayAbbreviations';
@@ -231,12 +234,12 @@ export interface DBUser {
   office_id: DocumentReference;
 }
 
-export interface WorkingBlock {
-  duration_ms: number;
-  source: string;
-  start_ms: number;
+export interface DBWorkingBlock {
+  availability: AvailabilityStatus;
+  end_time: Date;
+  start_time: Date;
+  source: WorkingBlockSource;
   user_id: DocumentReference;
-  week_day: number;
 }
 
 export interface Sensor {
@@ -246,15 +249,6 @@ export interface Sensor {
 export interface DBOffice {
   name: string;
   sensor_id: DocumentReference;
-}
-
-export interface WorkingBlockDTO {
-  id: string;
-  durationMs: number;
-  source: string;
-  startMs: number;
-  userId: string;
-  weekDay: number;
 }
 
 export interface DBSensorInput {
@@ -272,7 +266,7 @@ export interface UserDoc extends DBUser {
   id: string;
 }
 
-export interface WorkingBlockDoc extends WorkingBlock {
+export interface WorkingBlockDoc extends DBWorkingBlock {
   id: string;
 }
 

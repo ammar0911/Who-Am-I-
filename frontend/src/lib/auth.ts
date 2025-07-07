@@ -28,7 +28,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session }) {
       session.user.id = session.userId;
       session.userDTO = mapUserDocToDTO(session.user);
-      console.log('Session userDTO:', session.userDTO);
       return session;
     },
   },

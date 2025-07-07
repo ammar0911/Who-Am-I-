@@ -78,6 +78,8 @@ export default function ProfilePage() {
 
   const isCurrentUserProfile = userId === currentUser?.id;
 
+  const shouldUserBeVisible = user?.isPublic || isCurrentUserProfile;
+
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -101,7 +103,7 @@ export default function ProfilePage() {
         </div>
 
         <div className="lg:col-span-2 space-y-6">
-          {true ? (
+          {shouldUserBeVisible ? (
             <WeeklyAvailabilityView
               predictedAvailability={{}}
               calendarEvents={calendarEvents}

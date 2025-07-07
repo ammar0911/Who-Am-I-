@@ -24,7 +24,7 @@ import {
   DBUser,
   UserDoc,
   UserDTO,
-  WorkingBlock,
+  DBWorkingBlock,
   WorkingBlockDoc,
   WorkingBlockDTO,
 } from '@/types';
@@ -35,7 +35,6 @@ import mapWorkingBlockDocToDto from './mapWorkingBlockDocToDto';
 import mapSensorDocToDTO from './mapSensorDocToDto';
 import mapOfficeDocToDTO from './mapOfficeDocToDto';
 import { SensorInputDTO } from '@/hooks/api/requests';
-import pick from 'lodash/pick';
 import pickPropertiesIfDefined from './pickPropertiesIfDefined';
 
 export const userApi = {
@@ -138,16 +137,18 @@ export const userApi = {
 export const workingBlockApi = {
   async getByUserId(userId: string): Promise<WorkingBlockDTO[]> {
     try {
+      const userDocRef = doc(db, COLLECTIONS.USER, userId);
       const q = query(
         collection(db, COLLECTIONS.WORKING_BLOCK),
-        where('user_id', '==', userId),
-        orderBy('start_ms', 'desc'),
+        where('user_id', '==', userDocRef),
       );
       const querySnapshot = await getDocs(q);
       const data = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...convertFirebaseTimestampsToDate(doc.data()),
       })) as WorkingBlockDoc[];
+
+      console.log(data);
 
       return data.map(mapWorkingBlockDocToDto);
     } catch (error) {
@@ -156,7 +157,7 @@ export const workingBlockApi = {
     }
   },
 
-  async create(workingBlockData: Omit<WorkingBlock, 'id'>): Promise<string> {
+  async create(workingBlockData: Omit<DBWorkingBlock, 'id'>): Promise<string> {
     try {
       const docRef = await addDoc(
         collection(db, COLLECTIONS.WORKING_BLOCK),
@@ -171,7 +172,7 @@ export const workingBlockApi = {
 
   async update(
     id: string,
-    workingBlockData: Partial<WorkingBlock>,
+    workingBlockData: Partial<DBWorkingBlock>,
   ): Promise<void> {
     try {
       const docRef = doc(db, COLLECTIONS.WORKING_BLOCK, id);

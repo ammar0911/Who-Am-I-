@@ -36,6 +36,11 @@ export type AccountType = 'Admin' | 'Maintainer' | 'User' | 'Guest';
  */
 export type AvailabilityStatus = 'Available' | 'NotAvailable' | 'Private';
 
+/**
+ * Source of the working block.
+ */
+export type WorkingBlockSource = 'Sensor' | 'Calendar' | 'Prediction';
+
 export type OfficeDTO = {
   id: string;
   name?: string;
@@ -70,6 +75,28 @@ export type SensorInputDTO = {
    * ID of the sensor associated with the input.
    */
   sensorId: string;
+};
+
+export type WorkingBlockDTO = {
+  id: string;
+  startTime: string;
+  endTime: string;
+  /**
+   * Source of the working block.
+   */
+  source?: WorkingBlockSource;
+  /**
+   * ID of the user associated with the working block.
+   */
+  userId?: string;
+  /**
+   * User associated with the working block.
+   */
+  user?: UserDTO;
+  /**
+   * Availability status of the user during the working block.
+   */
+  availability?: AvailabilityStatus;
 };
 
 export type PutApiOfficesByOfficeIdData = {

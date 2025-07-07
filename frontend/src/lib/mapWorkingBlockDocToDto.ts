@@ -1,13 +1,12 @@
-import { WorkingBlockDoc } from '@/types';
+import { WorkingBlockDoc, WorkingBlockDTO } from '@/types';
 
-const mapWorkingBlockDocToDto = (doc: WorkingBlockDoc) => {
+const mapWorkingBlockDocToDto = (doc: WorkingBlockDoc): WorkingBlockDTO => {
   return {
     id: doc.id,
-    durationMs: doc.duration_ms,
+    startTime: doc.start_time.toISOString(),
+    endTime: doc.end_time.toISOString(),
     source: doc.source,
-    startMs: doc.start_ms,
     userId: doc.user_id.id,
-    weekDay: doc.week_day,
   };
 };
 

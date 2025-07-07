@@ -92,6 +92,12 @@ export const $AvailabilityStatus = {
   description: 'The availability status of the user.',
 } as const;
 
+export const $WorkingBlockSource = {
+  type: 'string',
+  enum: ['Sensor', 'Calendar', 'Prediction'],
+  description: 'Source of the working block.',
+} as const;
+
 export const $OfficeDTO = {
   type: 'object',
   required: ['id'],
@@ -171,6 +177,49 @@ export const $SensorInputDTO = {
       example: 'h9yRIrq5y6qEeh3IflZ5',
       description: 'ID of the sensor associated with the input.',
       writeOnly: true,
+    },
+  },
+} as const;
+
+export const $WorkingBlockDTO = {
+  type: 'object',
+  required: ['id', 'startTime', 'endTime'],
+  properties: {
+    id: {
+      type: 'string',
+      example: 'h9yRIrq5y6qEeh3IflZ5',
+      readonly: true,
+    },
+    startTime: {
+      type: 'string',
+      format: 'date-time',
+      example: '2023-10-01T09:00:00Z',
+    },
+    endTime: {
+      type: 'string',
+      format: 'date-time',
+      example: '2023-10-01T17:00:00Z',
+    },
+    source: {
+      $ref: '#/components/schemas/WorkingBlockSource',
+      description: 'Source of the working block.',
+      nullable: false,
+    },
+    userId: {
+      type: 'string',
+      example: 'NZYeL9zhepNhAeQavl5X',
+      description: 'ID of the user associated with the working block.',
+    },
+    user: {
+      $ref: '#/components/schemas/UserDTO',
+      description: 'User associated with the working block.',
+      nullable: false,
+      readonly: true,
+    },
+    availability: {
+      $ref: '#/components/schemas/AvailabilityStatus',
+      description: 'Availability status of the user during the working block.',
+      nullable: false,
     },
   },
 } as const;

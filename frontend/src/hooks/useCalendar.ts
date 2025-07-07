@@ -195,8 +195,8 @@ const useCalendar = (userId: string | null) => {
 
           const events: CalendarEvent[] = workingBlocks.map(
             (block: WorkingBlockDTO) => {
-              const startDate = new Date(block.startMs);
-              const endDate = new Date(block.startMs + block.durationMs);
+              const startDate = new Date(block.startTime);
+              const endDate = new Date(block.endTime);
 
               const days = [
                 'Sunday',
@@ -207,7 +207,8 @@ const useCalendar = (userId: string | null) => {
                 'Friday',
                 'Saturday',
               ];
-              const day = days[block.weekDay];
+              const dayOfWeek = startDate.getDay();
+              const day = days[dayOfWeek];
 
               const formatTime = (date: Date) => {
                 return date.toLocaleTimeString('en-US', {
