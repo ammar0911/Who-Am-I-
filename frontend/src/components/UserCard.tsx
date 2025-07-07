@@ -36,12 +36,12 @@ const UserCard: React.FC<UserCardProps> = ({
         />
         <div>
           <h3
-            className={`text-lg font-semibold ${hasDarkBackground ? 'text-base-300' : 'text-base-content'}`}
+            className={`text-lg font-semibold ${hasDarkBackground ? 'text-neutral-content' : 'text-base-content'}`}
           >
             {user.name}
           </h3>
           <p
-            className={`text-sm ${hasDarkBackground ? 'text-base-300/70' : 'text-base-content'}`}
+            className={`text-sm ${hasDarkBackground ? 'text-neutral-content/70' : 'text-base-content'}`}
           >
             {user.title}
           </p>
