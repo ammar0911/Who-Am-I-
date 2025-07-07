@@ -57,36 +57,7 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
 
   const germanDays: string[] = translations['de']['daysOfWeek'];
 
-  const isSlotBooked = (day: string, timeSlot: string): boolean => {
-    const slotIndex = timeSlots.indexOf(timeSlot);
-    const dayIndex = germanDays.indexOf(day);
-    const englishDay = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-    ][dayIndex];
-
-    for (const event of calendarEvents) {
-      if (event.day === englishDay) {
-        const startIndex = timeSlots.indexOf(event.start);
-        const endIndex = timeSlots.indexOf(event.end);
-        if (
-          slotIndex >= startIndex &&
-          slotIndex < endIndex &&
-          event.available === 'NotAvailable' &&
-          event.source === 'Calendar'
-        ) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  const getSlotInfo = (day: string, timeSlot: string): SlotInfo => {
+  const getSlotInfo = (day: string, timeSlot: string): SlotInfo | null => {
     const slotIndex = timeSlots.indexOf(timeSlot);
     const dayIndex = germanDays.indexOf(day);
     const englishDay = [
@@ -122,15 +93,22 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
               tooltip: t('tooltipLikelyAvailable'),
             };
           }
+
+          if (
+            event.available === 'NotAvailable' &&
+            event.source === 'Prediction'
+          ) {
+            return {
+              type: 'prediction',
+              availabilityLevel: 'low',
+              tooltip: t('tooltipLikelyNotAvailable'),
+            };
+          }
         }
       }
     }
 
-    return {
-      type: 'prediction',
-      availabilityLevel: 'low',
-      tooltip: t('tooltipLikelyNotAvailable'),
-    };
+    return null;
   };
 
   const getStripeBg = (level: Level, reverse = false): string => {
@@ -183,9 +161,13 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
               </p>
               <div className="grid grid-cols-1 gap-0.5">
                 {timeSlots.map((slot, index) => {
-                  const slotInfo = getSlotInfo(day, slot, index);
+                  const slotInfo = getSlotInfo(day, slot);
+                  if (!slotInfo) {
+                    return <div />;
+                  }
+
                   const style =
-                    slotInfo.type === 'calendar'
+                    slotInfo?.type === 'calendar'
                       ? { backgroundColor: '#64727f' }
                       : {
                           backgroundImage: getStripeBg(
