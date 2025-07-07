@@ -3,6 +3,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../contexts/AppContext';
 // import { InfoOutlined } from "@mui/icons-material";
 import { translations } from '../app/translations';
+import { CalendarEvent } from '@/types';
 
 type Level = 'high' | 'low';
 type ColorScheme = {
@@ -29,19 +30,13 @@ const timeSlots = [
   '18:00',
 ];
 
-interface CalendarEvent {
-  day: string;
-  start: string;
-  end: string;
-}
-
 interface PredictedAvailability {
   [key: string]: number[];
 }
 
 type SlotInfo =
   | { type: 'calendar'; tooltip: string }
-  | { type: 'prediction'; level: Level; tooltip: string };
+  | { type: 'prediction'; availabilityLevel: Level; tooltip: string };
 
 export interface WeeklyAvailabilityViewProps {
   predictedAvailability: PredictedAvailability;
@@ -78,20 +73,21 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
       if (event.day === englishDay) {
         const startIndex = timeSlots.indexOf(event.start);
         const endIndex = timeSlots.indexOf(event.end);
-        if (slotIndex >= startIndex && slotIndex < endIndex) return true;
+        if (
+          slotIndex >= startIndex &&
+          slotIndex < endIndex &&
+          event.available === 'NotAvailable' &&
+          event.source === 'Calendar'
+        ) {
+          return true;
+        }
       }
     }
     return false;
   };
 
-  const getSlotInfo = (
-    day: string,
-    timeSlot: string,
-    index: number,
-  ): SlotInfo => {
-    if (isSlotBooked(day, timeSlot))
-      return { type: 'calendar', tooltip: t('tooltipNotAvailableCalendar') };
-
+  const getSlotInfo = (day: string, timeSlot: string): SlotInfo => {
+    const slotIndex = timeSlots.indexOf(timeSlot);
     const dayIndex = germanDays.indexOf(day);
     const englishDay = [
       'Monday',
@@ -102,25 +98,37 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
       'Saturday',
     ][dayIndex];
 
-    if (!predictedAvailability || !predictedAvailability[englishDay]) {
-      return {
-        type: 'prediction',
-        level: 'low',
-        tooltip: t('tooltipLikelyNotAvailable'),
-      };
+    for (const event of calendarEvents) {
+      if (event.day === englishDay) {
+        const startIndex = timeSlots.indexOf(event.start);
+        const endIndex = timeSlots.indexOf(event.end);
+        if (slotIndex >= startIndex && slotIndex < endIndex) {
+          if (
+            event.available === 'NotAvailable' &&
+            event.source === 'Calendar'
+          ) {
+            return {
+              type: 'calendar',
+              tooltip: t('tooltipNotAvailableCalendar'),
+            };
+          }
+          if (
+            event.available === 'Available' &&
+            event.source === 'Prediction'
+          ) {
+            return {
+              type: 'prediction',
+              availabilityLevel: 'high',
+              tooltip: t('tooltipLikelyAvailable'),
+            };
+          }
+        }
+      }
     }
 
-    const prob = predictedAvailability[englishDay][index];
-    if (prob === 1) {
-      return {
-        type: 'prediction',
-        level: 'high',
-        tooltip: t('tooltipLikelyAvailable'),
-      };
-    }
     return {
       type: 'prediction',
-      level: 'low',
+      availabilityLevel: 'low',
       tooltip: t('tooltipLikelyNotAvailable'),
     };
   };
@@ -149,12 +157,6 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
         {t('weeklyAvailability')}
       </h3>
-      {/* {isWeekend && (
-        <div className="mb-4 p-2 text-sm text-blue-800 bg-blue-100 dark:bg-blue-900/50 dark:text-blue-300 rounded-md flex items-center">
-          <InfoOutlined className="w-5 h-5 mr-2" />
-          {t("weekendNotice")}
-        </div>
-      )} */}
       <div className="flex">
         <div className="flex flex-col pt-8 pr-2">
           {timeSlots.map((time) => (
@@ -186,7 +188,9 @@ export const WeeklyAvailabilityView: React.FC<WeeklyAvailabilityViewProps> = ({
                     slotInfo.type === 'calendar'
                       ? { backgroundColor: '#64727f' }
                       : {
-                          backgroundImage: getStripeBg(slotInfo.level),
+                          backgroundImage: getStripeBg(
+                            slotInfo.availabilityLevel,
+                          ),
                           backgroundSize: '10px 10px',
                         };
                   return (

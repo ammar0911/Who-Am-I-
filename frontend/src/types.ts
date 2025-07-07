@@ -144,6 +144,8 @@ export interface CalendarEvent {
   day: string;
   start: string;
   end: string;
+  source?: WorkingBlockSource;
+  available?: AvailabilityStatus;
 }
 
 export interface AppContextType {
@@ -316,3 +318,5 @@ export interface UserSettings extends Record<string, unknown> {
   selectedCalendars?: string[];
   [key: string]: unknown;
 }
+
+export type MLModelFeature = [number, number, number, number];

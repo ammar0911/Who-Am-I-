@@ -66,6 +66,11 @@ const retrieveAndSaveGoogleCalendarEvents = async () => {
         });
       });
 
+      // @TODO: Check if events have already been saved for this user.
+
+      // @TODO: Remove all events that have been deleted from the calendar by
+      // comparing with the database.
+
       // Create calendar API instance
       const calendar = googleAPIs.calendar({
         version: 'v3',

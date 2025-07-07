@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { userApi } from '@/lib/firestoreApi';
+import retrieveAndSaveGoogleCalendarEvents from '@/webhooks/retrieveAndSaveGoogleCalendarEvents';
 
 interface UserSettings {
   googleAuth?: {
@@ -13,7 +14,7 @@ interface UserSettings {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: Promise<{ userId: string }> },
 ) {
   const { userId } = await params;
 
@@ -29,7 +30,7 @@ export async function POST(
     if (!Array.isArray(calendarIds)) {
       return NextResponse.json(
         { error: 'calendarIds must be an array' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -61,6 +62,9 @@ export async function POST(
       user_settings: JSON.stringify(updatedSettings),
     });
 
+    // Trigger retrieve calendars
+    await retrieveAndSaveGoogleCalendarEvents();
+
     return NextResponse.json({
       message: 'Calendars saved successfully',
       selectedCalendars: calendarIds,
@@ -68,11 +72,11 @@ export async function POST(
   } catch (error: unknown) {
     console.error(
       'Error saving calendars:',
-      error instanceof Error ? error.message : String(error)
+      error instanceof Error ? error.message : String(error),
     );
     return NextResponse.json(
       { error: 'Failed to save calendars' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -178,7 +178,9 @@ const useCalendar = (userId: string | null) => {
     if (userId) {
       const fetchWorkingBlocks = async () => {
         try {
-          const response = await fetch(`/api/users/${userId}/workingBlock`);
+          const response = await fetch(
+            `/api/users/${userId}/workingBlock/forFollowingWeek`,
+          );
           if (!response.ok) {
             throw new Error(
               `Failed to fetch working blocks: ${response.statusText}`,
@@ -222,6 +224,8 @@ const useCalendar = (userId: string | null) => {
                 day,
                 start: formatTime(startDate),
                 end: formatTime(endDate),
+                source: block.source,
+                available: block.availability,
               };
             },
           );

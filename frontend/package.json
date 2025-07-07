@@ -27,6 +27,8 @@
     "@tailwindcss/postcss": "^4",
     "@tanstack/react-query": "^5.81.5",
     "core-js": "^3.43.0",
+    "csv": "^6.3.11",
+    "csv-parser": "^3.2.0",
     "daisyui": "^5.0.43",
     "firebase": "^11.9.1",
     "firebase-admin": "^13.4.0",

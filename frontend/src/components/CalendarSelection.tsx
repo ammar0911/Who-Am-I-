@@ -43,7 +43,7 @@ const CalendarSelection: React.FC<CalendarSelectionProps> = ({
           {t('noCalendarsAvailable')}
         </p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2 mb-3">
           {availableCalendars.map((calendar) => (
             <li key={calendar.id} className="flex items-center">
               <label className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-200 cursor-pointer">

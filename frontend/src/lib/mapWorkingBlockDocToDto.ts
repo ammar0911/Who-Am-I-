@@ -7,6 +7,8 @@ const mapWorkingBlockDocToDto = (doc: WorkingBlockDoc): WorkingBlockDTO => {
     endTime: doc.end_time.toISOString(),
     source: doc.source,
     userId: doc.user_id.id,
+    availability: doc.availability,
+    googleCalendarEventId: doc.google_calendar_event_id || null,
   };
 };
 

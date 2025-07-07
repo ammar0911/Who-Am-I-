@@ -155,6 +155,33 @@ export const workingBlockApi = {
     }
   },
 
+  async getByUserIdForUpcomingWeek(userId: string): Promise<WorkingBlockDTO[]> {
+    try {
+      const userDocRef = doc(db, COLLECTIONS.USER, userId);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const date = new Date();
+      date.setDate(date.getDate() + 7);
+      const q = query(
+        collection(db, COLLECTIONS.WORKING_BLOCK),
+        where('user_id', '==', userDocRef),
+        where('start_time', '>=', today),
+        where('start_time', '<=', date),
+        orderBy('start_time', 'asc'),
+      );
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...convertFirebaseTimestampsToDate(doc.data()),
+      })) as WorkingBlockDoc[];
+
+      return data.map(mapWorkingBlockDocToDto);
+    } catch (error) {
+      console.error('Error getting working blocks by user:', error);
+      throw error;
+    }
+  },
+
   async create(
     workingBlockData: Omit<WorkingBlockDTO, 'id'>,
     { source }: { source: WorkingBlockSource },
@@ -165,7 +192,7 @@ export const workingBlockApi = {
         end_time: new Date(workingBlockData.endTime),
         user_id: doc(db, COLLECTIONS.USER, workingBlockData.userId!),
         source,
-        availability: 'NotAvailable',
+        availability: workingBlockData.availability || 'NotAvailable',
         google_calendar_event_id:
           workingBlockData.googleCalendarEventId || null,
       };
@@ -207,6 +234,36 @@ export const workingBlockApi = {
     }
   },
 
+  async getAllForUserAfterDate({
+    user,
+    date,
+    source,
+  }: {
+    user: string;
+    date: Date;
+    source?: WorkingBlockSource;
+  }): Promise<WorkingBlockDTO[]> {
+    try {
+      const userDocRef = doc(db, COLLECTIONS.USER, user);
+      const q = query(
+        collection(db, COLLECTIONS.WORKING_BLOCK),
+        where('user_id', '==', userDocRef),
+        where('start_time', '>=', date),
+        ...(source ? [where('source', '==', source)] : []),
+      );
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...convertFirebaseTimestampsToDate(doc.data()),
+      })) as WorkingBlockDoc[];
+
+      return data.map(mapWorkingBlockDocToDto);
+    } catch (error) {
+      console.error('Error getting working blocks:', error);
+      throw error;
+    }
+  },
+
   async update(
     id: string,
     workingBlockData: Partial<DBWorkingBlock>,
@@ -225,6 +282,22 @@ export const workingBlockApi = {
       await deleteDoc(doc(db, COLLECTIONS.WORKING_BLOCK, id));
     } catch (error) {
       console.error('Error deleting working block:', error);
+      throw error;
+    }
+  },
+
+  async deleteAll(): Promise<void> {
+    try {
+      const querySnapshot = await getDocs(
+        collection(db, COLLECTIONS.WORKING_BLOCK),
+      );
+      const allPromises = querySnapshot.docs.map((doc) => {
+        return deleteDoc(doc.ref);
+      });
+
+      await Promise.all(allPromises);
+    } catch (error) {
+      console.error('Error deleting all working blocks:', error);
       throw error;
     }
   },
